@@ -1,0 +1,115 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../../Schemas/QuestProfileSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>Ancient Mana Shards Zinner</Name>
+    <MinLevel>110</MinLevel>
+    <MaxLevel>1001</MaxLevel>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <!-- NB: Honorbuddy sells before mailing -->
+    <SellGrey>true</SellGrey>
+    <SellWhite>true</SellWhite>
+    <SellGreen>true</SellGreen>
+    <SellBlue>true</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <AvoidMobs>
+        <Mob Name="Koralune Ettin" Entry="99791" />
+        <Mob Name="Elfbane" Entry="99792" />
+    </AvoidMobs>
+    <Blackspots>
+        <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
+        <Blackspot X="1807.786" Y="5389.523" Z="-36.09461" Radius="7.532747" />
+    </Blackspots>
+    <Vendors>
+        <Vendor Name="Felsoul Crusher" Entry="99764" Type="Repair" Nav="Fly" X="1122.2" Y="5189.969" Z="67.72179" />
+    </Vendors>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                    bool HasAncientMana( uint amount )
+                    {
+                        return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
+                    }
+
+                    uint MaxAncientMana()
+                    {
+                        if( WoWCurrency.GetCurrencyById(1155) != null )
+                        {
+                            return WoWCurrency.GetCurrencyById(1155).TotalMax;
+                        }
+                        return 0;
+                    }
+                ]]>
+        </CustomBehavior>
+        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" TerminateWhen="HasAncientMana(100)" >
+            <HuntingGrounds>
+                <Hotspot X="1305.939" Y="4830.756" Z="172.1508" />
+                <Hotspot X="1386.644" Y="4670.978" Z="128.5061" />
+                <Hotspot X="1331.427" Y="4492.01" Z="122.9617" />
+                <Hotspot X="1507.027" Y="4382.561" Z="115.4927" />
+                <Hotspot X="1703.431" Y="4317.868" Z="162.0318" />
+                <Hotspot X="1633.026" Y="4297.357" Z="138.98" />
+                <Hotspot X="1724.04" Y="4089.502" Z="166.0663" />
+                <Hotspot X="1415.358" Y="4424.396" Z="121.7797" />
+                <Hotspot X="1485.619" Y="4954.147" Z="187.0151" />
+                <Hotspot X="1565.029" Y="4973.608" Z="164.4833" />
+                <Hotspot X="1549.117" Y="5020.103" Z="124.2606" />
+                <Hotspot X="1522.021" Y="5000.249" Z="120.891" />
+                <Hotspot X="1459.936" Y="4998.865" Z="120.4602" />
+                <Hotspot X="1451.035" Y="5047.813" Z="174.2053" />
+                <Hotspot X="1288.823" Y="5242.343" Z="93.63394" />
+                <Hotspot X="974.6285" Y="5288.748" Z="106.7754" />
+                <Hotspot X="953.0189" Y="5328.632" Z="90.89679" />
+                <Hotspot X="913.7977" Y="5294.123" Z="94.69218" />
+                <Hotspot X="1145.838" Y="5571.61" Z="1.450079" />
+                <Hotspot X="1180.608" Y="5628.356" Z="6.87799" />
+                <Hotspot X="1312.984" Y="5664.373" Z="2.771824" />
+                <Hotspot X="1571.934" Y="5553.792" Z="13.56783" />
+                <Hotspot X="1558.282" Y="5467.915" Z="-7.36157" />
+                <Hotspot X="1543.184" Y="5478.198" Z="-7.76466" />
+                <Hotspot X="1590.861" Y="5487.653" Z="-7.360172" />
+                <Hotspot X="1588.765" Y="5611.566" Z="11.91419" />
+                <Hotspot X="1490.427" Y="5668.693" Z="16.13418" />
+                <Hotspot X="1811.907" Y="5701.867" Z="40.31356" />
+                <Hotspot X="1924.345" Y="5565.773" Z="60.70303" />
+                <Hotspot X="1619.317" Y="4887.14" Z="162.7641" />
+                <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
+                <Hotspot X="1386.644" Y="4670.978" Z="128.5061" />
+                <Hotspot X="1331.427" Y="4492.01" Z="122.9617" />
+                <Hotspot X="1507.027" Y="4382.561" Z="115.4927" />
+                <Hotspot X="1703.431" Y="4317.868" Z="162.0318" />
+                <Hotspot X="1633.026" Y="4297.357" Z="138.98" />
+                <Hotspot X="1724.04" Y="4089.502" Z="166.0663" />
+                <Hotspot X="1415.358" Y="4424.396" Z="121.7797" />
+                <Hotspot X="1485.619" Y="4954.147" Z="187.0151" />
+                <Hotspot X="1565.029" Y="4973.608" Z="164.4833" />
+                <Hotspot X="1549.117" Y="5020.103" Z="124.2606" />
+                <Hotspot X="1522.021" Y="5000.249" Z="120.891" />
+                <Hotspot X="1459.936" Y="4998.865" Z="120.4602" />
+                <Hotspot X="1451.035" Y="5047.813" Z="174.2053" />
+                <Hotspot X="1288.823" Y="5242.343" Z="93.63394" />
+                <Hotspot X="974.6285" Y="5288.748" Z="106.7754" />
+                <Hotspot X="953.0189" Y="5328.632" Z="90.89679" />
+                <Hotspot X="1451.373" Y="4894.687" Z="185.5585" />
+                <Hotspot X="913.7977" Y="5294.123" Z="94.69218" />
+                <Hotspot X="1145.838" Y="5571.61" Z="1.450079" />
+                <Hotspot X="1180.608" Y="5628.356" Z="6.87799" />
+                <Hotspot X="1312.984" Y="5664.373" Z="2.771824" />
+                <Hotspot X="1571.934" Y="5553.792" Z="13.56783" />
+                <Hotspot X="1558.282" Y="5467.915" Z="-7.36157" />
+                <Hotspot X="1543.184" Y="5478.198" Z="-7.76466" />
+                <Hotspot X="1590.861" Y="5487.653" Z="-7.360172" />
+                <Hotspot X="1588.765" Y="5611.566" Z="11.91419" />
+                <Hotspot X="1490.427" Y="5668.693" Z="16.13418" />
+                <Hotspot X="1811.907" Y="5701.867" Z="40.31356" />
+                <Hotspot X="1924.345" Y="5565.773" Z="60.70303" />
+                <Hotspot X="1619.317" Y="4887.14" Z="162.7641" />
+                <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
+            </HuntingGrounds>
+        </CustomBehavior>
+        <CustomBehavior File="LoadProfile" ProfileName="[H] Zygor - Suramar - 6 - 91" RememberProfile="true" />
+    </QuestOrder>
+</HBProfile>
