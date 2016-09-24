@@ -21,7 +21,7 @@
     </AvoidMobs>
     <Blackspots>
         <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
-        <Blackspot X="1807.786" Y="5389.523" Z="-36.09461" Radius="7.532747" />
+        <Blackspot X="1807.786" Y="5389.523" Z="-36.09461" Radius="20.0" />
     </Blackspots>
     <Vendors>
         <Vendor Name="Felsoul Crusher" Entry="99764" Type="Repair" Nav="Fly" X="1122.2" Y="5189.969" Z="67.72179" />
@@ -110,6 +110,6 @@
                 <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
             </HuntingGrounds>
         </CustomBehavior>
-        <CustomBehavior File="LoadProfile" ProfileName="[H] Zygor - Suramar - 6 - 91" RememberProfile="true" />
+        <CustomBehavior File="LoadProfile" ProfileName="..\[H] Zygor - Suramar - 6 - 91" RememberProfile="true" />
     </QuestOrder>
 </HBProfile>

@@ -110,6 +110,6 @@
                 <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
             </HuntingGrounds>
         </CustomBehavior>
-        <CustomBehavior File="LoadProfile" ProfileName="[H] Zygor - Suramar - 6 - 91" RememberProfile="true" />
+        <CustomBehavior File="LoadProfile" ProfileName="..\[H] Zygor - Suramar - 6 - 91" RememberProfile="true" />
     </QuestOrder>
 </HBProfile>

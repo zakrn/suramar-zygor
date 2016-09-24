@@ -89,6 +89,38 @@
                         }
                     }
 
+                    bool IsThirsty( uint friendId )
+                    {
+                        List<string> values = Lua.GetReturnValues("return GetFriendshipReputation(" + friendId +")");
+
+                        if( values.Count == 0 )
+                        {   
+                            Logging.Write(System.Windows.Media.Colors.Red, "[Zak]: Failed to get arcane thirst");
+                            return false;
+                        }
+
+                        int level = Int32.Parse( values[1]);
+                        int threshold = Int32.Parse( values[7]);
+                        int newlevel = level - threshold;
+
+                        return newlevel <= 1;
+                    }
+
+                    bool IsThalyssraThirsty()
+                    {
+                        return IsThirsty(1860);
+                    }
+
+                    bool IsOculethThirsty()
+                    {
+                        return IsThirsty(1862);
+                    }
+
+                    bool IsValtroisThirsty()
+                    {
+                        return IsThirsty(1919);
+                    }
+
                     void PrintStep( uint step )
                     {
                         Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: " + step);
@@ -271,21 +303,32 @@
 
         <!-- 146 -->
         <CustomBehavior File="RunCode" Code="PrintStep(146)" />
-        <If Condition="QuestDone(43813) &amp;&amp; QuestDone(42147) &amp;&amp; Me.ZoneId == 7637">
+        <If Condition="Me.AreaId != 1033 &amp;&amp; IsQuestCompleted(43813) &amp;&amp; QuestDone(42147)">
             <CustomBehavior File="InteractWith" MobId="260265" X="1204.069" Y="4248.17" Z="13.96463" />
         </If>
 
         <!-- 147 -->
         <CustomBehavior File="RunCode" Code="PrintStep(147)" />
+        <!-- check if he is thirsty and unlock if we have mana, otherwise go get some -->
+        <If Condition="QuestDone(42147) &amp;&amp; IsThalyssraThirsty()">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;Thirsty&quot;);" />
+            <If Condition="!HasAncientMana(50)">
+                <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-100" RememberProfile="true" />
+            </If>
+            <CustomBehavior File="InteractWith" MobId="97140" X="1737.871" Y="4600.824" Z="96.28322" />
+            <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+            <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+            <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+        </If>
         <TurnIn Nav="Fly" QuestName="First Contact" QuestId="42147" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1737.87" Y="4600.397" Z="96.3101"  />
         <PickUp Nav="Fly" QuestName="Arcane Communion" QuestId="40324" GiverName="First Arcanist Thalyssra" GiverId="97140" X="1737.87" Y="4600.397" Z="96.3101" />
 
         <!-- 148 -->
         <CustomBehavior File="RunCode" Code="PrintStep(148)" />
         <If Condition="DoQuest(40324) &amp;&amp; !HasAncientMana(300)">
-            <CustomBehavior File="LoadProfile" ProfileName="[N]-[QUEST]-Ancient-Mana-Zinner" RememberProfile="true" />
+            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-300" RememberProfile="true" />
         </If>
-        <If Condition="QuestDone(40324) &amp;&amp; HasAncientMana(300)">
+        <If Condition="HasQuest(40324) &amp;&amp; HasAncientMana(300)">
             <CustomBehavior File="InteractWith" MobId="104618" InteractByGossipOptions="1" X="1731.88" Y="4596.162" Z="96.28315"  />
         </If>
 
@@ -408,7 +451,7 @@
         <!-- 164 -->
         <CustomBehavior File="RunCode" Code="PrintStep(164)" />
         <If Condition="DoQuest(41197)">
-            <CustomBehavior File="UserDialog" QuestId="41453" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="150" ExpiryTime="300" 
+            <CustomBehavior File="UserDialog" QuestId="41197" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="150" ExpiryTime="300" 
                         Text="You've Got to Be Kitten Me Right Meow is no currently scripted, you'll have to do it manually sorry its complicated." />
         </If>
 
