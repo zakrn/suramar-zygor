@@ -213,6 +213,37 @@
 
         <!-- <CustomBehavior File="Hooks\Avoid" AvoidName="ettins" ObjectId="99791" ObjectId1="99792" Radius="15" /> -->
 
+        <!-- 2 -->
+        <CustomBehavior File="RunCode" Code="PrintStep(2)" />
+        <TurnIn Nav="Fly" QuestName="Khadgar's Discovery" QuestId="39985" TurnInName="Archmage Khadgar" TurnInId="90417" X="-847.2126" Y="4632.287" Z="749.6396" />
+        <PickUp Nav="Fly" QuestName="Magic Message" QuestId="39986" GiverName="Archmage Khadgar" GiverId="90417" X="-847.2126" Y="4632.287" Z="749.6396" />
+
+        <!-- 3 -->
+        <CustomBehavior File="RunCode" Code="PrintStep(3)" />
+        <While Condition="DoQuest(39986)">
+            <CustomBehavior File="InteractWith" MobId="98266" TerminateWhen="IsQuestCompleted(39986)" >
+                <HuntingGrounds>
+                    <Hotspot X="-849.5762" Y="4635.687" Z="749.6167" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            <CustomBehavior File="WaitTimer" WaitTime="35000" />
+        </While>
+        
+        <!-- 4 -->
+        <CustomBehavior File="RunCode" Code="PrintStep(4)" />
+        <TurnIn Nav="Fly" QuestName="Magic Message" QuestId="39986" TurnInName="Archmage Khadgar" TurnInId="90417" X="-849.5762" Y="4635.687" Z="749.6167" />
+        <PickUp Nav="Fly" QuestName="Trail of Echoes" QuestId="39987" GiverName="Archmage Khadgar" GiverId="90417" X="-849.5762" Y="4635.687" Z="749.6167" />
+
+        <!-- 5 -->
+        <CustomBehavior File="RunCode" Code="PrintStep(5)" />
+        <If Condition="DoQuest(39987)">
+            <CustomBehavior File="InteractWith" MobId="244874" NumOfTimes="1" >
+                <HuntingGrounds>
+                    <Hotspot X="-849.5762" Y="4635.687" Z="749.6167" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
         <!-- 6 -->
         <CustomBehavior File="RunCode" Code="PrintStep(6)" />
         <If Condition="DoQuest(39987) &amp;&amp; !IsObjectiveComplete(1,39987)">
@@ -448,10 +479,18 @@
         <!-- 46 --> 
         <CustomBehavior File="RunCode" Code="PrintStep(46)" />
         <If Condition="DoQuest(42688)">
-            <CustomBehavior File="InteractWith" QuestId="42688" TerminateWhen="IsObjectiveComplete(2,42688)" InteractByGossipOptions="3" NumOfTimes="500" MobId="107302" >
+            <CustomBehavior File="InteractWith" QuestId="42688" NumOfTimes="1" MobId="107302" >
                 <HuntingGrounds>
-                    <Hotspot X="726.0839" Y="4339.292" Z="137.4211" />
+                    <Hotspot X="1503.19" Y="5812.916" Z="4.580419" />
                 </HuntingGrounds>
+            </CustomBehavior>
+           <CustomBehavior File="RunCode" >
+                <![CDATA[
+                    List<string> values = Lua.GetReturnValues("return GetNumGossipOptions()");
+                    int idx = Int32.Parse(values[0]);
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: Sand option is: " + idx );
+                    Lua.DoString("SelectGossipOption(" + idx + ")");
+                ]]>
             </CustomBehavior>
         </If>
 
@@ -459,7 +498,7 @@
         <CustomBehavior File="RunCode" Code="PrintStep(47)" />
         <If Condition="QuestDone(42688)">
             <TurnIn Nav="Fly" QuestName="Mrgls of Endearment" QuestId="42688" TurnInName="Pearlhunter Phin" TurnInId="107302" X="1504.785" Y="5811.515" Z="4.897935"  />
-            <CustomBehavior File="WaitTimer" WaitTime="60000" />
+            <CustomBehavior File="WaitTimer" WaitTime="40000" />
         </If>
 
         <!-- 48 --> 
