@@ -605,6 +605,8 @@
         <TurnIn Nav="Fly" QuestName="Oculeth's Workshop" QuestId="40011" TurnInName="Chief Telemancer Oculeth" TurnInId="101499" X="1664.109" Y="3899.859" Z="168.1633"   />
         <PickUp Nav="Fly" QuestName="The Delicate Art of Telemancy" QuestId="40747" GiverName="Chief Telemancer Oculeth" GiverId="101499" X="1664.109" Y="3899.859" Z="168.1633" />
 
+        <UseMount Value="false" />
+
         <!-- 62 --> 
         <CustomBehavior File="RunCode" Code="PrintStep(62)" />
         <!-- workshop to gardens -->
@@ -692,6 +694,7 @@
             <CustomBehavior File="WaitTimer" WaitTime="20000" />
         </If>
 
+        <UseMount Value="true" />
         <!-- 73 --> 
         <CustomBehavior File="RunCode" Code="PrintStep(73)" />
         <TurnIn Nav="Fly" QuestName="The Delicate Art of Telemancy" QuestId="40747" TurnInName="Chief Telemancer Oculeth" TurnInId="101499" X="1705.067" Y="3921.113" Z="167.8172" />
