@@ -590,6 +590,8 @@
         <!-- 60 --> 
         <CustomBehavior File="RunCode" Code="PrintStep(60)" />
         <If Condition="DoQuest(40011)">
+            <MoveTo X="1679.904" Y="3929.66" Z="170.2346" />
+            <CustomBehavior File="ForcedDismount" />
             <MoveTo X="1665.214" Y="3921.889" Z="170.2346" />
             <!-- wait for cooldown on ability -->
             <CustomBehavior File="WaitTimer" WaitTime="17000" />
