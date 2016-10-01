@@ -155,6 +155,7 @@
                         await Coroutine.Sleep(postWait);
                     }
                     
+                    public bool HasExtraActionBar => Lua.GetReturnVal<bool>("return HasExtraActionBar()", 0);
                 ]]>
         </CustomBehavior>
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Zygor - Suramar Steps 170 - 289&quot;);" />
