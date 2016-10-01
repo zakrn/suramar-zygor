@@ -167,6 +167,7 @@
         <!-- 103 -->
         <CustomBehavior File="RunCode" Code="PrintStep(103)" />
         <If Condition="DoQuest(40370)">
+            <UseMount Value="false" />
             <CustomBehavior File="UserDialog" QuestId="40370" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="1" Text="I had some issues getting this to work, so it may not work as expected. You have to take manual control, but the quest is fairly simple." />
             <CustomBehavior File="Hooks\DoWhen" ActivityName="PurgeMob" AllowUseDuringCombat="true" LogExecution="true" UseAtInterval="4000" >
                <CustomBehavior File="UseItem" ItemId="131760" />
@@ -177,6 +178,7 @@
                 </HuntingGrounds>   
             </CustomBehavior>
             <CustomBehavior File="Hooks\DoWhen" ActivityName="PurgeMob" Command="Remove" />
+            <UseMount Value="true" />
         </If>
 
 

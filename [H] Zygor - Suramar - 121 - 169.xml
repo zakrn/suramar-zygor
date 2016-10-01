@@ -142,7 +142,7 @@
 
         <!-- 121 -->
         <CustomBehavior File="RunCode" Code="PrintStep(121)" />
-        <PickUp Nav="Fly" QuestName="Feeding Shal'Aran" QuestId="41138" GiverName="Arcanist Valtrois" GiverId="102600" X="1710.873" Y="4632.39" Z="124.0058" />
+        <PickUp QuestName="Feeding Shal'Aran" QuestId="41138" GiverName="Arcanist Valtrois" GiverId="102600" X="1712.013" Y="4633.702" Z="124.0061"  />
         <!-- 122 -->
         <CustomBehavior File="RunCode" Code="PrintStep(122)" />
         <While Condition="DoQuest(41138)">

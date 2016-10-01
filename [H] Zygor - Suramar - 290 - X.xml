@@ -1,0 +1,215 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[H] Zygor Suramar 290 - X</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
+    <Blackspots>
+        <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
+    </Blackspots>
+    <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
+    <Vendors>
+        <Vendor Name="Felsoul Crusher" Entry="99764" Type="Repair" Nav="Fly" X="1122.2" Y="5189.969" Z="67.72179" />
+    </Vendors>
+    <!--These are the locations of the available mailboxes that you want your character to use-->
+    <Mailboxes>
+    </Mailboxes>
+    <!--Setting these would make sure the character stays away from and does not attack these mobs-->
+    <AvoidMobs>
+        <Mob Name="Koralune Ettin" Entry="99791" />
+        <Mob Name="Elfbane" Entry="99792" />
+    </AvoidMobs>
+    <!--Here is where the meat of the profile will take place-->
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                    bool DoQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (!HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsBreadcrumbQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (IsQuestCompleted(questId)) return false;
+                        }
+                        return true;
+                    }
+                    bool QuestDone(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+
+                    bool HasAncientMana( uint amount )
+                    {
+                        return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
+                    }
+
+                    uint MaxAncientMana()
+                    {
+                        if( WoWCurrency.GetCurrencyById(1155) != null )
+                        {
+                            return WoWCurrency.GetCurrencyById(1155).TotalMax;
+                        }
+                        return 0;
+                    }
+
+                    double DistFrom253()
+                    {
+                        Vector2 loc = new Vector2( Me.Location.X, Me.Location.Y);
+                        Vector2 res = new Vector2( 2949.458f, 4882.862f );
+
+                        return CalcDist( loc, res );
+                    }
+
+                    double CalcDist( Vector2 v1, Vector2 v2 )
+                    {
+                        double dx = v2.X - v1.X;
+                        double dy =  v2.Y - v1.Y;
+                        double r = Math.Pow( dx , 2) - Math.Pow( dy, 2);
+
+                        if( r < 0 )
+                            r *= -1;
+
+                        return Math.Sqrt(  r );
+                    }
+
+                    async Task CastMask()
+                    {
+                        if( Me.ZoneId == 7637 && !Me.HasAura(202477) )
+                        {
+                            Lua.DoString("ExtraActionButton1:Click();");
+                            await Coroutine.Sleep(1400);
+                        }
+                    }
+
+                    bool IsThirsty( uint friendId )
+                    {
+                        List<string> values = Lua.GetReturnValues("return GetFriendshipReputation(" + friendId +")");
+
+                        if( values.Count == 0 )
+                        {   
+                            Logging.Write(System.Windows.Media.Colors.Red, "[Zak]: Failed to get arcane thirst");
+                            return false;
+                        }
+
+                        int level = Int32.Parse( values[1]);
+                        int threshold = Int32.Parse( values[7]);
+                        int newlevel = level - threshold;
+
+                        return newlevel <= 1;
+                    }
+
+                    bool IsThalyssraThirsty()
+                    {
+                        return IsThirsty(1860);
+                    }
+
+                    bool IsOculethThirsty()
+                    {
+                        return IsThirsty(1862);
+                    }
+
+                    bool IsValtroisThirsty()
+                    {
+                        return IsThirsty(1919);
+                    }
+
+                    void PrintStep( uint step )
+                    {
+                        Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: " + step);
+                    }
+
+                    async Task SkipCutscene(int preWait = 3000, int postWait = 3000)
+                    {
+                // Add detection of cutscene here.
+                        await Coroutine.Sleep(preWait);
+                // Test and improve the working method.
+                        Lua.DoString("MovieFrame:StopMovie(); CinematicFrame_CancelCinematic(); StopCinematic();");
+                        await Coroutine.Sleep(postWait);
+                    }
+                ]]>
+        </CustomBehavior>
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Zygor - Suramar Steps 290 - X&quot;);" />
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: ZoneId: &quot; + Me.ZoneId);" />
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: MaxMana: &quot; + IsQuestCompleted(40798));" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(290)" />
+        <If Condition="DoQuest(40334)">
+            <CustomBehavior File="KillUntilComplete" MobIds="102828, 100949, 100950" TerminateWhen="IsObjectiveComplete(2, 40334)" >
+                <HuntingGrounds>
+                    <Hotspot X="1056.912" Y="2610.179" Z="2.008139" />
+                    <Hotspot X="976.5192" Y="2582.707" Z="3.610669" />
+                    <Hotspot X="894.9761" Y="2612.082" Z="0.8384525" />
+
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(291)" />
+         <If Condition="DoQuest(40334)">
+            <CustomBehavior File="KillUntilComplete" MobIds="102796" TerminateWhen="IsObjectiveComplete(3, 40334)" >
+                <HuntingGrounds>
+                   <Hotspot X="921.054" Y="2796.057" Z="-3.007007" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(292)" />
+        <If Condition="DoQuest(40334)">
+            <CustomBehavior File="KillUntilComplete" MobIds="100100" TerminateWhen="IsObjectiveComplete(1, 40334)" >
+                <HuntingGrounds>
+                   <Hotspot X="921.054" Y="2796.057" Z="-3.007007" />
+                   <Hotspot X="841.2545" Y="2856.517" Z="-9.824205" />
+                   <Hotspot X="851.3156" Y="2650.387" Z="0.1384602" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(293)" />
+        <TurnIn Nav="Fly" QuestName="Fisherman's Tonic" QuestId="40334" TurnInName="Brandolf" TurnInId="100004" />
+        <PickUp Nav="Fly" QuestName="Testing the Waters" QuestId="41034" GiverName="Brandolf" GiverId="100004" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(294)" />
+        <If Condition="DoQuest(41034)">
+            <MoveTo X="949.7394" Y="2471.27" Z="-33.05093" />
+            <CustomBehavior File="KillUntilComplete" MobIds="102841" TerminateWhen="IsObjectiveComplete(2, 41034)" >
+                <HuntingGrounds>
+                   <Hotspot X="787.3208" Y="2437.363" Z="-70.64326" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+
+<!-- <TurnIn Nav="Fly" QuestName="Testing the Waters" QuestId="41034" TurnInName="Brandolf" TurnInId="102845" /> -->
+
+
+        
+    </QuestOrder>
+</HBProfile>
