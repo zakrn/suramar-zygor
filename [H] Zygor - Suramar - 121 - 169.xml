@@ -496,7 +496,7 @@
         </If>
 
         <!-- NEXT -->
-        <CustomBehavior File="LoadProfile" ProfileName="[H] Zygor - Suramar - 170 - X" RememberProfile="true" />
+        <CustomBehavior File="LoadProfile" ProfileName="[H] Zygor - Suramar - 170 - 289" RememberProfile="true" />
 
     </QuestOrder>
 </HBProfile>
