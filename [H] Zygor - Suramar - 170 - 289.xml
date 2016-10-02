@@ -154,8 +154,6 @@
                         Lua.DoString("MovieFrame:StopMovie(); CinematicFrame_CancelCinematic(); StopCinematic();");
                         await Coroutine.Sleep(postWait);
                     }
-                    
-                    public bool HasExtraActionBar => Lua.GetReturnVal<bool>("return HasExtraActionBar()", 0);
                 ]]>
         </CustomBehavior>
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Zygor - Suramar Steps 170 - 289&quot;);" />
@@ -674,7 +672,7 @@
         <PickUp Nav="Fly" QuestName="Lay Waste, Lay Mines" QuestId="40965" GiverName="Lothrius Mooncaller" GiverId="101768" X="2617.048" Y="4637.557" Z="258.9414" />
         <PickUp Nav="Fly" QuestName="Stop the Spell Seekers" QuestId="41032" GiverName="Lothrius Mooncaller" GiverId="101768" X="2617.048" Y="4637.557" Z="258.9414" />
 
-        <CustomBehavior File="Hooks\DoWhen" ActivityName="setTrap" UseWhen="Me.IsActuallyInCombat &amp;&amp; HasExtraActionBar" AllowUseDuringCombat="true" LogExecution="true" >
+        <CustomBehavior File="Hooks\DoWhen" ActivityName="setTrap" UseWhen="Me.IsActuallyInCombat &amp;&amp; HasItem(133882)" AllowUseDuringCombat="true" LogExecution="true" >
            <CustomBehavior File="UseItem" ItemId="133882" />
         </CustomBehavior>
 
