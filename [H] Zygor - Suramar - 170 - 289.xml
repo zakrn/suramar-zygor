@@ -32,6 +32,24 @@
     <QuestOrder>
         <CustomBehavior File="RunCode" Type="Definition">
             <![CDATA[
+
+                    long lastTrapTick = 0;
+
+                    long GetUnixTime()
+                    {
+                        return DateTimeOffset.Now.ToUnixTimeSeconds() * 1000;
+                    }
+
+                    bool ShouldUseTrap()
+                    {
+                        if( Me.IsActuallyInCombat && HasItem(133882) && (GetUnixTime() - lastTrapTick) >= 10000 )
+                        {
+                            lastTrapTick = GetUnixTime();
+                            return true;
+                        }
+                        return false;
+                    }
+
                     bool DoQuest(params uint[] questIds)
                     {
                         foreach (var questId in questIds)
@@ -285,13 +303,14 @@
 
         <!-- 190 -->
         <CustomBehavior File="RunCode" Code="PrintStep(190)" />
+        <If Condition="NeedsQuest(43592) || HasQuest(43592) &amp;&amp; !HasAncientMana(250)">
+            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-300" RememberProfile="true" />
+        </If>
+
         <PickUp Nav="Fly" QuestName="Leyline Feed: Falanaar Arcway" QuestId="43592" GiverName="Leyline Feed" GiverId="252262" X="1807.095" Y="5264.879" Z="-57.26294" />
 
         <!-- 191 -->
         <CustomBehavior File="RunCode" Code="PrintStep(191)" />
-        <If Condition="DoQuest(43592) &amp;&amp; !HasAncientMana(250)">
-            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-300" RememberProfile="true" />
-        </If>
 
         <!-- 192 -->
         <CustomBehavior File="RunCode" Code="PrintStep(192)" />
@@ -564,6 +583,7 @@
         </If>
 
         <!-- 230 -->
+        <UseMount Value="false" />
         <CustomBehavior File="RunCode" Code="PrintStep(230)" />
         <If Condition="DoQuest(40883)">
             <CustomBehavior File="InteractWith" MobId="102029" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1, 40883)">
@@ -664,6 +684,7 @@
             </CustomBehavior>
         </If>
 
+
         <!-- 242 -->
         <CustomBehavior File="RunCode" Code="PrintStep(242)" />
         <TurnIn Nav="Fly" QuestName="The Rift Between" QuestId="40964" TurnInName="Lothrius Mooncaller" TurnInId="101768" X="2617.048" Y="4637.557" Z="258.9414" />
@@ -671,9 +692,11 @@
         <PickUp Nav="Fly" QuestName="Lay Waste, Lay Mines" QuestId="40965" GiverName="Lothrius Mooncaller" GiverId="101768" X="2617.048" Y="4637.557" Z="258.9414" />
         <PickUp Nav="Fly" QuestName="Stop the Spell Seekers" QuestId="41032" GiverName="Lothrius Mooncaller" GiverId="101768" X="2617.048" Y="4637.557" Z="258.9414" />
 
-        <CustomBehavior File="Hooks\DoWhen" ActivityName="setTrap" UseWhen="Me.IsActuallyInCombat" AllowUseDuringCombat="true" LogExecution="true" >
+        <CustomBehavior File="Hooks\DoWhen" ActivityName="setTrap" UseWhen="ShouldUseTrap()" AllowUseDuringCombat="true" LogExecution="true" >
            <CustomBehavior File="UseItem" ItemId="133882" />
         </CustomBehavior>
+
+        <DisableBehavior Name="Pull" />
 
         <!-- 243 -->
         <CustomBehavior File="RunCode" Code="PrintStep(243)" />
@@ -764,8 +787,26 @@
 
         <!-- 250 -->
         <CustomBehavior File="RunCode" Code="PrintStep(250)" />
-        <TurnIn Nav="Fly" QuestName="Recovering Stolen Power" QuestId="40968" TurnInName="" TurnInId="" />
-        <!-- I MISSED A STEP -->
+        <TurnIn Nav="Fly" QuestName="Recovering Stolen Power" QuestId="40968" />
+        <PickUp Nav="Fly" QuestName="Waiting for Revenge" QuestId="41110" GiverName="Moonfall Riding Hippogryph" GiverId="111604" X="2830.336" Y="4701.386" Z="285.4977" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(2500)" />
+        <If Condition="DoQuest(41110)">
+            <CustomBehavior File="InteractWith" MobId="111604" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1, 41110)">
+                <HuntingGrounds>
+                    <Hotspot X="2830.336" Y="4701.386" Z="285.4977" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            <CustomBehavior File="WaitTimer" WaitTime="2000" TerminateWhen="Me.OnTaxi" />
+        </If>
+
+
+        <If Condition="Me.InVehicle">
+            <CustomBehavior File="RunCode" Code="PrintStep(2501)" />
+            <CustomBehavior File="RunCode" Code="Styx.Helpers.KeyboardManager.KeyUpDown((char)System.Windows.Forms.Keys.D2);" />
+            <CustomBehavior File="WaitTimer" WaitTime="600000" TerminateWhen="!Me.InVehicle" />
+        </If>
+
 
         <!-- 251 -->
         <CustomBehavior File="RunCode" Code="PrintStep(251)" />
@@ -779,6 +820,8 @@
 
         <!-- 252 -->
         <CustomBehavior File="RunCode" Code="PrintStep(252)" />
+        <!-- im not sure why he put it in this order, this is a terrible idea -->
+        
         <!-- MISSED A STEP -->
         <If Condition="HasQuest(40969) &amp;&amp; DistFrom253() &gt; 50">
             <DisableBehavior Name="Combat" />
