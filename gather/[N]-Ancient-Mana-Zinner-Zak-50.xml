@@ -1,5 +1,5 @@
 <HBProfile xsi:noNamespaceSchemaLocation="../../Schemas/QuestProfileSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <Name>Ancient Mana Shards Zinner</Name>
+    <Name>[N]-Ancient-Mana-Zinner-Zak-50</Name>
     <MinLevel>110</MinLevel>
     <MaxLevel>1001</MaxLevel>
     <MinDurability>0.3</MinDurability>
@@ -21,10 +21,9 @@
     </AvoidMobs>
     <Blackspots>
         <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
-        <Blackspot X="1807.786" Y="5389.523" Z="-36.09461" Radius="20.0" />
+        <Blackspot X="1807.786" Y="5389.523" Z="-36.09461" Radius="30.0" />
     </Blackspots>
     <Vendors>
-        <Vendor Name="Felsoul Crusher" Entry="99764" Type="Repair" Nav="Fly" X="1122.2" Y="5189.969" Z="67.72179" />
     </Vendors>
     <QuestOrder>
         <CustomBehavior File="RunCode" Type="Definition">
@@ -44,6 +43,16 @@
                     }
                 ]]>
         </CustomBehavior>
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="HasItem(139786) || HasItem(139890)" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
+            <!-- Ancient Mana Crystal -->
+            <If Condition="HasItem(139786)">
+                <CustomBehavior File="UseItem" ItemId="139786" />
+            </If>
+            <!-- Ancient Mana Gem -->
+            <If Condition="HasItem(139890)">
+                <CustomBehavior File="UseItem" ItemId="139890" />
+            </If>
+        </CustomBehavior>
         <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" TerminateWhen="HasAncientMana(50)" >
             <HuntingGrounds>
                 <Hotspot X="1305.939" Y="4830.756" Z="172.1508" />
@@ -60,7 +69,6 @@
                 <Hotspot X="1522.021" Y="5000.249" Z="120.891" />
                 <Hotspot X="1459.936" Y="4998.865" Z="120.4602" />
                 <Hotspot X="1451.035" Y="5047.813" Z="174.2053" />
-                <Hotspot X="1288.823" Y="5242.343" Z="93.63394" />
                 <Hotspot X="974.6285" Y="5288.748" Z="106.7754" />
                 <Hotspot X="953.0189" Y="5328.632" Z="90.89679" />
                 <Hotspot X="913.7977" Y="5294.123" Z="94.69218" />
@@ -90,7 +98,6 @@
                 <Hotspot X="1522.021" Y="5000.249" Z="120.891" />
                 <Hotspot X="1459.936" Y="4998.865" Z="120.4602" />
                 <Hotspot X="1451.035" Y="5047.813" Z="174.2053" />
-                <Hotspot X="1288.823" Y="5242.343" Z="93.63394" />
                 <Hotspot X="974.6285" Y="5288.748" Z="106.7754" />
                 <Hotspot X="953.0189" Y="5328.632" Z="90.89679" />
                 <Hotspot X="1451.373" Y="4894.687" Z="185.5585" />
@@ -110,6 +117,8 @@
                 <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
             </HuntingGrounds>
         </CustomBehavior>
+        <CustomBehavior File="Hooks\DoWhen" ActivityName="use_mana_item" Command="Remove" />
+
         <CustomBehavior File="LoadProfile" ProfileName="..\[H] Zygor - Suramar - 6 - 91" RememberProfile="true" />
     </QuestOrder>
 </HBProfile>
