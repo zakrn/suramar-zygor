@@ -303,7 +303,7 @@
 
         <!-- 190 -->
         <CustomBehavior File="RunCode" Code="PrintStep(190)" />
-        <If Condition="NeedsQuest(43592) || HasQuest(43592) &amp;&amp; !HasAncientMana(250)">
+        <If Condition="(NeedsQuest(43592) || HasQuest(43592)) &amp;&amp; !HasAncientMana(250)">
             <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-300" RememberProfile="true" />
         </If>
 
