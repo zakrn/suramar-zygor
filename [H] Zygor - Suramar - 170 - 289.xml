@@ -457,7 +457,7 @@
         <!-- 212 -->
         <CustomBehavior File="RunCode" Code="PrintStep(212)" />
         <If Condition="DoQuest(41485)" >
-            <CustomBehavior File="InteractWith" MobId="103816" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1, 41485)">
+            <CustomBehavior File="InteractWith" MobIds="103816, 105405" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1, 41485)">
                 <HuntingGrounds>
                     <Hotspot X="2313.65" Y="4950.181" Z="127.8318" />
                     <Hotspot X="2441.213" Y="4985.778" Z="119.8523" />
