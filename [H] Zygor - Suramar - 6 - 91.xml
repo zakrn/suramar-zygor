@@ -235,7 +235,7 @@
 
         <!-- 5 -->
         <CustomBehavior File="RunCode" Code="PrintStep(5)" />
-        <If Condition="DoQuest(39987)">
+        <If Condition="DoQuest(39987) &amp;&amp; !IsObjectiveComplete(1,39987)">
             <CustomBehavior File="InteractWith" MobId="244874" NumOfTimes="1" >
                 <HuntingGrounds>
                     <Hotspot X="-849.5762" Y="4635.687" Z="749.6167" />
