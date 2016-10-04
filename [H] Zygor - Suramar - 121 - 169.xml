@@ -79,13 +79,15 @@
                         return 0;
                     }
 
-                    async Task CastMask()
+                    bool ShouldCastMask()
                     {
-                        if( Me.ZoneId == 7637 && !Me.HasAura(202477) )
-                        {
-                            Lua.DoString("ExtraActionButton1:Click();");
-                            await Coroutine.Sleep(1400);
-                        }
+                        return (Me.MinimapZoneText == "The Grand Promenade" || Me.MinimapZoneText == "Suramar City")
+                                && !Me.HasAura(202477);
+                    }
+
+                    void CastMask()
+                    {
+                        Lua.DoString("ExtraActionButton1:Click();");
                     }
 
                     bool IsThirsty( uint friendId )
@@ -141,12 +143,22 @@
 
         <!-- 121 -->
         <CustomBehavior File="RunCode" Code="PrintStep(121)" />
-        <PickUp QuestName="Feeding Shal'Aran" QuestId="41138" GiverName="Arcanist Valtrois" GiverId="102600" X="1712.013" Y="4633.702" Z="124.0061"  />
+        <If Condition="NeedsQuest(41138)">
+            <CustomBehavior File="WaitTimer" WaitTime="20" />
+            <PickUp QuestName="Feeding Shal'Aran" QuestId="41138" GiverName="Arcanist Valtrois" GiverId="102600" X="1712.013" Y="4633.702" Z="124.0061"  />
+        </If>
+
         <!-- 122 -->
         <CustomBehavior File="RunCode" Code="PrintStep(122)" />
         <While Condition="DoQuest(41138)">
             <CustomBehavior File="Escort" QuestId="41138" MobId="102600" />
         </While>
+
+        <!-- pre-harvest 100 mana -->
+        <If Condition="!IsQuestCompleted(43811)  &amp;&amp; !HasAncientMana(200)">
+            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-200" RememberProfile="true" />
+        </If>
+
         <!-- 123 -->
         <CustomBehavior File="RunCode" Code="PrintStep(123)" />
         <TurnIn Nav="Fly" QuestName="Feeding Shal'Aran" QuestId="41138" TurnInName="Arcanist Valtrois" TurnInId="103155" X="1710.873" Y="4632.39" Z="124.0058" />
@@ -165,20 +177,17 @@
         <If Condition="DoQuest(41834) &amp;&amp; !HasItem(136600)">
             <CustomBehavior File="InteractWith" MobId="249021" X="765.7309" Y="4419.362" Z="123.4398" />
         </If>
+
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="!Me.HasAura(208824) &amp;&amp; Me.MinimapZoneText == &quot;The Grand Promenade&quot; &amp;&amp; HasItem(136600)" ActivityName="applyMask" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
+            <CustomBehavior File="UseItem" ItemId="136600" />
+        </CustomBehavior>
+
         <!-- 127 -->
         <CustomBehavior File="RunCode" Code="PrintStep(127)" />
-        <If Condition="DoQuest(41834) &amp;&amp; HasItem(136600)">
-            <If Condition="!Me.HasAura(208824)">
-                <CustomBehavior File="UseItem" ItemId="136600" />
-            </If>
-        </If>
+
         <!-- 128 -->
         <CustomBehavior File="RunCode" Code="PrintStep(128)" />
         <While Condition="DoQuest(41834) &amp;&amp; !IsObjectiveComplete(3,41834) &amp;&amp; HasItem(136600)">
-            <!-- Use Mask -->
-            <If Condition="!Me.HasAura(208824)">
-                <CustomBehavior File="UseItem" ItemId="136600" />
-            </If>
 
             <CustomBehavior File="Hooks\Avoid" AvoidName="High Mage of the Duskwatch" ObjectId="105759" Radius="20" />
 
@@ -197,18 +206,16 @@
         <!-- 129 -->
         <CustomBehavior File="RunCode" Code="PrintStep(129)" />
         <If Condition="DoQuest(41834) &amp;&amp; HasItem(136600)">
-            <!-- Use Mask -->
-            <If Condition="!Me.HasAura(208824)">
-                <CustomBehavior File="UseItem" ItemId="136600" />
-            </If>
-
             <CustomBehavior File="InteractWith" MobId="105342" InteractByGossipOptions="1" X="527.9258" Y="4251.841" Z="132.9018" />
         </If>
 
         <!-- 130 -->
         <CustomBehavior File="RunCode" Code="PrintStep(130)" />
+        <CustomBehavior File="Hooks\DoWhen" ActivityName="applyMask" Command="Remove" />
         <TurnIn Nav="Fly" QuestName="The Masks We Wear" QuestId="41834" TurnInName="Ly'leth Lunastre" TurnInId="105342" X="527.9258" Y="4251.841" Z="132.9018" />
         <PickUp Nav="Fly" QuestName="Blood of My Blood" QuestId="41989" GiverName="Ly'leth Lunastre" GiverId="105342" X="527.9258" Y="4251.841" Z="132.9018" />
+
+
 
         <!-- 131 -->
         <CustomBehavior File="RunCode" Code="PrintStep(131)" />
@@ -216,9 +223,7 @@
 
         <!-- 132 -->
         <CustomBehavior File="RunCode" Code="PrintStep(132)" />
-        <If Condition="DoQuest(43811)  &amp;&amp; !HasAncientMana(100)">
-            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-100" RememberProfile="true" />
-        </If>
+        
 
         <!-- 133 -->
         <CustomBehavior File="RunCode" Code="PrintStep(133)" />
@@ -269,12 +274,16 @@
 
         <!-- 141 -->
         <CustomBehavior File="RunCode" Code="PrintStep(141)" />
-        <CustomBehavior File="RunCode" Code="CastMask()" />
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" LogExecution="true" ActivityName="apply_mask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <CustomBehavior File="RunCode" Code="CastMask()" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+        </CustomBehavior>
+        
+        <!-- <CustomBehavior File="Hooks\DoWhen" ActivityName="applyMask" Command="Remove" /> -->
 
         <!-- 142 -->
         <CustomBehavior File="RunCode" Code="PrintStep(142)" />
         <If Condition="DoQuest(42147)">
-            <CustomBehavior File="RunCode" Code="CastMask()" />
             <CustomBehavior File="Hooks\Avoid" AvoidName="MaskDetectors" ObjectIds="105759, 99755" Radius="20" />
             <CustomBehavior File="InteractWith" MobId="106495" InteractByGossipOptions="1" X="1216.248" Y="4280.907" Z="113.0716" />
             <CustomBehavior File="Hooks\Avoid" AvoidName="MaskDetectors" Command="Remove" />
@@ -300,9 +309,10 @@
             <TurnIn Nav="Fly" QuestName="Sanctum of Order Teleporter Online!" QuestId="43813" TurnInName="Unpowered Telemancy Beacon" TurnInId="252816" X="1201.466" Y="4248.837" Z="12.72329" />
         </If>
 
+
         <!-- 146 -->
         <CustomBehavior File="RunCode" Code="PrintStep(146)" />
-        <If Condition="Me.AreaId != 1033 &amp;&amp; IsQuestCompleted(43813) &amp;&amp; QuestDone(42147)">
+        <If Condition="Me.MinimapZoneText == &quot;Sanctum of Order&quot; &amp;&amp; IsQuestCompleted(43813) &amp;&amp; QuestDone(42147)">
             <CustomBehavior File="InteractWith" MobId="260265" X="1204.069" Y="4248.17" Z="13.96463" />
         </If>
 
@@ -395,7 +405,7 @@
 
         <!-- 161 -->
         <CustomBehavior File="RunCode" Code="PrintStep(161)" />
-        <If Condition="HasQuest(41453)">
+        <If Condition="!IsQuestCompleted(41453) &amp;&amp; HasQuest(41453)">
             <CustomBehavior File="UserDialog" QuestId="41453" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="150" ExpiryTime="300" ExpiryAction="InputEnabled_Continue" 
                 Text="Homeward Bounding may not work 100% of the time due to the randomness of the kitty. feel free to do it by hand quickly by stopping now." />
 
