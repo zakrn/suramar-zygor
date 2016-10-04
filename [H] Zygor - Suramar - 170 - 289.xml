@@ -671,7 +671,7 @@
         <PickUp Nav="Fly" QuestName="Lay Waste, Lay Mines" QuestId="40965" GiverName="Lothrius Mooncaller" GiverId="101768" X="2617.048" Y="4637.557" Z="258.9414" />
         <PickUp Nav="Fly" QuestName="Stop the Spell Seekers" QuestId="41032" GiverName="Lothrius Mooncaller" GiverId="101768" X="2617.048" Y="4637.557" Z="258.9414" />
 
-        <CustomBehavior File="Hooks\DoWhen" ActivityName="setTrap" UseWhen="Me.IsActuallyInCombat" AllowUseDuringCombat="true" LogExecution="true" >
+        <CustomBehavior File="Hooks\DoWhen" ActivityName="setTrap" UseWhen="Me.IsActuallyInCombat &amp;&amp; HasItem(133882)" AllowUseDuringCombat="true" LogExecution="true" >
            <CustomBehavior File="UseItem" ItemId="133882" />
         </CustomBehavior>
 
@@ -1169,7 +1169,7 @@
         <TurnIn Nav="Fly" QuestName="Beach Bonfire" QuestId="40332" TurnInName="Brandolf" TurnInId="102334" X="1256.081" Y="2641.21" Z="0.8523445" />
         <TurnIn Nav="Fly" QuestName="Band of Blood Brothers" QuestId="40320" TurnInName="Brandolf" TurnInId="102334" X="1256.081" Y="2641.21" Z="0.8523445" />
         <TurnIn Nav="Fly" QuestName="Bite of the Sashj'tar" QuestId="40331" TurnInName="Brandolf" TurnInId="102334" X="1256.081" Y="2641.21" Z="0.8523445" />
-        <PickUp Nav="Fly" QuestName="Fisherman's Tonic" QuestId="40334" GiverName="" GiverId="" />
+        <PickUp Nav="Fly" QuestName="Fisherman's Tonic" QuestId="40334" GiverName="Brandolf" GiverId="102334" X="1256.081" Y="2641.21" Z="0.8523445" />
 
         <!-- <TurnIn Nav="Fly" QuestName="Fisherman's Tonic" QuestId="40334" TurnInName="" TurnInId="" /> -->
         <!-- <TurnIn Nav="Fly" QuestName="Turn Around, Nighteyes" QuestId="40617" TurnInName="Lilryia Dawnwind" TurnInId="100775" /> -->
