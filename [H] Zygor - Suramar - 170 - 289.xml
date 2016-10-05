@@ -117,13 +117,15 @@
                         return Math.Sqrt(  r );
                     }
 
-                    async Task CastMask()
+                    bool ShouldCastMask()
                     {
-                        if( Me.ZoneId == 7637 && !Me.HasAura(202477) )
-                        {
-                            Lua.DoString("ExtraActionButton1:Click();");
-                            await Coroutine.Sleep(1400);
-                        }
+                        return (Me.MinimapZoneText == "The Grand Promenade" || Me.MinimapZoneText == "Suramar City")
+                                && !Me.HasAura(202477);
+                    }
+
+                    void CastMask()
+                    {
+                        Lua.DoString("ExtraActionButton1:Click();");
                     }
 
                     bool IsThirsty( uint friendId )
@@ -170,6 +172,26 @@
                 // Test and improve the working method.
                         Lua.DoString("MovieFrame:StopMovie(); CinematicFrame_CancelCinematic(); StopCinematic();");
                         await Coroutine.Sleep(postWait);
+                    }
+
+                    void UseInertCrystal()
+                    {
+                        //203027 - volatile
+                        WoWItem item = Me.CarriedItems.FirstOrDefault(i => i.Entry == 133999);
+
+                        WoWUnit obj = ObjectManager.GetObjectsOfType<WoWUnit>()
+                            .OrderBy(ret => ret.Distance)
+                            .FirstOrDefault(target =>
+                                target.Distance <= 40 &&
+                                target.IsAlive &&
+                                !target.HasAura(203027) &&
+                                (int)target.Entry == 102242 );
+
+                        if( obj != null && item != null && item.Cooldown <= 0)
+                        {
+                            obj.Target();
+                            item.UseContainerItem();
+                        }
                     }
                 ]]>
         </CustomBehavior>
@@ -669,7 +691,8 @@
         <TurnIn Nav="Fly" QuestName="Take Them in Claw" QuestId="40963" TurnInName="Serena Windfeather" TurnInId="102425" X="2595.459" Y="4909.358" Z="247.2779" />
         <PickUp Nav="Fly" QuestName="The Rift Between" QuestId="40964" GiverName="Serena Windfeather" GiverId="102425" X="2595.459" Y="4909.358" Z="247.2779" />
         <!-- got a weird behavior accepting this quest -->
-        <If Condition="!IsQuestCompleted(40968) &amp;&amp; !HasQuest(40968)">
+        <If Condition="NeedsQuest(40968)">
+            <CustomBehavior File="WaitTimer" WaitTime="3000" />
             <CustomBehavior File="InteractWith" MobId="102425" X="2595.459" Y="4909.358" Z="247.2779" />
             <CustomBehavior File="Misc\RunLua" Lua="AcceptQuest()" WaitTime="200" />
         </If>
@@ -707,16 +730,15 @@
                 </HuntingGrounds>
             </CustomBehavior>
         </If>
-
         <!-- 244 -->
         <CustomBehavior File="RunCode" Code="PrintStep(244)" />
         <If Condition="!IsQuestCompleted(40762) &amp;&amp; !HasQuest(40762)">
-            <CustomBehavior File="KillUntilComplete" MobIds="106275" TerminateWhen="HasItem(136851)" >
-                <HuntingGrounds>
-                    <Hotspot X="2724.723" Y="4704.221" Z="271.6369" />
-                </HuntingGrounds>
-            </CustomBehavior>
+            <CustomBehavior File="RunCode" Code="PrintStep(2441)" />
+            <MoveTo X="2747.718" Y="4680.42" Z="271.3399"/>
+            <CustomBehavior File="KillUntilComplete" MobIds="106275" TerminateWhen="HasItem(136851)" X="2747.718" Y="4680.42" Z="271.3399" />
+            <CustomBehavior File="RunCode" Code="PrintStep(2442)" />
             <CustomBehavior File="UseItem" ItemId="136851" />
+            <CustomBehavior File="RunCode" Code="PrintStep(2443)" />
             <CustomBehavior File="Misc\RunLua" Lua="AcceptQuest()" WaitTime="200" />
         </If>
 
@@ -800,16 +822,41 @@
             <CustomBehavior File="WaitTimer" WaitTime="2000" TerminateWhen="Me.OnTaxi" />
         </If>
 
-
-        <If Condition="Me.InVehicle">
+        <If Condition="HasQuest(41110) &amp;&amp; Me.InVehicle">
             <CustomBehavior File="RunCode" Code="PrintStep(2501)" />
             <CustomBehavior File="RunCode" Code="Styx.Helpers.KeyboardManager.KeyUpDown((char)System.Windows.Forms.Keys.D2);" />
             <CustomBehavior File="WaitTimer" WaitTime="600000" TerminateWhen="!Me.InVehicle" />
         </If>
-
+        
+        <If Condition="QuestDone(41110)">
+            <TurnIn Nav="Fly" QuestName="Waiting for Revenge" QuestId="41110" />
+        </If>
 
         <!-- 251 -->
         <CustomBehavior File="RunCode" Code="PrintStep(251)" />
+
+        <!-- go farm another shard if we need it -->
+        <If Condition="NeedsQuest(41111) || HasQuest(41111)">
+            <CustomBehavior File="KillUntilComplete" MobIds="111599, 111527, 111530, 103326" TerminateWhen="HasItem(133956) || GetItemCount(133957) == 10" >
+                <HuntingGrounds>
+                    <Hotspot X="2754.733" Y="4705.179" Z="273.4313" />
+                    <Hotspot X="2771.606" Y="4657.494" Z="271.6132" />
+                    <Hotspot X="2743.972" Y="4629.302" Z="258.8517" />
+                    <Hotspot X="2663.746" Y="4725.763" Z="258.9397" />
+                    <Hotspot X="2727.123" Y="4737.895" Z="271.5403" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            <If Condition="(NeedsQuest(41111) || HasQuest(41111)) &amp;&amp; !HasItem(133956) &amp;&amp; GetItemCount(133957) == 10">
+               <CustomBehavior File="UseItem" ItemId="133957" />
+            </If>
+        </If>
+
+        <!-- go farm some mana before we get too deep -->
+        <If Condition="( NeedsQuest(43808) || HasQuest(43808) ) &amp;&amp; !HasAncientMana(100)" >
+            <MoveTo X="2539.183" Y="4482.568" Z="234.0783" />
+            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-100" RememberProfile="true" />
+        </If>
+
         <TurnIn Nav="Fly" QuestName="Precious Little Left" QuestId="40967" TurnInName="Lothrius Mooncaller" TurnInId="101768" X="2618.521" Y="4638.142" Z="258.9366" />
         <TurnIn Nav="Fly" QuestName="Lay Waste, Lay Mines" QuestId="40965" TurnInName="Lothrius Mooncaller" TurnInId="101768" X="2618.521" Y="4638.142" Z="258.9366" />
         <TurnIn Nav="Fly" QuestName="Stop the Spell Seekers" QuestId="41032" TurnInName="Lothrius Mooncaller" TurnInId="101768" X="2618.521" Y="4638.142" Z="258.9366" />
@@ -822,7 +869,6 @@
         <CustomBehavior File="RunCode" Code="PrintStep(252)" />
         <!-- im not sure why he put it in this order, this is a terrible idea -->
         
-        <!-- MISSED A STEP -->
         <If Condition="HasQuest(40969) &amp;&amp; DistFrom253() &gt; 50">
             <DisableBehavior Name="Combat" />
 
@@ -902,25 +948,15 @@
         <!-- 253 -->
         <CustomBehavior File="RunCode" Code="PrintStep(253)" />
         <If Condition="!IsQuestCompleted(41111) &amp;&amp; NeedsQuest(41111)">
-
             <PickUp Nav="Fly" QuestName="Rain Death Upon Them" QuestId="41111" GiverName="Moonfall Riding Hippogryph" GiverId="111605" X="2953.197" Y="4883.051" Z="285.826" />
-
         </If>
 
          <!-- 254 -->
         <CustomBehavior File="RunCode" Code="PrintStep(254)" />
-        <If Condition="DoQuest(41111) &amp;&amp; !Me.IsOnTransport">
-            <CustomBehavior File="InteractWith" MobId="111605" X="2947.653" Y="4882.219" Z="289.3035" />
-            <CustomBehavior File="WaitTimer" WaitTime="3000" />
-        </If>
-
-        <If Condition="DoQuest(41111) &amp;&amp; Me.IsOnTransport">
-            <CustomBehavior File="Vehicles\NoControlVehicle" QuestId="41111" VehicleMountId="111605" TargetId="111599" TargetId2="111527" TargetId3="111530" TargetId4="103326" AttackButton="1" OftenToUse="1600" NumOfTimes="500" VehicleId="111605" MaxRange="1000" />
-        </If>
+        
 
          <!-- 255 -->
         <CustomBehavior File="RunCode" Code="PrintStep(255)" />
-        <TurnIn Nav="Fly" QuestName="Rain Death Upon Them" QuestId="41111" />
 
         <!-- 256 -->
         <CustomBehavior File="RunCode" Code="PrintStep(256)" />
@@ -937,39 +973,40 @@
         <CustomBehavior File="RunCode" Code="PrintStep(257)" />
         <If Condition="DoQuest(40971)">
             <DisableBehavior Name="Combat" />
+
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2949.632" Y="4931.799" Z="272.1" />
-                <CustomBehavior File="UseItemTargetLocation" ItemId="133999" MobId1="102242" />
+                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
                 <CustomBehavior File="WaitTimer" WaitTime="2000" />
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2964.842" Y="4947.92" Z="271.8244" />
-                <CustomBehavior File="UseItemTargetLocation" ItemId="133999" MobId1="102242" />
+                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
                 <CustomBehavior File="WaitTimer" WaitTime="2000" />
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2971.451" Y="4963.638" Z="272.4892" />
-                <CustomBehavior File="UseItemTargetLocation" ItemId="133999" MobId1="102242" />
+                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
                 <CustomBehavior File="WaitTimer" WaitTime="2000" />
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2971.858" Y="4985.686" Z="272.2955" />
-                <CustomBehavior File="UseItemTargetLocation" ItemId="133999" MobId1="102242" />
+                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
                 <CustomBehavior File="WaitTimer" WaitTime="2000" />
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2962.59" Y="5006.315" Z="271.8596" />
-                <CustomBehavior File="UseItemTargetLocation" ItemId="133999" MobId1="102242" />
+                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
                 <CustomBehavior File="WaitTimer" WaitTime="2000" />
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2949.221" Y="5021.032" Z="271.809" />
-                <CustomBehavior File="UseItemTargetLocation" ItemId="133999" MobId1="102242" />
+                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
                 <CustomBehavior File="WaitTimer" WaitTime="2000" />
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2931.005" Y="5029.282" Z="271.8272" />
-                <CustomBehavior File="UseItemTargetLocation" ItemId="133999" MobId1="102242" />
+                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
                 <CustomBehavior File="WaitTimer" WaitTime="2000" />
             </If>
             <EnableBehavior Name="Combat" />
@@ -991,14 +1028,22 @@
 
         <!-- 260 -->
         <CustomBehavior File="RunCode" Code="PrintStep(260)" />
-        <If Condition="DoQuest(43808) &amp;&amp; !HasAncientMana(100)" >
-            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-100" RememberProfile="true" />
-        </If>
+
 
         <!-- 261 -->
         <CustomBehavior File="RunCode" Code="PrintStep(261)" />
         <TurnIn Nav="Fly" QuestName="Moon Guard Teleporter Online!" QuestId="43808" TurnInName="Unpowered Telemancy Beacon" TurnInId="252814" X="3036.183" Y="4951.125" Z="357.2864" />
 
+        <If Condition="DoQuest(41111) &amp;&amp; !Me.IsOnTransport">    
+            <CustomBehavior File="InteractWith" MobId="111606" X="3033.015" Y="4929.304" Z="358.597"  />
+            <CustomBehavior File="WaitTimer" WaitTime="3000" />
+        </If>
+
+        <If Condition="DoQuest(41111) &amp;&amp; Me.IsOnTransport">
+            <CustomBehavior File="Vehicles\NoControlVehicle" QuestId="41111" VehicleMountId="111606" TargetId="111599" TargetId2="111527" TargetId3="111530" TargetId4="103326" TargetId5="114300" TargetId6="114301" AttackButton="1" OftenToUse="1600" NumOfTimes="500" VehicleId="111606" MaxRange="1000" />
+        </If>
+
+        <TurnIn Nav="Fly" QuestName="Rain Death Upon Them" QuestId="41111" />
 
         <!-- 262 -->
         <CustomBehavior File="RunCode" Code="PrintStep(262)" />
@@ -1019,8 +1064,10 @@
         <!-- 265 -->
         <CustomBehavior File="RunCode" Code="PrintStep(265)" />
 
+        <UseMount Value="true" />
+
         <!-- check if she is thirsty before we try and turnin -->
-        <If Condition="QuestDone(40972) &amp;&amp; IsThalyssraThirsty()">
+        <If Condition="HasQuest(40972) &amp;&amp; IsThalyssraThirsty()">
             <If Condition="!HasAncientMana(50)">
                 <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-50" RememberProfile="true" />
             </If>
@@ -1052,9 +1099,14 @@
 
         <!-- 268 -->
         <CustomBehavior File="RunCode" Code="PrintStep(268)" />
+
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" LogExecution="true" ActivityName="apply_mask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <CustomBehavior File="RunCode" Code="CastMask()" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+        </CustomBehavior>
+
         <If Condition="QuestDone(40798)">
             <MoveTo X="1437.216" Y="4336.231" Z="113.071" />
-            <CustomBehavior File="RunCode" Code="CastMask()" />
         </If>
 
         <TurnIn Nav="Fly" QuestName="Cling to Hope" QuestId="40798" TurnInName="Noressa" TurnInId="111318" X="1364.334" Y="4351.875" Z="113.0737" />
@@ -1063,6 +1115,8 @@
         <CustomBehavior File="RunCode" Code="PrintStep(269)" />
         <PickUp Nav="Fly" QuestName="Leyline Feed: Kel'balor" QuestId="43588" GiverName="Leyline Feed" GiverId="252259" X="2023.723" Y="3387.641" Z="162.6618"  />
 
+        <CustomBehavior File="Hooks\DoWhen" ActivityName="apply_mask" Command="Remove" />
+        
         <!-- 270 -->
         <CustomBehavior File="RunCode" Code="PrintStep(270)" />
         <If Condition="DoQuest(43588)">
