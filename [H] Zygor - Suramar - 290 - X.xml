@@ -19,7 +19,6 @@
     </Blackspots>
     <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
     <Vendors>
-        <Vendor Name="Felsoul Crusher" Entry="99764" Type="Repair" Nav="Fly" X="1122.2" Y="5189.969" Z="67.72179" />
     </Vendors>
     <!--These are the locations of the available mailboxes that you want your character to use-->
     <Mailboxes>
