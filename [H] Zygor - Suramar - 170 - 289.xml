@@ -851,6 +851,8 @@
             </If>
         </If>
 
+        <EnableBehavior Name="Pull" />
+
         <!-- go farm some mana before we get too deep -->
         <If Condition="( NeedsQuest(43808) || HasQuest(43808) ) &amp;&amp; !HasAncientMana(100)" >
             <MoveTo X="2539.183" Y="4482.568" Z="234.0783" />
@@ -1116,14 +1118,14 @@
         <PickUp Nav="Fly" QuestName="Leyline Feed: Kel'balor" QuestId="43588" GiverName="Leyline Feed" GiverId="252259" X="2023.723" Y="3387.641" Z="162.6618"  />
 
         <CustomBehavior File="Hooks\DoWhen" ActivityName="apply_mask" Command="Remove" />
-        
+
         <!-- 270 -->
         <CustomBehavior File="RunCode" Code="PrintStep(270)" />
         <If Condition="DoQuest(43588)">
-            <CustomBehavior File="InteractWith" MobId="253071" X="2026.148" Y="3390.597" Z="162.5589" />
+            <CustomBehavior File="InteractWith" MobId="253071" X="2024.286" Y="3393.75" Z="162.729" />
             <CustomBehavior File="KillUntilComplete" MobIds="113570, 111923" TerminateWhen="QuestDone(43588)" >
                 <HuntingGrounds>
-                    <Hotspot X="2023.723" Y="3387.641" Z="162.6618" />
+                    <Hotspot X="2024.286" Y="3393.75" Z="162.729" />
                 </HuntingGrounds>
             </CustomBehavior>
         </If>
@@ -1145,7 +1147,7 @@
         
         <!-- 274 -->
         <CustomBehavior File="RunCode" Code="PrintStep(274)" />
-        <If Condition="DoQuest(40617)">
+        <If Condition="DoQuest(40617) &amp;&amp; !IsObjectiveComplete(1, 40617)">
             <MoveTo X="1898.717" Y="3098.343" Z="220.4361"  />
         </If>
 
@@ -1155,10 +1157,10 @@
 
         <!-- 276 -->
         <CustomBehavior File="RunCode" Code="PrintStep(276)" />
-        <If Condition="DoQuest(40617)">
+        <If Condition="DoQuest(40907)">
             <CustomBehavior File="KillUntilComplete" MobIds="100780" TerminateWhen="IsObjectiveComplete(2, 40617)" >
                 <HuntingGrounds>
-                    <Hotspot X="1727.889" Y="3116.518" Z="161.8802"  />
+                    <Hotspot X="1508.103" Y="2815.062" Z="41.09519" />
                 </HuntingGrounds>
             </CustomBehavior>
         </If>
@@ -1166,6 +1168,8 @@
         <!-- 277 -->
         <CustomBehavior File="RunCode" Code="PrintStep(277)" />
         <PickUp Nav="Fly" QuestName="Removing Obstacles" QuestId="40907" GiverName="Toryl" GiverId="102309" X="1558.892" Y="3042.477" Z="93.09901" />
+
+        <UseMount Value="false" />
 
         <!-- 278 -->
         <CustomBehavior File="RunCode" Code="PrintStep(278)" />
