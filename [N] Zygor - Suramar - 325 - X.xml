@@ -1,5 +1,5 @@
 <HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <Name>[H] Zygor Suramar 290 - X</Name>
+    <Name>[H] Zygor Suramar 325 - X</Name>
     <MinDurability>0.3</MinDurability>
     <MinFreeBagSlots>3</MinFreeBagSlots>
     <SellGrey>true</SellGrey>
@@ -155,60 +155,10 @@
                     }
                 ]]>
         </CustomBehavior>
-        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Zygor - Suramar Steps 290 - X&quot;);" />
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Zygor - Suramar Steps 325 - X&quot;);" />
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: ZoneId: &quot; + Me.ZoneId);" />
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: MaxMana: &quot; + IsQuestCompleted(40798));" />
-
-        <CustomBehavior File="RunCode" Code="PrintStep(290)" />
-        <If Condition="DoQuest(40334)">
-            <CustomBehavior File="KillUntilComplete" MobIds="102828, 100949, 100950" TerminateWhen="IsObjectiveComplete(2, 40334)" >
-                <HuntingGrounds>
-                    <Hotspot X="1056.912" Y="2610.179" Z="2.008139" />
-                    <Hotspot X="976.5192" Y="2582.707" Z="3.610669" />
-                    <Hotspot X="894.9761" Y="2612.082" Z="0.8384525" />
-
-                </HuntingGrounds>
-            </CustomBehavior>
-        </If>
-
-        <CustomBehavior File="RunCode" Code="PrintStep(291)" />
-         <If Condition="DoQuest(40334)">
-            <CustomBehavior File="KillUntilComplete" MobIds="102796" TerminateWhen="IsObjectiveComplete(3, 40334)" >
-                <HuntingGrounds>
-                   <Hotspot X="921.054" Y="2796.057" Z="-3.007007" />
-                </HuntingGrounds>
-            </CustomBehavior>
-        </If>
-
-        <CustomBehavior File="RunCode" Code="PrintStep(292)" />
-        <If Condition="DoQuest(40334)">
-            <CustomBehavior File="KillUntilComplete" MobIds="100100" TerminateWhen="IsObjectiveComplete(1, 40334)" >
-                <HuntingGrounds>
-                   <Hotspot X="921.054" Y="2796.057" Z="-3.007007" />
-                   <Hotspot X="841.2545" Y="2856.517" Z="-9.824205" />
-                   <Hotspot X="851.3156" Y="2650.387" Z="0.1384602" />
-                </HuntingGrounds>
-            </CustomBehavior>
-        </If>
-
-        <CustomBehavior File="RunCode" Code="PrintStep(293)" />
-        <TurnIn Nav="Fly" QuestName="Fisherman's Tonic" QuestId="40334" TurnInName="Brandolf" TurnInId="100004" />
-        <PickUp Nav="Fly" QuestName="Testing the Waters" QuestId="41034" GiverName="Brandolf" GiverId="100004" />
-
-        <CustomBehavior File="RunCode" Code="PrintStep(294)" />
-        <If Condition="DoQuest(41034)">
-            <MoveTo X="949.7394" Y="2471.27" Z="-33.05093" />
-            <CustomBehavior File="KillUntilComplete" MobIds="102841" TerminateWhen="IsObjectiveComplete(2, 41034)" >
-                <HuntingGrounds>
-                   <Hotspot X="787.3208" Y="2437.363" Z="-70.64326" />
-                </HuntingGrounds>
-            </CustomBehavior>
-        </If>
-
-
-<!-- <TurnIn Nav="Fly" QuestName="Testing the Waters" QuestId="41034" TurnInName="Brandolf" TurnInId="102845" /> -->
-
-
         
+
     </QuestOrder>
 </HBProfile>

@@ -44,7 +44,27 @@
                     }
                 ]]>
         </CustomBehavior>
-        <CustomBehavior File="Hooks\DoWhen" UseWhen="HasItem(139786) || HasItem(139890) || HasItem(140240) || HasItem(140406) || HasItem(140242)" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
+        <!-- Fancy ones you wont just find -->
+
+        <!-- Enchanted Moonwell Waters -->
+        <If Condition="HasItem(140240)">
+            <CustomBehavior File="UseItem" ItemId="140240" />
+        </If>
+        <!-- Primed Arcane Charge -->
+        <If Condition="HasItem(140406)">
+            <CustomBehavior File="UseItem" ItemId="140406" />
+        </If>
+        <!-- Astromancer's Compass -->
+        <If Condition="HasItem(140242)">
+            <CustomBehavior File="UseItem" ItemId="140242" />
+        </If>
+        <!-- The Tidemistress' Enchanted Pearl -->
+        <If Condition="HasItem(140245)">
+            <CustomBehavior File="UseItem" ItemId="140245" />
+        </If>
+
+        <!-- Ones you may find while farming -->
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="HasItem(139786) || HasItem(139890)" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
             <!-- Ancient Mana Crystal -->
             <If Condition="HasItem(139786)">
                 <CustomBehavior File="UseItem" ItemId="139786" />
@@ -52,18 +72,6 @@
             <!-- Ancient Mana Gem -->
             <If Condition="HasItem(139890)">
                 <CustomBehavior File="UseItem" ItemId="139890" />
-            </If>
-            <!-- Enchanted Moonwell Waters -->
-            <If Condition="HasItem(140240)">
-                <CustomBehavior File="UseItem" ItemId="140240" />
-            </If>
-            <!-- Primed Arcane Charge -->
-            <If Condition="HasItem(140406)">
-                <CustomBehavior File="UseItem" ItemId="140406" />
-            </If>
-            <!-- Astromancer's Compass -->
-            <If Condition="HasItem(140242)">
-                <CustomBehavior File="UseItem" ItemId="140242" />
             </If>
         </CustomBehavior>
         <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" TerminateWhen="HasAncientMana(100)" >

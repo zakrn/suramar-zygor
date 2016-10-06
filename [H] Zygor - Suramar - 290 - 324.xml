@@ -1,0 +1,674 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[H] Zygor Suramar 290 - 324</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
+    <Blackspots>
+        <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
+    </Blackspots>
+    <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
+    <Vendors>
+    </Vendors>
+    <!--These are the locations of the available mailboxes that you want your character to use-->
+    <Mailboxes>
+    </Mailboxes>
+    <!--Setting these would make sure the character stays away from and does not attack these mobs-->
+    <AvoidMobs>
+        <Mob Name="Koralune Ettin" Entry="99791" />
+        <Mob Name="Elfbane" Entry="99792" />
+    </AvoidMobs>
+    <!--Here is where the meat of the profile will take place-->
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                    bool DoQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (!HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsBreadcrumbQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (IsQuestCompleted(questId)) return false;
+                        }
+                        return true;
+                    }
+                    bool QuestDone(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+
+                    bool HasAncientMana( uint amount )
+                    {
+                        return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
+                    }
+
+                    uint MaxAncientMana()
+                    {
+                        if( WoWCurrency.GetCurrencyById(1155) != null )
+                        {
+                            return WoWCurrency.GetCurrencyById(1155).TotalMax;
+                        }
+                        return 0;
+                    }
+
+                    double DistFrom253()
+                    {
+                        Vector2 loc = new Vector2( Me.Location.X, Me.Location.Y);
+                        Vector2 res = new Vector2( 2949.458f, 4882.862f );
+
+                        return CalcDist( loc, res );
+                    }
+
+                    double CalcDist( Vector2 v1, Vector2 v2 )
+                    {
+                        double dx = v2.X - v1.X;
+                        double dy =  v2.Y - v1.Y;
+                        double r = Math.Pow( dx , 2) - Math.Pow( dy, 2);
+
+                        if( r < 0 )
+                            r *= -1;
+
+                        return Math.Sqrt(  r );
+                    }
+
+                    async Task CastMask()
+                    {
+                        if( Me.ZoneId == 7637 && !Me.HasAura(202477) )
+                        {
+                            Lua.DoString("ExtraActionButton1:Click();");
+                            await Coroutine.Sleep(1400);
+                        }
+                    }
+
+                    bool IsThirsty( uint friendId )
+                    {
+                        List<string> values = Lua.GetReturnValues("return GetFriendshipReputation(" + friendId +")");
+
+                        if( values.Count == 0 )
+                        {   
+                            Logging.Write(System.Windows.Media.Colors.Red, "[Zak]: Failed to get arcane thirst");
+                            return false;
+                        }
+
+                        int level = Int32.Parse( values[1]);
+                        int threshold = Int32.Parse( values[7]);
+                        int newlevel = level - threshold;
+
+                        return newlevel <= 1;
+                    }
+
+                    bool IsThalyssraThirsty()
+                    {
+                        return IsThirsty(1860);
+                    }
+
+                    bool IsOculethThirsty()
+                    {
+                        return IsThirsty(1862);
+                    }
+
+                    bool IsValtroisThirsty()
+                    {
+                        return IsThirsty(1919);
+                    }
+
+                    void PrintStep( uint step )
+                    {
+                        Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: " + step);
+                    }
+
+                    async Task SkipCutscene(int preWait = 3000, int postWait = 3000)
+                    {
+                // Add detection of cutscene here.
+                        await Coroutine.Sleep(preWait);
+                // Test and improve the working method.
+                        Lua.DoString("MovieFrame:StopMovie(); CinematicFrame_CancelCinematic(); StopCinematic();");
+                        await Coroutine.Sleep(postWait);
+                    }
+                ]]>
+        </CustomBehavior>
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Zygor - Suramar Steps 290 - 324&quot;);" />
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: ZoneId: &quot; + Me.ZoneId);" />
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: MaxMana: &quot; + IsQuestCompleted(40798));" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(290)" />
+        <If Condition="DoQuest(40334)">
+            <CustomBehavior File="KillUntilComplete" MobIds="102828, 100949, 100950" TerminateWhen="IsObjectiveComplete(2, 40334)" >
+                <HuntingGrounds>
+                    <Hotspot X="1056.912" Y="2610.179" Z="2.008139" />
+                    <Hotspot X="976.5192" Y="2582.707" Z="3.610669" />
+                    <Hotspot X="894.9761" Y="2612.082" Z="0.8384525" />
+
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(291)" />
+         <If Condition="DoQuest(40334)">
+            <CustomBehavior File="KillUntilComplete" MobIds="102796" TerminateWhen="IsObjectiveComplete(3, 40334)" >
+                <HuntingGrounds>
+                   <Hotspot X="921.054" Y="2796.057" Z="-3.007007" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(292)" />
+        <If Condition="DoQuest(40334)">
+            <CustomBehavior File="KillUntilComplete" MobIds="100100" TerminateWhen="IsObjectiveComplete(1, 40334)" >
+                <HuntingGrounds>
+                   <Hotspot X="921.054" Y="2796.057" Z="-3.007007" />
+                   <Hotspot X="841.2545" Y="2856.517" Z="-9.824205" />
+                   <Hotspot X="851.3156" Y="2650.387" Z="0.1384602" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(293)" />
+        <TurnIn Nav="Fly" QuestName="Fisherman's Tonic" QuestId="40334" TurnInName="Brandolf" TurnInId="100004" />
+        <PickUp Nav="Fly" QuestName="Testing the Waters" QuestId="41034" GiverName="Brandolf" GiverId="100004" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(294)" />
+        <If Condition="DoQuest(41034) &amp;&amp; !IsObjectiveComplete(2, 41034)">
+            <!-- leave cave -->
+            <MoveTo X="938.9965" Y="2526.882" Z="2.4044" />
+            <CustomBehavior File="MyCTM" X="872.6779" Y="2453.581" Z="-1.906282" />
+            <CustomBehavior File="MyCTM" X="870.7814" Y="2369.968" Z="-88.0772"  />
+            <CustomBehavior File="MyCTM" X="782.4954" Y="2431.686" Z="-71.21175" />
+            <CustomBehavior File="KillUntilComplete" MobIds="102841" TerminateWhen="IsObjectiveComplete(2, 41034)" >
+                <HuntingGrounds>
+                   <Hotspot X="782.4954" Y="2431.686" Z="-71.21175" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <!-- i updated zygor and the numbers change -->
+        <!-- 293 -->
+        <CustomBehavior File="RunCode" Code="PrintStep(293)" />
+
+        <CustomBehavior File="Hooks\Avoid" AvoidName="whale_shark" ObjectId="99899" Radius="30" />
+
+        <If Condition="DoQuest(41034) &amp;&amp; !IsObjectiveComplete(1, 41034)">
+            <CustomBehavior File="MyCTM" X="870.7814" Y="2369.968" Z="-88.0772"  />
+            <CustomBehavior File="MyCTM" X="929.2061" Y="2320.617" Z="-29.8241"  />
+            <CustomBehavior File="MyCTM" X="1057.504" Y="2208.932" Z="-29.49107" />
+            <CustomBehavior File="MyCTM" X="1057.499" Y="2208.936" Z="-115.3167" />
+            <CustomBehavior File="MyCTM" X="1075.34" Y="2207.08" Z="-125.3794"   />
+            <CustomBehavior File="KillUntilComplete" MobIds="102840" TerminateWhen="IsObjectiveComplete(1, 41034)" >
+                <HuntingGrounds>
+                   <Hotspot X="1075.547" Y="2204.08" Z="-126.7002" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <!-- 294 -->
+        <CustomBehavior File="RunCode" Code="PrintStep(294)" />
+        <If Condition="DoQuest(41034) &amp;&amp; !IsObjectiveComplete(3, 41034)">
+            <CustomBehavior File="MyCTM" X="1098.621" Y="2228.489" Z="-107.6941"  />
+            <CustomBehavior File="MyCTM" X="1269.369" Y="2317.943" Z="-87.92223"  />
+            <CustomBehavior File="MyCTM" X="1285.422" Y="2332.762" Z="-105.8444"  />
+            <CustomBehavior File="KillUntilComplete" MobIds="102844" TerminateWhen="IsObjectiveComplete(3, 41034)" >
+                <HuntingGrounds>
+                   <Hotspot X="1285.422" Y="2332.762" Z="-105.8444" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(295)" />
+        <If Condition="QuestDone(41034) &amp;&amp; Me.MinimapZoneText == &quot;Azuregale Bay&quot;">
+            <CustomBehavior File="MyCTM" X="1338.23" Y="2425.823" Z="-47.28785" />
+            <CustomBehavior File="MyCTM" X="1448.034" Y="2584.579" Z="-1.906767" />
+            <CustomBehavior File="MyCTM" X="1480.99" Y="2624.647" Z="1.03686" />
+        </If>
+        <TurnIn Nav="Fly" QuestName="Testing the Waters" QuestId="41034" TurnInName="Brandolf" TurnInId="102845" X="1618.507" Y="2729.824" Z="23.20116" />
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(296)" />
+        <PickUp Nav="Fly" QuestName="Jandvik's Last Hope" QuestId="40927" GiverName="Toryl" GiverId="99948" X="1618.507" Y="2729.824" Z="23.20116" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(297)" />
+        <If Condition="DoQuest(40927) &amp;&amp; Me.MinimapZoneText != &quot;Sashj'tar Grotto&quot;">
+            <MoveTo X="1552.061" Y="2455.406" Z="1.147959" />
+            <CustomBehavior File="MyCTM" X="1347.202" Y="2398.23" Z="-19.70461" />
+            <CustomBehavior File="MyCTM" X="1347.202" Y="2398.23" Z="-86.13209" />
+            <CustomBehavior File="MyCTM" X="1469.176" Y="2437.71" Z="-68.89151" />
+
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(297)" />
+        <If Condition="DoQuest(40927) &amp;&amp; Me.MinimapZoneText == &quot;Sashj'tar Grotto&quot; &amp;&amp; !IsObjectiveComplete(1, 40927)">
+            <CustomBehavior File="InteractWith" QuestId="40927" MobId="102388" NumOfTimes="1" InteractByGossipOptions="1" >
+                <HuntingGrounds>
+                    <Hotspot X="1485.502" Y="2441.157" Z="-67.66195" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(298)" />
+        <If Condition="DoQuest(40927) &amp;&amp; Me.MinimapZoneText == &quot;Sashj'tar Grotto&quot; &amp;&amp; !IsObjectiveComplete(2, 40927)">
+            <CustomBehavior File="KillUntilComplete" MobIds="102388" TerminateWhen="IsObjectiveComplete(2, 40927)" >
+                <HuntingGrounds>
+                   <Hotspot X="1485.502" Y="2441.157" Z="-67.66195" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(299)" />
+        <If Condition="DoQuest(40927) &amp;&amp; Me.MinimapZoneText == &quot;Sashj'tar Grotto&quot; &amp;&amp; !IsObjectiveComplete(3, 40927)">
+            <CustomBehavior File="InteractWith" QuestId="40927" MobId="246923" NumOfTimes="1" >
+                <HuntingGrounds>
+                    <Hotspot X="1485.502" Y="2441.157" Z="-67.66195" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(300)" />
+        <TurnIn Nav="Fly" QuestName="Jandvik's Last Hope" QuestId="40927" TurnInName="Toryl" TurnInId="102390" X="1491.591" Y="2440.221" Z="-67.3662" />
+        <PickUp Nav="Fly" QuestName="Against Their Will" QuestId="41426" GiverName="Toryl" GiverId="102390" X="1491.591" Y="2440.221" Z="-67.3662"/>
+        <PickUp Nav="Fly" QuestName="Breaking Down the Big Guns" QuestId="41709" GiverName="Toryl" GiverId="102390" X="1491.591" Y="2440.221" Z="-67.3662"/>
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(301)" />
+        <PickUp Nav="Fly" QuestName="Finding Brytag" QuestId="41606" GiverName="Kell" GiverId="104630" X="1491.591" Y="2440.221" Z="-67.3662"/>
+        <PickUp Nav="Fly" QuestName="Sunken Foes" QuestId="41425" GiverName="Kell" GiverId="104630" X="1491.591" Y="2440.221" Z="-67.3662"/>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(302)" />
+        <If Condition="NeedsQuest(41410)">
+            <CustomBehavior File="MyCTM" X="1373.943" Y="2397.92" Z="-83.48626"  />
+            <CustomBehavior File="MyCTM" X="1214.762" Y="2373.221" Z="-88.2552"   />
+            <CustomBehavior File="MyCTM" X="1213.779" Y="2365.122" Z="-112.4378"  />
+            <CustomBehavior File="MyCTM" X="1230.122" Y="2354.766" Z="-117.2635"  />
+        </If>
+        <PickUp Nav="Fly" QuestName="Dry Powder" QuestId="41410" GiverName="Fjolrik" GiverId="104586" X="1230.122" Y="2354.766" Z="-117.2635" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(303)" />
+        <While Condition="DoQuest(41410)">
+            <If Condition="DoQuest(41410)">
+                <CustomBehavior File="MyCTM" X="1086.79" Y="2414.884" Z="-124.6144"  />
+                <CustomBehavior File="InteractWith" QuestId="41410" MobId="247851" NumOfTimes="1" X="1086.79" Y="2414.884" Z="-124.6144" />
+            </If>
+            <If Condition="DoQuest(41410)">
+                <CustomBehavior File="MyCTM" X="1159.818" Y="2407.925" Z="-118.2961" />
+                <CustomBehavior File="InteractWith" QuestId="41410" MobId="247851" NumOfTimes="1" X="1159.818" Y="2407.925" Z="-118.2961" />
+            </If>
+            <If Condition="DoQuest(41410)">
+                <CustomBehavior File="MyCTM" X="1156.019" Y="2448.085" Z="-117.737"  />
+                <CustomBehavior File="InteractWith" QuestId="41410" MobId="247851" NumOfTimes="1" X="1156.019" Y="2448.085" Z="-117.737" />
+            </If>
+            <If Condition="DoQuest(41410)">
+                <CustomBehavior File="MyCTM" X="1076.368" Y="2359.689" Z="-124.9511" />
+                <CustomBehavior File="InteractWith" QuestId="41410" MobId="247851" NumOfTimes="1" X="1076.368" Y="2359.689" Z="-124.9511" />
+            </If>
+            <If Condition="DoQuest(41410)">
+                <CustomBehavior File="MyCTM" X="1174.899" Y="2384.792" Z="-99.47632" />
+                <CustomBehavior File="InteractWith" QuestId="41410" MobId="247851" NumOfTimes="1" X="1174.899" Y="2384.792" Z="-99.47632" />
+            </If>
+            <If Condition="DoQuest(41410)">
+                <CustomBehavior File="MyCTM" X="1037.993" Y="2399.403" Z="-124.8226" />
+                <CustomBehavior File="InteractWith" QuestId="41410" MobId="247851" NumOfTimes="1" X="1037.993" Y="2399.403" Z="-124.8226" />
+            </If>
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(304)" />
+        <While Condition="DoQuest(41425) &amp;&amp; !IsObjectiveComplete(2,41425)">
+            <If Condition="!IsObjectiveComplete(2,41425)">
+                <CustomBehavior File="MyCTM" X="1086.79" Y="2414.884" Z="-124.6144"  />
+            </If>
+            <If Condition="!IsObjectiveComplete(2,41425)">
+                <CustomBehavior File="MyCTM" X="1159.818" Y="2407.925" Z="-118.2961" />
+            </If>
+            <If Condition="!IsObjectiveComplete(2,41425)">
+                <CustomBehavior File="MyCTM" X="1156.019" Y="2448.085" Z="-117.737"  />
+            </If>
+            <If Condition="!IsObjectiveComplete(2,41425)">
+                <CustomBehavior File="MyCTM" X="1076.368" Y="2359.689" Z="-124.9511" />
+            </If>
+            <If Condition="!IsObjectiveComplete(2,41425)">
+                <CustomBehavior File="MyCTM" X="1174.899" Y="2384.792" Z="-99.47632" />
+            </If>
+            <If Condition="!IsObjectiveComplete(2,41425)">
+                <CustomBehavior File="MyCTM" X="1037.993" Y="2399.403" Z="-124.8226" />
+            </If>
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(305)" />
+        <If Condition="HasQuest(41410)">
+            <CustomBehavior File="MyCTM" X="1161.235" Y="2399.082" Z="-81.7067" />
+            <CustomBehavior File="MyCTM" X="1230.122" Y="2354.766" Z="-117.2635"  />
+        </If>
+        <TurnIn Nav="Fly" QuestName="Dry Powder" QuestId="41410" TurnInName="Fjolrik" TurnInId="104586" />
+        <PickUp Nav="Fly" QuestName="Timing Is Everything" QuestId="41409" GiverName="Fjolrik" GiverId="104586" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(306)" />
+        <While Condition="DoQuest(41709)">
+            <CustomBehavior File="MyCTM" X="1161.235" Y="2399.082" Z="-81.7067" />
+
+            <If Condition="DoQuest(41709)">
+                <CustomBehavior File="MyCTM" X="1190.844" Y="2336.271" Z="-120.429" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+            <If Condition="DoQuest(41709)">
+                <CustomBehavior File="MyCTM" X="1220.634" Y="2397.576" Z="-119.5027" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+            <If Condition="DoQuest(41709)">
+                <CustomBehavior File="MyCTM" X="1205.559" Y="2304.373" Z="-113.2354" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+            <If Condition="DoQuest(41709)">
+                <CustomBehavior File="MyCTM" X="1255.629" Y="2412.495" Z="-121.5674" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+            <If Condition="DoQuest(41709)">
+                <CustomBehavior File="MyCTM" X="1152.208" Y="2300.165" Z="-124.9997" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+            <If Condition="DoQuest(41709)">
+                <CustomBehavior File="MyCTM" X="1263.59" Y="2291.908" Z="-105.7302" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(307)" />
+        <CustomBehavior File="Hooks\Avoid" AvoidName="avoid_harpoons" ObjectIds="104638" Radius="20" />
+        <While Condition="DoQuest(41426)">
+            <CustomBehavior File="MyCTM" X="1161.235" Y="2399.082" Z="-81.7067" />
+
+            <If Condition="DoQuest(41426)">
+                <CustomBehavior File="MyCTM" X="1207.944" Y="2361.318" Z="-128.4111" />
+                <CustomBehavior File="InteractWith" QuestId="41426" MobId="103529" NumOfTimes="1" X="1207.944" Y="2361.318" Z="-128.4111" />
+            </If>
+
+            <If Condition="DoQuest(41426)">
+                <CustomBehavior File="MyCTM" X="1243.842" Y="2375.087" Z="-127.5444" />
+                <CustomBehavior File="InteractWith" QuestId="41426" MobId="103529" NumOfTimes="1" X="1243.842" Y="2375.087" Z="-127.5444" />
+            </If>
+
+            <If Condition="DoQuest(41426)">
+                <CustomBehavior File="MyCTM" X="1283.188" Y="2374.715" Z="-121.3691" />
+                <CustomBehavior File="InteractWith" QuestId="41426" MobId="103529" NumOfTimes="1" X="1283.188" Y="2374.715" Z="-121.3691" />
+            </If>
+
+            <If Condition="DoQuest(41426)">
+                <CustomBehavior File="MyCTM" X="1298.106" Y="2409.845" Z="-120.776" />
+                <CustomBehavior File="InteractWith" QuestId="41426" MobId="103529" NumOfTimes="1" X="1298.106" Y="2409.845" Z="-120.776" />
+            </If>
+
+            <If Condition="DoQuest(41426)">
+                <CustomBehavior File="MyCTM" X="1309.351" Y="2454.247" Z="-117.6289" />
+                <CustomBehavior File="InteractWith" QuestId="41426" MobId="103529" NumOfTimes="1" X="1309.351" Y="2454.247" Z="-117.6289" />
+            </If>
+
+            <If Condition="DoQuest(41426)">
+                <CustomBehavior File="MyCTM" X="1327" Y="2358.026" Z="-106.8367" /> 
+                <CustomBehavior File="InteractWith" QuestId="41426" MobId="103529" NumOfTimes="1" X="1327" Y="2358.026" Z="-106.8367" /> 
+            </If>
+
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(308)" />
+        <While Condition="DoQuest(41425)">
+            <CustomBehavior File="MyCTM" X="1226.869" Y="2347.387" Z="-92.60435" />
+
+
+            <If Condition="DoQuest(41425)">
+                <CustomBehavior File="MyCTM" X="1252.755" Y="2313.039" Z="-110.2418" /> 
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+
+            <If Condition="DoQuest(41425)">
+                <CustomBehavior File="MyCTM" X="1296.814" Y="2382.969" Z="-111.134" /> 
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+
+            <If Condition="DoQuest(41425)">
+                <CustomBehavior File="MyCTM" X="1181.295" Y="2316.043" Z="-120.9286" /> 
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+
+            <If Condition="DoQuest(41425)">
+                <CustomBehavior File="MyCTM" X="1306.022" Y="2301.913" Z="-101.9073" /> 
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+
+            <If Condition="DoQuest(41425)">
+                <CustomBehavior File="MyCTM" X="1136.547" Y="2370.179" Z="-126.337" /> 
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+
+            <If Condition="DoQuest(41425)">
+                <CustomBehavior File="MyCTM" X="1296.814" Y="2382.969" Z="-111.134" /> 
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </If>
+
+        </While>
+        <CustomBehavior File="Hooks\Avoid" AvoidName="avoid_harpoons" Command="Remove" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(309)" />
+        <CustomBehavior File="RunCode" Code="PrintStep(310)" />
+        <While Condition="DoQuest(41409)">
+            <If Condition="!Me.IsOnTransport">
+                <CustomBehavior File="MyCTM" X="1235.976" Y="2383.065" Z="-27.22905" /> 
+
+                <CustomBehavior File="RunCode"><![CDATA[
+                        var turtle = Unit(104242);
+                        turtle.Target();
+
+                        while(!IsObjectiveComplete(1,41409))
+                        {
+                            Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: Chasing Turtle");
+
+                            Vector3 kLoc = Me.CurrentTarget.Location;
+
+                            Navigator.MoveTo(kLoc);
+
+                            await Coroutine.Sleep(1000);
+
+                            Me.CurrentTarget.Interact();
+
+                            await Coroutine.Sleep(3000);
+                        }
+                    ]]>
+                </CustomBehavior>
+            </If>
+
+            <CustomBehavior File="Vehicles\NoControlVehicle" QuestId="41409" VehicleMountId="104242" TargetId="103613" TargetId2="103610" TargetId3="103611" AttackButton="1" OftenToUse="5000" NumOfTimes="500" VehicleId="104242" MaxRange="1000" />
+
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(311)" />
+        <If Condition="QuestDone(41606) || NeedsQuest(40364) || NeedsQuest(41618)">
+            <CustomBehavior File="MyCTM" X="1116.012" Y="2486.169" Z="-55.32464" /> 
+            <CustomBehavior File="MyCTM" X="1101.486" Y="2499.922" Z="-100.9398" />
+            <TurnIn Nav="Fly" QuestName="Finding Brytag" QuestId="41606" TurnInName="Brytag" TurnInId="104406" X="1101.486" Y="2499.922" Z="-100.9398" />
+            <PickUp Nav="Fly" QuestName="Bubble Trouble" QuestId="40364" GiverName="Brytag" GiverId="104406" X="1101.486" Y="2499.922" Z="-100.9398" />
+            <PickUp Nav="Fly" QuestName="The Seawarden" QuestId="41618" GiverName="Brytag" GiverId="104406" X="1101.486" Y="2499.922" Z="-100.9398" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(312)" />
+        <If Condition="DoQuest(40364) &amp;&amp; !IsObjectiveComplete(1,40364)">
+            <CustomBehavior File="MyCTM" X="1156.773" Y="2489.087" Z="-113.2819" /> 
+            <CustomBehavior File="InteractWith" QuestId="40364" MobId="248080" NumOfTimes="1" X="1156.773" Y="2489.087" Z="-113.2819" /> 
+        </If>
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(313)" />
+        <If Condition="DoQuest(41618) &amp;&amp; !IsObjectiveComplete(1,41618)">
+            <CustomBehavior File="MyCTM" X="1028.103" Y="2495.825" Z="-9.728177" /> 
+            <CustomBehavior File="MyCTM" X="1014.856" Y="2500.98" Z="-54.37667" /> 
+            <CustomBehavior File="KillUntilComplete" MobIds="104459" TerminateWhen="IsObjectiveComplete(1, 41618)" X="1014.856" Y="2500.98" Z="-54.37667"/>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(314)" />
+        <While Condition="DoQuest(40364) &amp;&amp; !IsObjectiveComplete(2,40364)">
+            <CustomBehavior File="MyCTM" X="1028.103" Y="2495.825" Z="-9.728177" /> 
+
+            <If Condition="!IsObjectiveComplete(2,40364)">
+                <CustomBehavior File="MyCTM" X="964.7743" Y="2434.715" Z="-40.41428" /> 
+                <CustomBehavior File="InteractWith" QuestId="40364" MobId="99825" NumOfTimes="1" X="964.7743" Y="2434.715" Z="-40.41428" /> 
+            </If>
+
+            <If Condition="!IsObjectiveComplete(2,40364)">
+                <CustomBehavior File="MyCTM" X="1007.304" Y="2461.592" Z="-39.99683" /> 
+                <CustomBehavior File="InteractWith" QuestId="40364" MobId="99825" NumOfTimes="1" X="1007.304" Y="2461.592" Z="-39.99683" /> 
+            </If>
+
+            <If Condition="!IsObjectiveComplete(2,40364)">
+                <CustomBehavior File="MyCTM" X="1025.712" Y="2497.387" Z="-50.39842" /> 
+                <CustomBehavior File="InteractWith" QuestId="40364" MobId="99825" NumOfTimes="1" X="1025.712" Y="2497.387" Z="-50.39842" />
+            </If>
+
+            <If Condition="!IsObjectiveComplete(2,40364)">
+                <CustomBehavior File="MyCTM" X="1033.965" Y="2536.268" Z="-58.53989" /> 
+                <CustomBehavior File="InteractWith" QuestId="40364" MobId="99825" NumOfTimes="1" X="1033.965" Y="2536.268" Z="-58.53989" /> 
+            </If>
+
+            <If Condition="!IsObjectiveComplete(2,40364)">
+                <CustomBehavior File="MyCTM" X="1088.811" Y="2514.337" Z="-66.96291" /> 
+                <CustomBehavior File="InteractWith" QuestId="40364" MobId="99825" NumOfTimes="1" X="1088.811" Y="2514.337" Z="-66.96291" /> 
+            </If>
+
+            <If Condition="!IsObjectiveComplete(2,40364)">
+                <CustomBehavior File="MyCTM" X="1090.429" Y="2542.169" Z="-67.34298" /> 
+                <CustomBehavior File="InteractWith" QuestId="40364" MobId="99825" NumOfTimes="1" X="1090.429" Y="2542.169" Z="-67.34298" /> 
+            </If>
+
+            <If Condition="!IsObjectiveComplete(2,40364)">
+                <CustomBehavior File="MyCTM" X="1090.429" Y="2542.169" Z="-67.34298" /> 
+                <CustomBehavior File="InteractWith" QuestId="40364" MobId="99825" NumOfTimes="1" X="1090.429" Y="2542.169" Z="-67.34298" /> 
+            </If>
+
+            <If Condition="!IsObjectiveComplete(2,40364)">
+                <CustomBehavior File="MyCTM" X="1078.066" Y="2459.576" Z="-93.50523" /> 
+                <CustomBehavior File="InteractWith" QuestId="40364" MobId="99825" NumOfTimes="1" X="1078.066" Y="2459.576" Z="-93.50523" /> 
+            </If>
+
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(315)" />
+        <If Condition="QuestDone(40364) || QuestDone(41618)">
+            <CustomBehavior File="MyCTM" X="1116.012" Y="2486.169" Z="-55.32464" /> 
+            <CustomBehavior File="MyCTM" X="1101.486" Y="2499.922" Z="-100.9398" />
+            <TurnIn Nav="Fly" QuestName="The Seawarden" QuestId="41618" TurnInName="Brytag" TurnInId="104406" X="1101.486" Y="2499.922" Z="-100.9398" />
+            <TurnIn Nav="Fly" QuestName="Bubble Trouble" QuestId="40364" TurnInName="Brytag" TurnInId="104406" X="1101.486" Y="2499.922" Z="-100.9398" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(316)" />
+        <If Condition="QuestDone(41425) || QuestDone(41409)">
+            <If Condition="Me.MinimapZoneText == &quot;Azuregale Bay&quot;">
+                <CustomBehavior File="MyCTM" X="1102.069" Y="2499.355" Z="-46.23845" /> 
+                <CustomBehavior File="MyCTM" X="1371.852" Y="2536.984" Z="-38.96476" /> 
+                <CustomBehavior File="MyCTM" X="1478.752" Y="2625.397" Z="0.9377241" />
+            </If>
+            <TurnIn Nav="Fly" QuestName="Sunken Foes" QuestId="41425" TurnInName="Brandolf" TurnInId="102845" X="1622.397" Y="2733.718" Z="22.69972" />
+            <TurnIn Nav="Fly" QuestName="Timing Is Everything" QuestId="41409" TurnInName="Brandolf" TurnInId="102845" X="1622.397" Y="2733.718" Z="22.69972" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(317)" />
+        <TurnIn Nav="Fly" QuestName="Against Their Will" QuestId="41426" TurnInName="Toryl" TurnInId="102410" X="1637.895" Y="2730.441" Z="22.71786" />
+        <TurnIn Nav="Fly" QuestName="Breaking Down the Big Guns" QuestId="41709" TurnInName="Toryl" TurnInId="102410" X="1637.895" Y="2730.441" Z="22.71786" />
+        <PickUp Nav="Fly" QuestName="Turning the Tidemistress" QuestId="40336" GiverName="Toryl" GiverId="102410" X="1637.895" Y="2730.441" Z="22.71786" />
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(318)" />
+        <PickUp Nav="Fly" QuestName="Shatter the Sashj'tar" QuestId="41001" GiverName="Brandolf" GiverId="102845" X="1622.397" Y="2733.718" Z="22.69972" />
+        <PickUp Nav="Fly" QuestName="Squid Out of Water" QuestId="41499" GiverName="Brandolf" GiverId="102845" X="1622.397" Y="2733.718" Z="22.69972"/>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(319)" />
+        <If Condition="(DoQuest(40336) || DoQuest(41001) || DoQuest(41499)) &amp;&amp; Me.MinimapZoneText != &quot;Sashj'tar Ruins&quot;">
+            <MoveTo X="1445.025" Y="2143.352" Z="1.70567" />
+            <CustomBehavior File="ForcedDismount" />
+        </If>
+
+        <!-- dismount to prevent pulling a ton of mobs -->
+        <UseMount Value="false" />
+
+        <If Condition="DoQuest(40336) &amp;&amp; !IsObjectiveComplete(1,40336)">
+            <CustomBehavior File="InteractWith" QuestId="40336" MobId="104830" NumOfTimes="1" X="1290.31" Y="2086.315" Z="16.86522" /> 
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(320)" />
+         <If Condition="DoQuest(40336) &amp;&amp; !IsObjectiveComplete(2,40336)">
+            <If Condition="!Me.IsOnTransport">
+                <CustomBehavior File="InteractWith" QuestId="40336" MobId="104821" NumOfTimes="1" X="1290.31" Y="2086.315" Z="16.86522" />
+                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+            </If>
+            <CustomBehavior File="RunCode"><![CDATA[
+                    var mistress = Unit(104359);
+                    mistress.Target();
+                    mistress.Face();
+                ]]>
+            </CustomBehavior>
+            <CustomBehavior File="RunCode" Code="Styx.Helpers.KeyboardManager.KeyUpDown((char)System.Windows.Forms.Keys.D1);" />
+            <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            <CustomBehavior File="KillUntilComplete" MobIds="104359,104829" TerminateWhen="IsObjectiveComplete(2, 40336)" X="1290.31" Y="2086.315" Z="16.86522"/>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(321)" />
+        <If Condition="DoQuest(41499)">
+            <CustomBehavior File="InteractWith" QuestId="41499" MobId="100179" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1,41499)" >
+                <HuntingGrounds>
+                    <Hotspot X="1341.606" Y="2108.567" Z="17.21071" />
+                    <Hotspot X="1277.049" Y="2035.984" Z="16.87943" />
+                    <Hotspot X="1239.421" Y="2106.579" Z="11.27516" />
+                    <Hotspot X="1167.091" Y="2072.183" Z="3.979312" />
+                    <Hotspot X="1160.881" Y="2035.081" Z="1.41447" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(322)" />
+        <If Condition="DoQuest(41001)">
+            <CustomBehavior File="KillUntilComplete" QuestId="41001"  MobIds="100999,100998" TerminateWhen="IsObjectiveComplete(1,41001)" >
+                <HuntingGrounds>
+                    <Hotspot X="1341.606" Y="2108.567" Z="17.21071" />
+                    <Hotspot X="1277.049" Y="2035.984" Z="16.87943" />
+                    <Hotspot X="1239.421" Y="2106.579" Z="11.27516" />
+                    <Hotspot X="1167.091" Y="2072.183" Z="3.979312" />
+                    <Hotspot X="1160.881" Y="2035.081" Z="1.41447" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(323)" />
+        <If Condition="Me.MinimapZoneText == &quot;Sashj'tar Ruins&quot;">
+            <MoveTo X="1445.025" Y="2143.352" Z="1.70567" />
+        </If>
+
+        <UseMount Value="true" />
+
+        <TurnIn Nav="Fly" QuestName="Shatter the Sashj'tar" QuestId="41001" TurnInName="Brandolf" TurnInId="102845" X="1622.397" Y="2733.718" Z="22.69972"/>
+        <TurnIn Nav="Fly" QuestName="Squid Out of Water" QuestId="41499" TurnInName="Brandolf" TurnInId="102845" X="1622.397" Y="2733.718" Z="22.69972"/>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(324)" />
+        <TurnIn Nav="Fly" QuestName="Turning the Tidemistress" QuestId="40336" TurnInName="Toryl" TurnInId="102410" X="1637.895" Y="2730.441" Z="22.71786" />
+
+        <!-- END SWIMMING QUESTS! -->
+
+        <CustomBehavior File="LoadProfile" ProfileName="[N] Zygor - Suramar - 325 - X" RememberProfile="true" />
+
+    </QuestOrder>
+</HBProfile>
