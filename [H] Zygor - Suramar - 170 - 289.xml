@@ -834,27 +834,34 @@
 
         <!-- 251 -->
         <CustomBehavior File="RunCode" Code="PrintStep(251)" />
+        
+        <EnableBehavior Name="Pull" />
 
         <!-- go farm another shard if we need it -->
         <If Condition="NeedsQuest(41111) || HasQuest(41111)">
-            <CustomBehavior File="KillUntilComplete" MobIds="111599, 111527, 111530, 103326" TerminateWhen="HasItem(133956) || GetItemCount(133957) == 10" >
-                <HuntingGrounds>
-                    <Hotspot X="2754.733" Y="4705.179" Z="273.4313" />
-                    <Hotspot X="2771.606" Y="4657.494" Z="271.6132" />
-                    <Hotspot X="2743.972" Y="4629.302" Z="258.8517" />
-                    <Hotspot X="2663.746" Y="4725.763" Z="258.9397" />
-                    <Hotspot X="2727.123" Y="4737.895" Z="271.5403" />
-                </HuntingGrounds>
-            </CustomBehavior>
-            <If Condition="(NeedsQuest(41111) || HasQuest(41111)) &amp;&amp; !HasItem(133956) &amp;&amp; GetItemCount(133957) == 10">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Farming up a volatile spell focus&quot;);" />
+
+            <If Condition="!HasItem(133956)">
+                <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Gathering 10 Spell Focus Fragment&quot;);" />
+                <CustomBehavior File="KillUntilComplete" MobIds="111599, 111527, 111530, 103326" TerminateWhen="GetItemCount(133957) == 10" >
+                    <HuntingGrounds>
+                        <Hotspot X="2754.733" Y="4705.179" Z="273.4313" />
+                        <Hotspot X="2771.606" Y="4657.494" Z="271.6132" />
+                        <Hotspot X="2743.972" Y="4629.302" Z="258.8517" />
+                        <Hotspot X="2663.746" Y="4725.763" Z="258.9397" />
+                        <Hotspot X="2727.123" Y="4737.895" Z="271.5403" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+            <If Condition="!HasItem(133956) &amp;&amp; GetItemCount(133957) == 10">
                <CustomBehavior File="UseItem" ItemId="133957" />
             </If>
         </If>
 
-        <EnableBehavior Name="Pull" />
 
         <!-- go farm some mana before we get too deep -->
         <If Condition="( NeedsQuest(43808) || HasQuest(43808) ) &amp;&amp; !HasAncientMana(100)" >
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Pre-farming some ancient mana&quot;);" />
             <MoveTo X="2539.183" Y="4482.568" Z="234.0783" />
             <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-100" RememberProfile="true" />
         </If>
