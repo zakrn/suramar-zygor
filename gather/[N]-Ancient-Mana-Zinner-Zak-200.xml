@@ -63,6 +63,10 @@
         <If Condition="HasItem(140245)">
             <CustomBehavior File="UseItem" ItemId="140245" />
         </If>
+        <!-- Small Jar of Arcwine -->
+        <If Condition="HasItem(140235)">
+            <CustomBehavior File="UseItem" ItemId="140235" />
+        </If>
 
         <!-- Ones you may find while farming -->
         <CustomBehavior File="Hooks\DoWhen" UseWhen="HasItem(139786) || HasItem(139890)" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
