@@ -732,7 +732,7 @@
         </If>
         <!-- 244 -->
         <CustomBehavior File="RunCode" Code="PrintStep(244)" />
-        <If Condition="!IsQuestCompleted(40762) &amp;&amp; !HasQuest(40762)">
+        <If Condition="NeedsQuest(40762)">
             <CustomBehavior File="RunCode" Code="PrintStep(2441)" />
             <MoveTo X="2747.718" Y="4680.42" Z="271.3399"/>
             <!-- turn pull on so we can kill capn -->
