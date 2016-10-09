@@ -460,8 +460,29 @@
         <!-- 164 -->
         <CustomBehavior File="RunCode" Code="PrintStep(164)" />
         <If Condition="DoQuest(41197)">
-            <CustomBehavior File="UserDialog" QuestId="41197" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="150" ExpiryTime="300" 
-                        Text="You've Got to Be Kitten Me Right Meow is no currently scripted, you'll have to do it manually sorry its complicated." />
+            <!-- <CustomBehavior File="UserDialog" QuestId="41197" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="150" ExpiryTime="300" 
+                        Text="You've Got to Be Kitten Me Right Meow is no currently scripted, you'll have to do it manually sorry its complicated." /> -->
+
+            <!-- Credit: ksmaze -->
+            <CustomBehavior File="RunCode"><![CDATA[
+                    var home = new Vector3(2322.228f, 5470.458f, 118.7071f);
+                    
+                    while (!IsQuestCompleted(41197))
+                    {
+                      var kitty = Unit(103511);
+                      kitty.Target();
+
+                      while(kitty != null && kitty.IsValid)
+                      {
+                          Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: Chasing Kitty");
+                          float inverse = WoWMathHelper.CalculateNeededFacing(home, kitty.Location);
+                          var nLoc = kitty.Location.RayCast(inverse, 2);
+                          Navigator.MoveTo(nLoc);
+                          await Coroutine.Sleep(3000);
+                      }
+                    }
+                ]]>
+            </CustomBehavior>
         </If>
 
         <!-- 165 -->
