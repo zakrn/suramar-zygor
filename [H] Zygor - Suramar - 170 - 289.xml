@@ -735,7 +735,13 @@
         <If Condition="!IsQuestCompleted(40762) &amp;&amp; !HasQuest(40762)">
             <CustomBehavior File="RunCode" Code="PrintStep(2441)" />
             <MoveTo X="2747.718" Y="4680.42" Z="271.3399"/>
+            <!-- turn pull on so we can kill capn -->
+            <EnableBehavior Name="Pull" />
+
             <CustomBehavior File="KillUntilComplete" MobIds="106275" TerminateWhen="HasItem(136851)" X="2747.718" Y="4680.42" Z="271.3399" />
+
+            <DisableBehavior Name="Pull" />
+
             <CustomBehavior File="RunCode" Code="PrintStep(2442)" />
             <CustomBehavior File="UseItem" ItemId="136851" />
             <CustomBehavior File="RunCode" Code="PrintStep(2443)" />
@@ -1123,14 +1129,14 @@
         <!-- 269 -->
         <CustomBehavior File="RunCode" Code="PrintStep(269)" />
         <PickUp Nav="Fly" QuestName="Leyline Feed: Kel'balor" QuestId="43588" GiverName="Leyline Feed" GiverId="252259" X="2023.723" Y="3387.641" Z="162.6618"  />
-
+      
         <CustomBehavior File="Hooks\DoWhen" ActivityName="apply_mask" Command="Remove" />
 
         <!-- 270 -->
         <CustomBehavior File="RunCode" Code="PrintStep(270)" />
         <If Condition="DoQuest(43588)">
             <CustomBehavior File="InteractWith" MobId="253071" X="2024.286" Y="3393.75" Z="162.729" />
-            <CustomBehavior File="KillUntilComplete" MobIds="113570, 111923" TerminateWhen="QuestDone(43588)" >
+            <CustomBehavior File="KillUntilComplete" MobIds="113570, 111923" TerminateWhen="IsObjectiveComplete(1, 43588)" >
                 <HuntingGrounds>
                     <Hotspot X="2024.286" Y="3393.75" Z="162.729" />
                 </HuntingGrounds>
@@ -1154,20 +1160,23 @@
         
         <!-- 274 -->
         <CustomBehavior File="RunCode" Code="PrintStep(274)" />
+        <!-- grab flight path -->
         <If Condition="DoQuest(40617) &amp;&amp; !IsObjectiveComplete(1, 40617)">
             <MoveTo X="1898.717" Y="3098.343" Z="220.4361"  />
         </If>
 
         <!-- 275 -->
         <CustomBehavior File="RunCode" Code="PrintStep(275)" />
-        <!-- move to -->
+        <If Condition="DoQuest(40617) &amp;&amp; !IsObjectiveComplete(1, 40617)">
+            <MoveTo X="1746.231" Y="3113.79" Z="164.3932" />
+        </If>
 
         <!-- 276 -->
         <CustomBehavior File="RunCode" Code="PrintStep(276)" />
         <If Condition="DoQuest(40907)">
             <CustomBehavior File="KillUntilComplete" MobIds="100780" TerminateWhen="IsObjectiveComplete(2, 40617)" >
                 <HuntingGrounds>
-                    <Hotspot X="1508.103" Y="2815.062" Z="41.09519" />
+                    <Hotspot X="1746.231" Y="3113.79" Z="164.3932" />
                 </HuntingGrounds>
             </CustomBehavior>
         </If>
