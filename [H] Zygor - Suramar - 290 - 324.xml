@@ -241,6 +241,7 @@
             </CustomBehavior>
         </If>
 
+        <!-- 295 -->
         <CustomBehavior File="RunCode" Code="PrintStep(295)" />
         <If Condition="QuestDone(41034) &amp;&amp; Me.MinimapZoneText == &quot;Azuregale Bay&quot;">
             <CustomBehavior File="MyCTM" X="1338.23" Y="2425.823" Z="-47.28785" />
@@ -249,9 +250,11 @@
         </If>
         <TurnIn Nav="Fly" QuestName="Testing the Waters" QuestId="41034" TurnInName="Brandolf" TurnInId="102845" X="1618.507" Y="2729.824" Z="23.20116" />
         
+        <!-- 296 -->
         <CustomBehavior File="RunCode" Code="PrintStep(296)" />
         <PickUp Nav="Fly" QuestName="Jandvik's Last Hope" QuestId="40927" GiverName="Toryl" GiverId="99948" X="1618.507" Y="2729.824" Z="23.20116" />
 
+        <!-- 297 -->
         <CustomBehavior File="RunCode" Code="PrintStep(297)" />
         <If Condition="DoQuest(40927) &amp;&amp; Me.MinimapZoneText != &quot;Sashj'tar Grotto&quot;">
             <MoveTo X="1552.061" Y="2455.406" Z="1.147959" />
@@ -261,6 +264,7 @@
 
         </If>
 
+        <!-- 297 -->
         <CustomBehavior File="RunCode" Code="PrintStep(297)" />
         <If Condition="DoQuest(40927) &amp;&amp; Me.MinimapZoneText == &quot;Sashj'tar Grotto&quot; &amp;&amp; !IsObjectiveComplete(1, 40927)">
             <CustomBehavior File="InteractWith" QuestId="40927" MobId="102388" NumOfTimes="1" InteractByGossipOptions="1" >
@@ -431,6 +435,8 @@
 
         </While>
 
+        <CustomBehavior File="Hooks\Avoid" AvoidName="avoid_harpoons" Command="Remove" />
+        
         <CustomBehavior File="RunCode" Code="PrintStep(308)" />
         <While Condition="DoQuest(41425)">
             <CustomBehavior File="MyCTM" X="1226.869" Y="2347.387" Z="-92.60435" />
@@ -467,7 +473,6 @@
             </If>
 
         </While>
-        <CustomBehavior File="Hooks\Avoid" AvoidName="avoid_harpoons" Command="Remove" />
 
         <CustomBehavior File="RunCode" Code="PrintStep(309)" />
         <CustomBehavior File="RunCode" Code="PrintStep(310)" />
