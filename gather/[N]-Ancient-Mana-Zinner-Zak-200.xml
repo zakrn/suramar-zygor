@@ -22,6 +22,8 @@
     <Blackspots>
         <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
         <Blackspot X="1807.786" Y="5389.523" Z="-36.09461" Radius="20.0" />
+        <Blackspot X="1507.854" Y="5399.925" Z="76.86271" Radius="30.0" />
+        <Blackspot X="1175.61" Y="5278.585" Z="75.51192" Radius="30.0"/>
     </Blackspots>
     <Vendors>
     </Vendors>
@@ -66,6 +68,10 @@
         <!-- Small Jar of Arcwine -->
         <If Condition="HasItem(140235)">
             <CustomBehavior File="UseItem" ItemId="140235" />
+        </If>
+        <!-- Half-Full Bottle of Arcwine -->
+        <If Condition="HasItem(137010)">
+            <CustomBehavior File="UseItem" ItemId="137010" />
         </If>
 
         <!-- Ones you may find while farming -->

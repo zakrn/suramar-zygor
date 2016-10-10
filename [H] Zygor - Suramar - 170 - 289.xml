@@ -174,7 +174,7 @@
                         await Coroutine.Sleep(postWait);
                     }
 
-                    void UseInertCrystal()
+                    bool UseInertCrystal()
                     {
                         //203027 - volatile
                         WoWItem item = Me.CarriedItems.FirstOrDefault(i => i.Entry == 133999);
@@ -191,7 +191,9 @@
                         {
                             obj.Target();
                             item.UseContainerItem();
+                            return true;
                         }
+                        return false;
                     }
                 ]]>
         </CustomBehavior>
@@ -991,39 +993,101 @@
 
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2949.632" Y="4931.799" Z="272.1" />
-                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
-                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2964.842" Y="4947.92" Z="271.8244" />
-                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
-                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2971.451" Y="4963.638" Z="272.4892" />
-                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
-                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2971.858" Y="4985.686" Z="272.2955" />
-                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
-                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2962.59" Y="5006.315" Z="271.8596" />
-                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
-                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2949.221" Y="5021.032" Z="271.809" />
-                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
-                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
             </If>
             <If Condition="DoQuest(40971)">
                 <MoveTo X="2931.005" Y="5029.282" Z="271.8272" />
-                <CustomBehavior File="RunCode" Code="UseInertCrystal()" />
-                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
             </If>
+            <If Condition="DoQuest(40971)">
+                <MoveTo X="2906.679" Y="5030.229" Z="271.8406" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
+            </If>
+            <If Condition="DoQuest(40971)">
+                <MoveTo X="2887.329" Y="5017.914" Z="271.8218" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
+            </If>
+            <If Condition="DoQuest(40971)">
+                <MoveTo X="2876.618" Y="5008.198" Z="271.8879" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
+            </If>
+            <If Condition="DoQuest(40971)">
+                <MoveTo X="2870.317" Y="4989.904" Z="271.963" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
+            </If>
+            <If Condition="DoQuest(40971)">
+                <MoveTo X="2869.478" Y="4968.499" Z="271.8129" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
+            </If>
+            <If Condition="DoQuest(40971)">
+                <MoveTo X="2874.992" Y="4948.983" Z="272.088" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
+            </If>
+            <If Condition="DoQuest(40971)">
+                <MoveTo X="2892.915" Y="4930.724" Z="271.8906" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
+            </If>
+            <If Condition="DoQuest(40971)">
+                <MoveTo X="2908.34" Y="4923.989" Z="272.0619" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
+            </If>
+            <If Condition="DoQuest(40971)">
+                <MoveTo X="2926.485" Y="4924.027" Z="272.2269" />
+                <If Condition="UseInertCrystal()">
+                    <CustomBehavior File="WaitTimer" WaitTime="5000" />
+                </If>
+            </If>
+
             <EnableBehavior Name="Combat" />
         </If>
 
@@ -1141,11 +1205,11 @@
                     <Hotspot X="2024.286" Y="3393.75" Z="162.729" />
                 </HuntingGrounds>
             </CustomBehavior>
-        </If>
+        </If>w
 
         <!-- 271 -->
         <CustomBehavior File="RunCode" Code="PrintStep(271)" />
-        <If Condition="QuestDone(43588) &amp;&amp; !HasAncientMana(200)">
+        <If Condition="DoQuest(43588) &amp;&amp; !HasAncientMana(200)">
             <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-200" RememberProfile="true" />
         </If>
 
@@ -1173,7 +1237,7 @@
 
         <!-- 276 -->
         <CustomBehavior File="RunCode" Code="PrintStep(276)" />
-        <If Condition="DoQuest(40907)">
+        <If Condition="DoQuest(40617)">
             <CustomBehavior File="KillUntilComplete" MobIds="100780" TerminateWhen="IsObjectiveComplete(2, 40617)" >
                 <HuntingGrounds>
                     <Hotspot X="1746.231" Y="3113.79" Z="164.3932" />
@@ -1186,6 +1250,7 @@
         <PickUp Nav="Fly" QuestName="Removing Obstacles" QuestId="40907" GiverName="Toryl" GiverId="102309" X="1558.892" Y="3042.477" Z="93.09901" />
 
         <UseMount Value="false" />
+        <CustomBehavior File="ForcedDismount" />
 
         <!-- 278 -->
         <CustomBehavior File="RunCode" Code="PrintStep(278)" />

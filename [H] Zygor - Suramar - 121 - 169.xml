@@ -16,6 +16,7 @@
     <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
     <Blackspots>
         <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
+        <Blackspot X="1175.61" Y="5278.585" Z="75.51192" Radius="30.0"/>
     </Blackspots>
     <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
     <Vendors>
@@ -81,13 +82,26 @@
 
                     bool ShouldCastMask()
                     {
-                        return (Me.MinimapZoneText == "The Grand Promenade" || Me.MinimapZoneText == "Suramar City")
-                                && !Me.HasAura(202477);
+                        return Me.IsAlive && IsInCity() && !Me.HasAura(202477);
                     }
 
                     void CastMask()
                     {
                         Lua.DoString("ExtraActionButton1:Click();");
+                    }
+
+                    bool IsInCity()
+                    {
+                        return  Me.MinimapZoneText == "The Grand Promenade" || 
+                                Me.MinimapZoneText == "Starcaller Retreat"  ||
+                                Me.MinimapZoneText == "The Waning Crescent" ||
+                                Me.MinimapZoneText == "Artisan's Gallery" ||
+                                Me.MinimapZoneText == "Astravar Harbor" ||
+                                Me.MinimapZoneText == "Evermoon Bazaar" ||
+                                Me.MinimapZoneText == "Shimmershade Garden" ||
+                                Me.MinimapZoneText == "Terrace of Order" ||
+                                Me.MinimapZoneText == "Lunastre Estate" ||
+                                Me.MinimapZoneText == "Suramar City";
                     }
 
                     bool IsThirsty( uint friendId )
@@ -240,13 +254,13 @@
         <!-- 135 -->
         <CustomBehavior File="RunCode" Code="PrintStep(135)" />
         <If Condition="DoQuest(41989) &amp;&amp; !IsObjectiveComplete(2,41989)">
-            <CustomBehavior File="KillUntilComplete" MobIds="106239" QuestId="41989" QuestObjectiveIndex="2" />
+            <CustomBehavior File="KillUntilComplete" MobIds="106173" QuestId="41989" QuestObjectiveIndex="2" X="532.6307" Y="4316.902" Z="132.9876" />
         </If>
 
         <!-- 136 -->
         <CustomBehavior File="RunCode" Code="PrintStep(136)" />
         <If Condition="DoQuest(41989) &amp;&amp; !IsObjectiveComplete(3,41989)">
-            <CustomBehavior File="InteractWith" MobId="106239" InteractByGossipOptions="1" />
+            <CustomBehavior File="InteractWith" MobId="106173" InteractByGossipOptions="1" X="532.6307" Y="4316.902" Z="132.9876" />
         </If>
 
         <!-- 137 -->
@@ -264,7 +278,7 @@
         <!-- 139 -->
         <CustomBehavior File="RunCode" Code="PrintStep(139)" />
         <If Condition="DoQuest(42079)">
-            <CustomBehavior File="UseItem" MobId="106418" ItemId="136970" NumOfTimes="1" QuestId="42079" QuestObjectiveIndex="1"  />
+            <CustomBehavior File="InteractWith" MobId="106420" InteractByUsingItemId="136970" NumOfTimes="1" QuestId="42079"  />
         </If>
 
         <!-- 140 -->
