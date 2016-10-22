@@ -1,0 +1,212 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[N] Building an Army</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
+    <Blackspots>
+    </Blackspots>
+    <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
+    <Vendors>
+    </Vendors>
+    <!--These are the locations of the available mailboxes that you want your character to use-->
+    <Mailboxes>
+    </Mailboxes>
+    <!--Setting these would make sure the character stays away from and does not attack these mobs-->
+    <AvoidMobs>
+    </AvoidMobs>
+    <!--Here is where the meat of the profile will take place-->
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+
+                    bool DoQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (!HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsBreadcrumbQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (IsQuestCompleted(questId)) return false;
+                        }
+                        return true;
+                    }
+                    bool QuestDone(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+
+                    bool HasAncientMana( uint amount )
+                    {
+                        return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
+                    }
+
+                    uint MaxAncientMana()
+                    {
+                        if( WoWCurrency.GetCurrencyById(1155) != null )
+                        {
+                            return WoWCurrency.GetCurrencyById(1155).TotalMax;
+                        }
+                        return 0;
+                    }
+
+                    double CalcDist( Vector2 v1, Vector2 v2 )
+                    {
+                        double dx = v2.X - v1.X;
+                        double dy =  v2.Y - v1.Y;
+                        double r = Math.Pow( dx , 2) - Math.Pow( dy, 2);
+
+                        if( r < 0 )
+                            r *= -1;
+
+                        return Math.Sqrt(  r );
+                    }
+
+                    bool IsThirsty( uint friendId )
+                    {
+                        List<string> values = Lua.GetReturnValues("return GetFriendshipReputation(" + friendId +")");
+
+                        if( values.Count == 0 )
+                        {   
+                            Logging.Write(System.Windows.Media.Colors.Red, "[Zak]: Failed to get arcane thirst");
+                            return false;
+                        }
+
+                        int level = Int32.Parse( values[1]);
+                        int threshold = Int32.Parse( values[7]);
+                        int newlevel = level - threshold;
+
+                        return newlevel <= 1;
+                    }
+
+                    bool IsThalyssraThirsty()
+                    {
+                        return IsThirsty(1860);
+                    }
+
+                    bool IsOculethThirsty()
+                    {
+                        return IsThirsty(1862);
+                    }
+
+                    bool IsValtroisThirsty()
+                    {
+                        return IsThirsty(1919);
+                    }
+
+                    void PrintStep( uint step )
+                    {
+                        Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: " + step);
+                    }
+
+                    void Print( string msg )
+                    {
+                        Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: " + msg);
+                    }
+
+                    int StageNumber() {
+                        return Bots.DungeonBuddy.Helpers.ScenarioInfo.Current.CurrentStageNumber;
+                    }
+
+                ]]>
+        </CustomBehavior>
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: ZoneId: &quot; + Me.AreaId);" />
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: StageNumber: &quot; + Bots.DungeonBuddy.Helpers.ScenarioInfo.Current.CurrentStageNumber );" />
+        
+        <!-- TRAINING SCENARIO -->
+        <If Condition="StageNumber() == 1" >
+            <CustomBehavior File="InteractWith" MobIds="109008" NumOfTimes="1" InteractByGossipOptions="1" X="2102.989" Y="5392.836" Z="48.12273" />
+        </If>
+
+        <While Condition="StageNumber() == 2" >
+            <CustomBehavior File="KillUntilComplete" MobIds="110371, 110369, 110374, 110373" TerminateWhen="StageNumber() != 2">
+                <HuntingGrounds>
+                    <Hotspot X="2238.1" Y="5520.415" Z="1.640649" />
+                    <Hotspot X="2095.856" Y="5447.035" Z="-34.2065" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+
+
+        <CustomBehavior File="RunCode" Code="Print(&quot;looting chest&quot;)" />
+        <If Condition="StageNumber() == 3">
+            <CustomBehavior File="InteractWith" MobIds="252451" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitForNpcs="false" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="Print(&quot;using rep items&quot;)" />
+        <While Condition="HasItem(140260)">
+            <CustomBehavior File="UseItem" ItemId="140260" />
+        </While>
+        <While Condition="HasItem(141870)">
+            <CustomBehavior File="UseItem" ItemId="141870" />
+        </While>
+
+        <CustomBehavior File="InteractWith" MobIds="258976" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitForNpcs="false" />
+        <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+        
+        <!-- <CustomBehavior File="RunCode" Code="PrintStep(390)" />
+        
+
+        <CustomBehavior File="RunCode" Code="PrintStep(391)" />
+        <CustomBehavior File="RunCode" Code="PrintStep(392)" />
+        <If Condition="Me.AreaId == 1033 &amp;&amp; Bots.DungeonBuddy.Helpers.ScenarioInfo.Current.CurrentStageNumber == 2" >
+            <CustomBehavior File="RunCode" Code="PrintStep(3921)" />
+            <CustomBehavior File="Hooks\DoWhen" UseAtInterval="5000" LogExecution="true" ActivityName="use_ability" AllowUseDuringCombat="true" >
+                <If Condition="Me.IsActuallyInCombat">
+                    <CustomBehavior File="Misc\RunLua" Lua="ExtraActionButton1:Click();" />
+                </If>
+            </CustomBehavior> -->
+
+<!--             <MoveTo X="2161.402" Y="5379.453" Z="36.87641" />
+            <MoveTo X="2198.6" Y="5398.503" Z="36.87683" />
+            <MoveTo X="2221.614" Y="5362.199" Z="36.87586" />
+            <MoveTo X="2203.118" Y="5340.991" Z="36.87623" />
+            <CustomBehavior File="InteractWith" MobIds="110141" NumOfTimes="1" X="2203.118" Y="5340.991" Z="36.87623"  />
+            <MoveTo X="2161.402" Y="5379.453" Z="36.87641" />
+            <MoveTo X="2192.154" Y="5369.486" Z="35.50682" /> -->
+            
+<!--             <MoveTo X="2254.594" Y="5356.899" Z="37.02238" />
+            <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="2" X="2254.594" Y="5356.899" Z="37.02238" WaitForNpcs="false"  />
+            <Hotspot X="2272.458" Y="5455.635" Z="9.342071" />
+            <CustomBehavior File="InteractWith" MobIds="110141" NumOfTimes="1" X="2272.458" Y="5455.635" Z="9.342071"  />
+
+
+            <CustomBehavior File="Hooks\DoWhen" ActivityName="use_ability" Command="Remove" />
+        </If> -->
+
+
+        <!-- <TurnIn Nav="Fly" QuestName="Building an Army" QuestId="44636" TurnInName="First Arcanist Thalyssra" TurnInId="97140" /> -->
+        <!-- <TurnIn Nav="Fly" QuestName="Thalyssra's Abode" QuestId="42488" TurnInName="First Arcanist Thalyssra" TurnInId="97140" /> -->
+
+
+
+
+    </QuestOrder>
+</HBProfile>

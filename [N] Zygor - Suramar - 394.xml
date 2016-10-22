@@ -1,0 +1,477 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[N] Zygor Suramar 394</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
+    <Blackspots>
+        <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
+    </Blackspots>
+    <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
+    <Vendors>
+    </Vendors>
+    <!--These are the locations of the available mailboxes that you want your character to use-->
+    <Mailboxes>
+    </Mailboxes>
+    <!--Setting these would make sure the character stays away from and does not attack these mobs-->
+    <AvoidMobs>
+        <Mob Name="Koralune Ettin" Entry="99791" />
+        <Mob Name="Elfbane" Entry="99792" />
+    </AvoidMobs>
+    <!--Here is where the meat of the profile will take place-->
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+
+                    bool DoQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (!HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsBreadcrumbQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (IsQuestCompleted(questId)) return false;
+                        }
+                        return true;
+                    }
+                    bool QuestDone(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+
+                    bool HasAncientMana( uint amount )
+                    {
+                        return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
+                    }
+
+                    uint MaxAncientMana()
+                    {
+                        if( WoWCurrency.GetCurrencyById(1155) != null )
+                        {
+                            return WoWCurrency.GetCurrencyById(1155).TotalMax;
+                        }
+                        return 0;
+                    }
+
+                    double DistFrom253()
+                    {
+                        Vector2 loc = new Vector2( Me.Location.X, Me.Location.Y);
+                        Vector2 res = new Vector2( 2949.458f, 4882.862f );
+
+                        return CalcDist( loc, res );
+                    }
+
+                    double CalcDist( Vector2 v1, Vector2 v2 )
+                    {
+                        double dx = v2.X - v1.X;
+                        double dy =  v2.Y - v1.Y;
+                        double r = Math.Pow( dx , 2) - Math.Pow( dy, 2);
+
+                        if( r < 0 )
+                            r *= -1;
+
+                        return Math.Sqrt(  r );
+                    }
+
+                    bool ShouldCastMask()
+                    {
+                        return Me.IsAlive && IsInCity() && !Me.HasAura(202477);
+                    }
+
+                    void CastMask()
+                    {
+                        Lua.DoString("ExtraActionButton1:Click();");
+                    }
+
+                    bool IsInCity()
+                    {
+                        return  Me.MinimapZoneText == "The Grand Promenade" || 
+                                Me.MinimapZoneText == "Starcaller Retreat"  ||
+                                Me.MinimapZoneText == "The Waning Crescent" ||
+                                Me.MinimapZoneText == "Artisan's Gallery" ||
+                                Me.MinimapZoneText == "Astravar Harbor" ||
+                                Me.MinimapZoneText == "Evermoon Bazaar" ||
+                                Me.MinimapZoneText == "Evermoon Commons" ||
+                                Me.MinimapZoneText == "Shimmershade Garden" ||
+                                Me.MinimapZoneText == "Terrace of Order" ||
+                                Me.MinimapZoneText == "Estate of the First Arcanist" ||
+                                Me.MinimapZoneText == "Twilight Vineyards" ||
+                                Me.MinimapZoneText == "Suramar City";
+                    }
+
+                    bool IsThirsty( uint friendId )
+                    {
+                        List<string> values = Lua.GetReturnValues("return GetFriendshipReputation(" + friendId +")");
+
+                        if( values.Count == 0 )
+                        {   
+                            Logging.Write(System.Windows.Media.Colors.Red, "[Zak]: Failed to get arcane thirst");
+                            return false;
+                        }
+
+                        int level = Int32.Parse( values[1]);
+                        int threshold = Int32.Parse( values[7]);
+                        int newlevel = level - threshold;
+
+                        return newlevel <= 1;
+                    }
+
+                    bool IsThalyssraThirsty()
+                    {
+                        return IsThirsty(1860);
+                    }
+
+                    bool IsOculethThirsty()
+                    {
+                        return IsThirsty(1862);
+                    }
+
+                    bool IsValtroisThirsty()
+                    {
+                        return IsThirsty(1919);
+                    }
+
+                    void PrintStep( uint step )
+                    {
+                        Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: " + step);
+                    }
+
+                    async Task SkipCutscene(int preWait = 3000, int postWait = 3000)
+                    {
+                // Add detection of cutscene here.
+                        await Coroutine.Sleep(preWait);
+                // Test and improve the working method.
+                        Lua.DoString("MovieFrame:StopMovie(); CinematicFrame_CancelCinematic(); StopCinematic();");
+                        await Coroutine.Sleep(postWait);
+                    }
+                ]]>
+        </CustomBehavior>
+        
+
+        <!-- <CustomBehavior File="Hooks\Avoid" AvoidName="MaskDetectors" ObjectIds="108190" Radius="20" /> -->
+
+        <CustomBehavior File="RunCode" Code="PrintStep(394)" />
+        <If Condition="NeedsQuest(42489)">
+            <MoveTo X="1134.477" Y="2869.507" Z="44.28946" />
+            <CustomBehavior File="ForcedDismount" />
+        </If>
+
+        <UseMount Value="false" />
+
+        <PickUp Nav="Fly" QuestName="Thalyssra's Drawers" QuestId="42489" GiverName="Armoire" GiverId="251032" X="1121.544" Y="3009.178" Z="6.86612" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(395)" />
+        <If Condition="DoQuest(42489) &amp;&amp; !IsObjectiveComplete(1,42489)">
+            <CustomBehavior File="InteractWith" QuestId="42489" MobId="251046" NumOfTimes="1">
+                <HuntingGrounds>
+                    <Hotspot X="1099.294" Y="2975.288" Z="6.198305" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(396)" />
+        <If Condition="DoQuest(42489) &amp;&amp; !IsObjectiveComplete(2,42489)">
+            <CustomBehavior File="InteractWith" QuestId="42489" MobId="251034" NumOfTimes="1">
+                <HuntingGrounds>
+                    <Hotspot X="1045.421" Y="3001.41" Z="2.953944" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(397)" />
+        <If Condition="DoQuest(42489) &amp;&amp; !IsObjectiveComplete(3,42489)">
+            <CustomBehavior File="InteractWith" QuestId="42489" MobId="251035" NumOfTimes="1">
+                <HuntingGrounds>
+                    <Hotspot X="1153.447" Y="3040.209" Z="5.441119" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(398)" />
+        <If Condition="DoQuest(42488)">        
+            <CustomBehavior File="KillUntilComplete" MobIds="108190" TerminateWhen="GetItemCount(138392) &gt;= 3" >
+                <HuntingGrounds>
+                    <Hotspot X="1153.447" Y="3040.209" Z="5.441119" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            <If Condition="GetItemCount(138392) &gt;= 3">
+                <CustomBehavior File="UseItem" ItemId="138392" />
+            </If>
+        </If>
+
+        <UseMount Value="true" />
+
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" LogExecution="true" ActivityName="apply_mask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <CustomBehavior File="RunCode" Code="CastMask()" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+        </CustomBehavior>
+
+
+        <CustomBehavior File="RunCode" Code="PrintStep(399)" />
+        <TurnIn Nav="Fly" QuestName="Thalyssra's Drawers" QuestId="42489" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1721.308" Y="4613.505" Z="123.8009" />
+        <TurnIn Nav="Fly" QuestName="Thalyssra's Abode" QuestId="42488" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1721.308" Y="4613.505" Z="123.8009" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(400)" />
+        <If Condition="NeedsQuest(40266) || NeedsQuest(40744)">
+            <CustomBehavior File="InteractWith" MobId="254129" NumOfTimes="1" X="1783.168" Y="4640.48" Z="124.789" />
+        </If>
+
+        <PickUp Nav="Fly" QuestName="The Lost Advisor" QuestId="40266" GiverName="Thaedris Feathersong" GiverId="99065" X="1937.913" Y="4128.488" Z="266.2768"  />
+        <PickUp Nav="Fly" QuestName="An Ancient Recipe" QuestId="40744" GiverName="Thaedris Feathersong" GiverId="99065" X="1937.913" Y="4128.488" Z="266.2768"  />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(401)" />
+        <While Condition="DoQuest(40266)">
+            <CustomBehavior File="InteractWith" QuestId="40266" MobId="245186" NumOfTimes="1" InteractBlacklistTimeInSeconds="1000">
+                <HuntingGrounds>
+                    <Hotspot X="1981.782" Y="4070.541" Z="263.5798" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(402)" />
+        <While Condition="DoQuest(40744)">
+            <CustomBehavior File="KillUntilComplete" MobIds="113573, 98306" TerminateWhen="IsObjectiveComplete(1,40744)" >
+                <HuntingGrounds>
+                    <Hotspot X="1953.855" Y="4182.607" Z="252.0313" />
+                    <Hotspot X="1972.402" Y="4074.865" Z="263.6337" />
+                    <Hotspot X="1919.736" Y="3966.884" Z="265.3144" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(403)" />
+        <TurnIn Nav="Fly" QuestName="An Ancient Recipe" QuestId="40744" TurnInName="Thaedris Feathersong" TurnInId="99093" X="1824.016" Y="3929.723" Z="272.0049" />
+        <TurnIn Nav="Fly" QuestName="The Lost Advisor" QuestId="40266" TurnInName="Thaedris Feathersong" TurnInId="99093" X="1824.016" Y="3929.723" Z="272.0049" />
+        <PickUp Nav="Fly" QuestName="Bad Intentions" QuestId="40227" GiverName="Thaedris Feathersong" GiverId="99093" X="1824.016" Y="3929.723" Z="272.0049" />
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(404)" />
+        <If Condition="DoQuest(40227)">
+            <CustomBehavior File="InteractWith" QuestId="40227" MobId="99093" NumOfTimes="1" InteractByGossipOptions="1" X="1824.016" Y="3929.723" Z="272.0049" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(405)" />
+        <TurnIn Nav="Fly" QuestName="Bad Intentions" QuestId="40227" TurnInName="Thaedris Feathersong" TurnInId="99093" X="1824.016" Y="3929.723" Z="272.0049" />
+        <PickUp Nav="Fly" QuestName="Tools of the Trade" QuestId="40300" GiverName="Thaedris Feathersong" GiverId="99093" X="1824.016" Y="3929.723" Z="272.0049" />
+        
+        <If Condition="DoQuest(40300)">
+            <CustomBehavior File="RunCode" Code="PrintStep(406)" />
+            <If Condition="!IsObjectiveComplete(1,40300)">
+                <CustomBehavior File="InteractWith" QuestId="40300" MobId="245681" NumOfTimes="1" >
+                    <HuntingGrounds>
+                        <Hotspot X="2001.061" Y="3864.436" Z="265.7645" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+            <CustomBehavior File="RunCode" Code="PrintStep(407)" />
+            <If Condition="!IsObjectiveComplete(2,40300)">
+                <CustomBehavior File="InteractWith" QuestId="40300" MobId="245682" NumOfTimes="1" >
+                    <HuntingGrounds>
+                        <Hotspot X="2165.194" Y="3990.482" Z="285.1466" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(408)" />
+        <PickUp Nav="Fly" QuestName="Fragments of Memory" QuestId="40308" GiverName="Shattered Burial Urn" GiverId="245688" X="2180.171" Y="3931.131" Z="285.1753" />
+    
+        <If Condition="DoQuest(40300)">
+            <CustomBehavior File="RunCode" Code="PrintStep(409)" />
+            <If Condition="!IsObjectiveComplete(3,40300)">
+                <CustomBehavior File="InteractWith" QuestId="40300" MobId="247339" NumOfTimes="1" >
+                    <HuntingGrounds>
+                        <Hotspot X="2260.457" Y="3765.863" Z="276.4616" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+        </If>
+
+        <If Condition="DoQuest(40308)">
+            <CustomBehavior File="RunCode" Code="PrintStep(410)" />
+            <CustomBehavior File="KillUntilComplete" MobIds="101577, 101580, 101581" TerminateWhen="IsObjectiveComplete(1,40308)" >
+                <HuntingGrounds>
+                    <Hotspot X="2231.044" Y="3845.981" Z="272.8451" />
+                    <Hotspot X="2260.457" Y="3765.863" Z="276.4616" />
+                    <Hotspot X="2293.826" Y="3800.436" Z="284.5994" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(411)" />
+        <TurnIn Nav="Fly" QuestName="Tools of the Trade" QuestId="40300" TurnInName="Thaedris Feathersong" TurnInId="99483" X="2204.25" Y="4029.721" Z="266.2486" />
+        <TurnIn Nav="Fly" QuestName="Fragments of Memory" QuestId="40308" TurnInName="Thaedris Feathersong" TurnInId="99483" X="2204.25" Y="4029.721" Z="266.2486" />
+        <PickUp Nav="Fly" QuestName="The Last Chapter" QuestId="40306" GiverName="Thaedris Feathersong" GiverId="99483" X="2204.25" Y="4029.721" Z="266.2486" />
+        <PickUp Nav="Fly" QuestName="Paying Respects" QuestId="40578" GiverName="Thaedris Feathersong" GiverId="99483" X="2204.25" Y="4029.721" Z="266.2486" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(412)" />
+        <While Condition="DoQuest(40306)">
+            <CustomBehavior File="InteractWith" QuestId="40306" MobId="245236" NumOfTimes="1" >
+                <HuntingGrounds>
+                    <Hotspot X="2252.697" Y="4214.764" Z="274.1958" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+
+        <If Condition="DoQuest(40578)">
+            <CustomBehavior File="RunCode" Code="PrintStep(413)" />
+            <CustomBehavior File="KillUntilComplete" MobIds="97732, 97729" TerminateWhen="IsObjectiveComplete(1,40578)" >
+                <HuntingGrounds>
+                    <Hotspot X="2228.927" Y="4200.428" Z="259.7561" />
+                    <Hotspot X="2141.745" Y="4146.204" Z="254.2535" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(414)" />
+        <TurnIn Nav="Fly" QuestName="The Last Chapter" QuestId="40306" TurnInName="Thaedris Feathersong" TurnInId="99575" X="2305.626" Y="4155.99" Z="295.1306"  />
+        <TurnIn Nav="Fly" QuestName="Paying Respects" QuestId="40578" TurnInName="Thaedris Feathersong" TurnInId="99575" X="2305.626" Y="4155.99" Z="295.1306"  />
+
+        <If Condition="NeedsQuest(40315)">
+            <CustomBehavior File="InteractWith" MobId="99575" NumOfTimes="1" X="1824.016" Y="3929.723" Z="272.0049" />
+            <CustomBehavior File="RunMacro" Macro="/run AcceptQuest()" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(415)" />
+        <If Condition="DoQuest(40315)">
+            <CustomBehavior File="InteractWith" QuestId="40315" MobId="99575" NumOfTimes="1" InteractByGossipOptions="1" X="1824.016" Y="3929.723" Z="272.0049" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(416)" />
+        <TurnIn Nav="Fly" QuestName="End of the Line" QuestId="40315" TurnInName="Thaedris Feathersong" TurnInId="99575" X="1824.016" Y="3929.723" Z="272.0049" />
+        <PickUp Nav="Fly" QuestName="The Final Ingredient" QuestId="40319" GiverName="Thaedris Feathersong" GiverId="99575" X="1824.016" Y="3929.723" Z="272.0049" />
+    
+        <CustomBehavior File="RunCode" Code="PrintStep(417)" />
+        <If Condition="DoQuest(40319)">
+            <CustomBehavior File="KillUntilComplete" MobIds="97750" TerminateWhen="IsObjectiveComplete(1,40319)" >
+                <HuntingGrounds>
+                    <Hotspot X="2331.418" Y="4029.525" Z="294.5592" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(418)" />
+        <TurnIn Nav="Fly" QuestName="The Final Ingredient" QuestId="40319" TurnInName="Thaedris Feathersong" TurnInId="99575" X="1824.016" Y="3929.723" Z="272.0049" />
+        <PickUp Nav="Fly" QuestName="Feathersong's Redemption" QuestId="40321" GiverName="Thaedris Feathersong" GiverId="99575" X="1824.016" Y="3929.723" Z="272.0049" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(419)" />
+        <If Condition="DoQuest(40321)">
+          <CustomBehavior File="CombatUseItemOnV2" QuestId="40321" ItemId="130260" ItemAppliesAuraId="AssumeItemUseAlwaysSucceeds" MobId="99593"
+          UseWhenMobHasHealthPercent="100" MaxRangeToUseItem="15" UseItemStrategy="UseItemOncePerTarget"
+          RecallPetAtMobPercentHealth="0" >
+              <HuntingGrounds >
+                <Hotspot X="2589.755" Y="4169.936" Z="340.3653" />
+              </HuntingGrounds>
+          </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(420)" />
+        <TurnIn Nav="Fly" QuestName="Feathersong's Redemption" QuestId="40321" TurnInName="Thaedris Feathersong" TurnInId="100779" X="2567.609" Y="4161.703" Z="336.2392" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(421)" />
+        <PickUp Nav="Fly" QuestName="Lyana Darksorrow" QuestId="40297" GiverName="Lyana Darksorrow" GiverId="98801" X="1255.429" Y="4946.362" Z="69.86123" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(422)" />
+        <If Condition="DoQuest(40297)">
+            <CustomBehavior File="InteractWith" QuestId="40297" MobId="99470" NumOfTimes="1" X="1255.996" Y="4948.305" Z="69.17934" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(423)" />
+        <TurnIn Nav="Fly" QuestName="Lyana Darksorrow" QuestId="40297" TurnInName="Lyana Darksorrow" TurnInId="99514" X="1255.996" Y="4948.305" Z="69.17934" />
+        <PickUp Nav="Fly" QuestName="Glaive Circumstances" QuestId="40307" GiverName="Lyana Darksorrow" GiverId="99514" X="1255.996" Y="4948.305" Z="69.17934" />
+        <PickUp Nav="Fly" QuestName="Fresh Meat" QuestId="40898" GiverName="Lyana Darksorrow" GiverId="99514" X="1255.996" Y="4948.305" Z="69.17934" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(424)" />
+        <If Condition="DoQuest(40307)">
+
+            <UseMount Value="false" />
+            
+            <If Condition="!IsObjectiveComplete(2,40307)">
+                <CustomBehavior File="InteractWith" QuestId="40307" MobId="245245" NumOfTimes="1" X="1225.726" Y="5148.667" Z="56.89205" />
+            </If>
+
+            <UseMount Value="true" />
+
+            <CustomBehavior File="RunCode" Code="PrintStep(425)" />
+            <If Condition="!IsObjectiveComplete(1,40307)">
+                <!-- <CustomBehavior File="MyCTM" X="1189.306" Y="5142.74" Z="55.93295" /> -->
+                <CustomBehavior File="KillUntilComplete" MobIds="100595" TerminateWhen="IsObjectiveComplete(1,40307)" >
+                    <HuntingGrounds>
+                        <Hotspot X="1057.823" Y="5288.306" Z="75.05817" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(426)" />
+        <If Condition="!IsObjectiveComplete(1,40898)">
+            <!-- <CustomBehavior File="MyCTM" X="1189.306" Y="5142.74" Z="55.93295" /> -->
+            <CustomBehavior File="KillUntilComplete" MobIds="101868" TerminateWhen="IsObjectiveComplete(1,40898)" >
+                <HuntingGrounds>
+                    <Hotspot X="1163.796" Y="5195.795" Z="78.11154" />
+                    <Hotspot X="1141.654" Y="5076.333" Z="58.12973" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(427)" />
+        <TurnIn Nav="Fly" QuestName="Glaive Circumstances" QuestId="40307" TurnInName="Lyana Darksorrow" TurnInId="99514" X="1255.996" Y="4948.305" Z="69.17934" />
+        <TurnIn Nav="Fly" QuestName="Fresh Meat" QuestId="40898" TurnInName="Lyana Darksorrow" TurnInId="99514" X="1255.996" Y="4948.305" Z="69.17934" />
+        <PickUp Nav="Fly" QuestName="Grimwing the Devourer" QuestId="40901" GiverName="Lyana Darksorrow" GiverId="99514" X="1255.996" Y="4948.305" Z="69.17934" />
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(428)" />
+        <If Condition="DoQuest(40901)">
+            <MoveTo X="1273.912" Y="5231.249" Z="93.53309" />
+            <CustomBehavior File="UseItem" ItemId="133756" />
+            <CustomBehavior File="KillUntilComplete" MobIds="102292" TerminateWhen="IsObjectiveComplete(1,40901)" >
+                <HuntingGrounds>
+                    <Hotspot X="1273.912" Y="5231.249" Z="93.53309" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(429)" />
+        <TurnIn Nav="Fly" QuestName="Grimwing the Devourer" QuestId="40901" TurnInName="Lyana Darksorrow" TurnInId="99890" X="879.246" Y="4990.934" Z="25.92789"  />
+        <PickUp Nav="Fly" QuestName="A Fate Worse Than Dying" QuestId="40328" GiverName="Lyana Darksorrow" GiverId="99890" X="879.246" Y="4990.934" Z="25.92789"/>
+        <PickUp Nav="Fly" QuestName="Symbols of Power" QuestId="40929" GiverName="Lyana Darksorrow" GiverId="99890" X="879.246" Y="4990.934" Z="25.92789" />
+<!-- <TurnIn Nav="Fly" QuestName="Symbols of Power" QuestId="40929" TurnInName="Lyana Darksorrow" TurnInId="99890" /> -->
+<!-- <TurnIn Nav="Fly" QuestName="A Fate Worse Than Dying" QuestId="40328" TurnInName="Lyana Darksorrow" TurnInId="99890" /> -->
+
+        <CustomBehavior File="RunCode" Code="PrintStep(430)" />
+        <If Condition="DoQuest(40328)">
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="500" Range="5.0" >
+                <HuntingGrounds>
+                    <Hotspot X="923.4418" Y="4752.103" Z="44.11855" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>   
+
+    </QuestOrder>
+</HBProfile>

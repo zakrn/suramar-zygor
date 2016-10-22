@@ -118,6 +118,7 @@
                                 Me.MinimapZoneText == "Artisan's Gallery" ||
                                 Me.MinimapZoneText == "Astravar Harbor" ||
                                 Me.MinimapZoneText == "Evermoon Bazaar" ||
+                                Me.MinimapZoneText == "Evermoon Commons" ||
                                 Me.MinimapZoneText == "Shimmershade Garden" ||
                                 Me.MinimapZoneText == "Terrace of Order" ||
                                 Me.MinimapZoneText == "Suramar City";
@@ -314,8 +315,8 @@
         <PickUp Nav="Fly" QuestName="Special Delivery" QuestId="40947" GiverName="Silgryn" GiverId="108411" X="358.6021" Y="3975.843" Z="1.388276" />
 
         <CustomBehavior File="RunCode" Code="PrintStep(346)" />
-        <If Condition="DoQuest(40947)">
-            <CustomBehavior File="InteractWith" MobIds="106919" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1,40947)" WaitTime="1400">
+        <While Condition="DoQuest(40947)">
+            <CustomBehavior File="InteractWith" MobIds="106919" NumOfTimes="1" MobState="Alive">
                 <HuntingGrounds>
                     <Hotspot X="504.791" Y="3952.093" Z="1.493344" />
                     <Hotspot X="554.4365" Y="3891.466" Z="5.685683" />
@@ -323,11 +324,12 @@
                     <Hotspot X="779.6024" Y="3992.183" Z="5.773875" />
                 </HuntingGrounds>
             </CustomBehavior>
-        </If>
+            <CustomBehavior File="InteractWith" MobIds="106919" NumOfTimes="1" MobState="Dead"></CustomBehavior>
+        </While>
         
         <CustomBehavior File="RunCode" Code="PrintStep(347)" />
         <If Condition="DoQuest(41878)">
-            <CustomBehavior File="InteractWith" MobIds="107225" NumOfTimes="1" InteractByGossipOptions="1" />
+            <CustomBehavior File="InteractWith" MobIds="107225" NumOfTimes="1" InteractByGossipOptions="1" X="624.457" Y="3818.361" Z="0.6609841"  />
         </If>
 
         <CustomBehavior File="RunCode" Code="PrintStep(348)" />
@@ -339,7 +341,7 @@
 
         <CustomBehavior File="RunCode" Code="PrintStep(349)" />
         <If Condition="DoQuest(40730)">
-            <CustomBehavior File="InteractWith" MobIds="250240" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1,40730)" >
+            <CustomBehavior File="InteractWith" MobIds="250240, 250239" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1,40730)" >
                 <HuntingGrounds>
                     <Hotspot X="504.791" Y="3952.093" Z="1.493344" />
                     <Hotspot X="554.4365" Y="3891.466" Z="5.685683" />
@@ -348,20 +350,19 @@
                 </HuntingGrounds>
             </CustomBehavior>
         </If>
+
+        <!-- avoid list without orbitist -->
+        <CustomBehavior File="Hooks\Avoid" AvoidName="MaskDetectors" ObjectIds="99755, 113633, 107717, 107727, 113738, 107521, 105292" Radius="20" />
 
         <CustomBehavior File="RunCode" Code="PrintStep(350)" />
         <If Condition="DoQuest(40727)">
-            <CustomBehavior File="KillUntilComplete" MobIds="114468" TerminateWhen="IsObjectiveComplete(1, 40727)" >
+            <CustomBehavior File="KillUntilComplete" MobIds="114468, 114470" TerminateWhen="IsObjectiveComplete(1, 40727)" >
                 <HuntingGrounds>
-                    <Hotspot X="504.791" Y="3952.093" Z="1.493344" />
-                    <Hotspot X="554.4365" Y="3891.466" Z="5.685683" />
-                    <Hotspot X="668.2935" Y="3927.591" Z="5.685683" />
-                    <Hotspot X="779.6024" Y="3992.183" Z="5.773875" />
+                    <Hotspot X="627.1587" Y="3870.491" Z="5.682046" />
+                    <Hotspot X="539.246" Y="3854.614" Z="5.685413" />
                 </HuntingGrounds>
             </CustomBehavior>
         </If>
-
-        <CustomBehavior File="Hooks\Avoid" AvoidName="MaskDetectors" ObjectIds="105759, 99755, 113633, 107717, 107727, 113738, 114470, 107521, 105292" Radius="20" />
 
         <CustomBehavior File="RunCode" Code="PrintStep(351)" />
         <TurnIn Nav="Fly" QuestName="Redistribution" QuestId="40730" TurnInName="Deline" TurnInId="107225" X="630.7161" Y="3819.96" Z="0.6614472"/>
@@ -423,7 +424,10 @@
 
         <CustomBehavior File="RunCode" Code="PrintStep(360)" />
         <If Condition="DoQuest(42722)">
-            <CustomBehavior File="KillUntilComplete" MobIds="108096" TerminateWhen="HasItem(138301) &amp;&amp; GetItemCount(138301) == 3" >
+            <If Condition="Me.MinimapZoneText != &quot;Terrace of Order&quot;">
+                <CustomBehavior File="MyCTM" X="746.7241" Y="4194.674" Z="3.248303"  />
+            </If>
+            <CustomBehavior File="KillUntilComplete" MobIds="108096" TerminateWhen="HasItem(138301) &amp;&amp; GetItemCount(138301) &gt;= 3" >
                 <HuntingGrounds>
                     <Hotspot X="921.1705" Y="4040.392" Z="1.35467" />
                     <Hotspot X="912.6882" Y="3963.212" Z="1.353993" />
@@ -432,7 +436,7 @@
             </CustomBehavior>
         </If>
 
-        <If Condition="DoQuest(42722) &amp;&amp; GetItemCount(138301) == 3">
+        <If Condition="DoQuest(42722) &amp;&amp; GetItemCount(138301) &gt;= 3">
             <CustomBehavior File="InteractWith" MobIds="251190" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1,42722)">
                 <HuntingGrounds>
                     <Hotspot X="921.1705" Y="4040.392" Z="1.35467" />
@@ -472,7 +476,7 @@
         
         <!-- TODO this only has one step and nothing happens? -->
         <CustomBehavior File="RunCode" Code="PrintStep(365)" />
-        <TurnIn Nav="Fly" QuestName="Wasted Potential" QuestId="44051" TurnInName="Rosaine" TurnInId="111900" X="423.5779" Y="4007.669" Z="1.474621" />
+        <PickUp Nav="Fly" QuestName="Wasted Potential" QuestId="44051" GiverName="Rosaine" GiverId="111900" X="423.5779" Y="4007.669" Z="1.474621" />
     
         <CustomBehavior File="RunCode" Code="PrintStep(366)" />
         <If Condition="DoQuest(42487) &amp;&amp; !IsObjectiveComplete(1,42487)">
@@ -552,7 +556,10 @@
 
         <CustomBehavior File="RunCode" Code="PrintStep(377)" />
         <If Condition="DoQuest(40424) &amp;&amp; !IsObjectiveComplete(3,40424)">
-            <Runto X="1162.4" Y="4558.388" Z="119.5889" />
+            <MoveTo X="1163.762" Y="4575.891" Z="119.5988" />
+            <CustomBehavior File="WaitTimer" WaitTime="12000" />
+            <MoveTo X="1161.659" Y="4559.709" Z="119.5901" />
+            <CustomBehavior File="WaitTimer" WaitTime="12000" />
         </If>
 
         <CustomBehavior File="RunCode" Code="PrintStep(378)" />
@@ -603,7 +610,7 @@
         <CustomBehavior File="RunCode" Code="PrintStep(384)" />
         <TurnIn Nav="Fly" QuestName="Felsoul Teleporter Online!" QuestId="41575" TurnInName="Unpowered Telemancy Beacon" TurnInId="252107" X="622.8325" Y="4481.75" Z="-111.5352" />
 
-        <If Condition="HasQuest(40470) &amp;&amp; IsObjectiveComplete(2,40470) &amp;&amp; IsQuestCompleted(41575) &amp;&amp; Me.MinimapZoneText == &quot;The Fel Breach&quot;" >
+        <If Condition="IsQuestCompleted(41575) &amp;&amp; Me.MinimapZoneText == &quot;The Fel Breach&quot;" >
             <CustomBehavior File="InteractWith" MobIds="260263" NumOfTimes="1" X="622.1436" Y="4480.874" Z="-111.5409"  />
         </If>
 
@@ -625,7 +632,8 @@
 
         <CustomBehavior File="RunCode" Code="PrintStep(386)" />
         <TurnIn Nav="Fly" QuestName="Quality of Life" QuestId="40470" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1721.308" Y="4613.505" Z="123.8009" />
-        <PickUp Nav="Fly" QuestName="Building an Army" QuestId="44636" GiverName="First Arcanist Thalyssra" GiverId="97140" X="1721.308" Y="4613.505" Z="123.8009" />
+        <!-- Skip this for now, its complicated -->
+        <!-- <PickUp Nav="Fly" QuestName="Building an Army" QuestId="44636" GiverName="First Arcanist Thalyssra" GiverId="97140" X="1721.308" Y="4613.505" Z="123.8009" />
 
         <CustomBehavior File="RunCode" Code="PrintStep(387)" />
         <CustomBehavior File="RunCode" Code="PrintStep(388)" />
@@ -634,46 +642,11 @@
         </If>
 
         <CustomBehavior File="RunCode" Code="PrintStep(389)" />
-        <TurnIn Nav="Fly" QuestName="Building an Army" QuestId="44636"/>
+        <TurnIn Nav="Fly" QuestName="Building an Army" QuestId="44636"/> -->
 
-        <!-- TRAINING SCENARIO -->
-        <CustomBehavior File="RunCode" Code="PrintStep(390)" />
-        <If Condition="Me.AreaId == 1033 &amp;&amp; Bots.DungeonBuddy.Helpers.ScenarioInfo.Current.CurrentStageNumber == 1" >
-            <CustomBehavior File="InteractWith" MobIds="109008" NumOfTimes="1" InteractByGossipOptions="1" X="2102.989" Y="5392.836" Z="48.12273" />
-        </If>
+        <!-- TODO Run scenario script -->
 
-        <CustomBehavior File="RunCode" Code="PrintStep(391)" />
-        <CustomBehavior File="RunCode" Code="PrintStep(392)" />
-        <If Condition="Me.AreaId == 1033 &amp;&amp; Bots.DungeonBuddy.Helpers.ScenarioInfo.Current.CurrentStageNumber == 2" >
-            <CustomBehavior File="RunCode" Code="PrintStep(3921)" />
-            <CustomBehavior File="Hooks\DoWhen" UseAtInterval="5000" LogExecution="true" ActivityName="use_ability" AllowUseDuringCombat="true" >
-                <If Condition="Me.IsActuallyInCombat">
-                    <CustomBehavior File="Misc\RunLua" Lua="ExtraActionButton1:Click();" />
-                </If>
-            </CustomBehavior>
-
-<!--             <MoveTo X="2161.402" Y="5379.453" Z="36.87641" />
-            <MoveTo X="2198.6" Y="5398.503" Z="36.87683" />
-            <MoveTo X="2221.614" Y="5362.199" Z="36.87586" />
-            <MoveTo X="2203.118" Y="5340.991" Z="36.87623" />
-            <CustomBehavior File="InteractWith" MobIds="110141" NumOfTimes="1" X="2203.118" Y="5340.991" Z="36.87623"  />
-            <MoveTo X="2161.402" Y="5379.453" Z="36.87641" />
-            <MoveTo X="2192.154" Y="5369.486" Z="35.50682" /> -->
-            <MoveTo X="2254.594" Y="5356.899" Z="37.02238" />
-            <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="2" X="2254.594" Y="5356.899" Z="37.02238" WaitForNpcs="false"  />
-            <Hotspot X="2272.458" Y="5455.635" Z="9.342071" />
-            <CustomBehavior File="InteractWith" MobIds="110141" NumOfTimes="1" X="2272.458" Y="5455.635" Z="9.342071"  />
-
-
-            <CustomBehavior File="Hooks\DoWhen" ActivityName="use_ability" Command="Remove" />
-        </If>
-
-
-        <!-- <TurnIn Nav="Fly" QuestName="Building an Army" QuestId="44636" TurnInName="First Arcanist Thalyssra" TurnInId="97140" /> -->
-        <!-- <TurnIn Nav="Fly" QuestName="Thalyssra's Abode" QuestId="42488" TurnInName="First Arcanist Thalyssra" TurnInId="97140" /> -->
-
-
-
+        <CustomBehavior File="LoadProfile" ProfileName="[N] Zygor - Suramar - 394" RememberProfile="true" />
 
     </QuestOrder>
 </HBProfile>
