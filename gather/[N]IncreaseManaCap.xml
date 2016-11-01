@@ -32,10 +32,59 @@
     </AvoidMobs>
     <!--Here is where the meat of the profile will take place-->
     <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                    bool DoQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (!HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsBreadcrumbQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (IsQuestCompleted(questId)) return false;
+                        }
+                        return true;
+                    }
+                    bool QuestDone(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+
+                    uint MaxAncientMana()
+                    {
+                        if( WoWCurrency.GetCurrencyById(1155) != null )
+                        {
+                            return WoWCurrency.GetCurrencyById(1155).TotalMax;
+                        }
+                        return 0;
+                    }
+                ]]>
+        </CustomBehavior>
+
         <CustomBehavior File="RunCode" Code="RoutineManager.SetCapabilityState(CapabilityFlags.MultiMobPull, CapabilityState.Disallowed);"/>
         <DisableBehavior Name="Pull" />
         <CustomBehavior File="UserSettings" HarvestHerbs="false" HarvestMinerals="false" /> <!-- Harvesting will bug out CTMs. --> 
 
+        <If Condition="IsQuestCompleted(42842)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Kel'danath's Flask Done&quot;);" />
+        </If>
         <If Condition="!IsQuestCompleted(42842)" >
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Kel'danath's Flask &quot;);" />
             <MoveTo DestName="Kel'danath's Flask" X="1423.234" Y="5471.044" Z="78.43398" />
@@ -44,6 +93,92 @@
                 <CustomBehavior File="UseItem" ItemId="136269" />
             </If>
         </If>
+
+        <If Condition="IsQuestCompleted(43988)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Volatile Leyline Crystal Done&quot;);" />
+        </If>
+        <If Condition="!IsQuestCompleted(43988)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Volatile Leyline Crystal&quot;);" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="254009" X="2197.311" Y="5471.879" Z="-26.0712" />
+            <If Condition="HasItem(140328)">
+                <CustomBehavior File="UseItem" ItemId="140328" />
+            </If>
+        </If>
+
+        <If Condition="IsQuestCompleted(43989)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Infinite Stone Done&quot;);" />
+        </If>
+        <If Condition="!IsQuestCompleted(43989)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Infinite Stone&quot;);" />
+            <MoveTo X="2989.819" Y="4690.892" Z="421.0724" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="254023" X="2989.819" Y="4690.892" Z="421.0724" />
+            <If Condition="HasItem(140329)">
+                <CustomBehavior File="UseItem" ItemId="140329" />
+            </If>
+            <If Condition="HasItem(141605)">
+                <CustomBehavior File="UseItem" ItemId="141605" />
+            </If>
+        </If>
+
+        <If Condition="IsQuestCompleted(43986)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Enchanted Burial Urn Done&quot;);" />
+        </If>
+        <If Condition="!IsQuestCompleted(43986)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Enchanted Burial Urn&quot;);" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="254006" X="2304.84" Y="4162.628" Z="295.1306" />
+            <If Condition="HasItem(140326)">
+                <CustomBehavior File="UseItem" ItemId="140326" />
+            </If>
+            <If Condition="HasItem(141605)">
+                <CustomBehavior File="UseItem" ItemId="141605" />
+            </If>
+        </If>
+
+        <If Condition="IsQuestCompleted(43987)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Kyrtos's Research Notes Done&quot;);" />
+        </If>
+        <If Condition="!IsQuestCompleted(43987)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Kyrtos's Research Notes&quot;);" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="254008" X="827.1096" Y="5172.174" Z="37.62635" />
+            <If Condition="HasItem(140327)">
+                <CustomBehavior File="UseItem" ItemId="140327" />
+            </If>
+        </If>
+
+        <!-- side quest -->
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Checking sidequest chain&quot;);" />
+        <If Condition="IsQuestCompleted(40625)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: A Different Source, Complete&quot;);" />
+        </If>
+        <PickUp Nav="Fly" QuestName="A Different Source" QuestId="40625" GiverName="Kyrtos" GiverId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+
+        <EnableBehavior Name="Pull" />
+
+
+        <If Condition="DoQuest(40625)">
+
+            <CustomBehavior File="Hooks\Avoid" AvoidName="infernals" ObjectId="99764" Radius="20" />
+
+            <CustomBehavior File="KillUntilComplete" MobIds="99765,106339,106348" TerminateWhen="IsObjectiveComplete(1,40625)" >
+                <HuntingGrounds>
+                    <Hotspot X="784.8348" Y="5035.829" Z="0.3443883" />
+                    <Hotspot X="968.0789" Y="4855.959" Z="35.38117" />
+                    <Hotspot X="1065.062" Y="4823.668" Z="44.95152" />
+                    <Hotspot X="1163.07" Y="5038.284" Z="55.15041" />
+                    <Hotspot X="1100.779" Y="5244.342" Z="77.17715" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            
+            <CustomBehavior File="Hooks\Avoid" AvoidName="infernals" Command="Remove" />
+        </If>
+
+        <TurnIn Nav="Fly" QuestName="A Different Source" QuestId="40625" TurnInName="Kyrtos" TurnInId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+        <PickUp Nav="Fly" QuestName="The Road to Fel" QuestId="40657" GiverName="Kyrtos" GiverId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+<!-- <TurnIn Nav="Fly" QuestName="The Road to Fel" QuestId="40657" TurnInName="Kyrtos" TurnInId="101076" /> -->
+        <PickUp Nav="Fly" QuestName="Discovery Requires Experimentation" QuestId="40683" GiverName="Kyrtos" GiverId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+<!-- <TurnIn Nav="Fly" QuestName="Discovery Requires Experimentation" QuestId="40683" TurnInName="Kyrtos" TurnInId="101076" /> -->
+
+
 
     </QuestOrder>
 </HBProfile>
