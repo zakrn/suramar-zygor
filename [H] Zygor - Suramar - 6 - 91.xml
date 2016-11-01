@@ -289,7 +289,7 @@
         <!-- 12 -->
         <CustomBehavior File="RunCode" Code="PrintStep(12)" />
         <If Condition="DoQuest(40008)">
-            <CustomBehavior File="EscortGroup" QuestId="40008" EscortNpcId="98312" PriorityTargetId="98946" EscortMaxFollowDistance="4" />
+            <CustomBehavior File="EscortGroup" QuestId="40008" EscortNpcId="98312" PriorityTargetId="98946" EscortMaxFollowDistance="4" EscortMaxFightDistance="50" />
         </If>
 
         <!-- 13 -->
@@ -625,14 +625,14 @@
         <!-- 64 --> 
         <CustomBehavior File="RunCode" Code="PrintStep(64)" />
         <If Condition="DoQuest(40747) &amp;&amp; IsObjectiveComplete(1,40747) &amp;&amp; !IsObjectiveComplete(3,40747) &amp;&amp; IsAtWarpLab()" >
-            <CustomBehavior File="InteractWith" MobId="246229" NumOfTimes="1" X="1711.833" Y="3706.787" Z="261.2419"   />
+            <CustomBehavior File="InteractWith" MobId="246229" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="1711.833" Y="3706.787" Z="261.2419"   />
         </If>
 
         <!-- 65 --> 
         <CustomBehavior File="RunCode" Code="PrintStep(65)" />
         <!-- warplab to workshop -->
         <If Condition="DoQuest(40747) &amp;&amp; IsObjectiveComplete(1,40747) &amp;&amp; IsObjectiveComplete(3,40747) &amp;&amp; !IsObjectiveComplete(2,40747) &amp;&amp; IsAtWarpLab()" >
-            <CustomBehavior File="InteractWith" MobId="245928" NumOfTimes="1" X="1787.05" Y="3763.933" Z="268.6244"  />
+            <CustomBehavior File="InteractWith" MobId="245928" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="1787.05" Y="3763.933" Z="268.6244"  />
             <Moveto X="1776.192" Y="3763.838" Z="268.8917" />
         </If>
 
@@ -640,7 +640,7 @@
         <CustomBehavior File="RunCode" Code="PrintStep(66)" />
         <!-- workshop to gardens -->
         <If Condition="DoQuest(40747) &amp;&amp; IsObjectiveComplete(1,40747) &amp;&amp; IsObjectiveComplete(3,40747) &amp;&amp; !IsObjectiveComplete(2,40747) &amp;&amp; IsAtWorkshop()" >
-            <CustomBehavior File="InteractWith" MobId="245925" NumOfTimes="1" X="1714.095" Y="3904.475" Z="167.9921" />
+            <CustomBehavior File="InteractWith" MobId="245925" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="1714.095" Y="3904.475" Z="167.9921" />
             <MoveTo X="1709.767" Y="3915.335" Z="167.9709" />
         </If>
 
@@ -648,7 +648,7 @@
         <CustomBehavior File="RunCode" Code="PrintStep(67)" />
         <!-- gardens to fountain -->
         <If Condition="DoQuest(40747) &amp;&amp; IsObjectiveComplete(1,40747) &amp;&amp; IsObjectiveComplete(3,40747) &amp;&amp; !IsObjectiveComplete(2,40747) &amp;&amp; IsAtGardens()" >
-            <CustomBehavior File="InteractWith" MobId="245954" NumOfTimes="1" X="1987.021" Y="3560.165" Z="362.8521" />
+            <CustomBehavior File="InteractWith" MobId="245954" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="1987.021" Y="3560.165" Z="362.8521" />
             <Moveto X="1976.355" Y="3560.497" Z="363.0712" />
         </If>
 
@@ -656,7 +656,7 @@
         <CustomBehavior File="RunCode" Code="PrintStep(68)" />
         <!-- fountain to telemetry lab -->
         <If Condition="DoQuest(40747) &amp;&amp; IsObjectiveComplete(1,40747) &amp;&amp; IsObjectiveComplete(3,40747) &amp;&amp; !IsObjectiveComplete(2,40747) &amp;&amp; IsAtFountain()" >
-            <CustomBehavior File="InteractWith" MobId="245947" NumOfTimes="1" X="1810.194" Y="3641.862" Z="303.9812"   />
+            <CustomBehavior File="InteractWith" MobId="245947" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="1810.194" Y="3641.862" Z="303.9812"   />
             <MoveTo X="1800.066" Y="3646.988" Z="304.2827" />
             <!-- tweak this loc -->
         </If>
@@ -664,14 +664,14 @@
         <!-- 69 --> 
         <CustomBehavior File="RunCode" Code="PrintStep(69)" />
         <If Condition="DoQuest(40747) &amp;&amp; IsObjectiveComplete(1,40747) &amp;&amp; IsObjectiveComplete(3,40747) &amp;&amp; !IsObjectiveComplete(2,40747) &amp;&amp; IsAtTelemetryLabs()" >
-            <CustomBehavior File="InteractWith" MobId="246225" NumOfTimes="1" X="2149.879" Y="3777.373" Z="462.5777"     />
+            <CustomBehavior File="InteractWith" MobId="246225" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="2149.879" Y="3777.373" Z="462.5777"     />
         </If>
 
         <!-- 70 --> 
         <CustomBehavior File="RunCode" Code="PrintStep(70)" />
         <!-- telemetry lab to fountain -->
         <If Condition="QuestDone(40747) &amp;&amp; IsAtTelemetryLabs()" >
-            <CustomBehavior File="InteractWith" MobId="245950" NumOfTimes="1" X="2072.113" Y="3715.378" Z="454.1997"  />
+            <CustomBehavior File="InteractWith" MobId="245950" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="2072.113" Y="3715.378" Z="454.1997"  />
             <MoveTo X="2083.047" Y="3711.535" Z="454.3508" />
         </If>
 
@@ -679,7 +679,7 @@
         <CustomBehavior File="RunCode" Code="PrintStep(71)" />
         <!-- fountain to garden -->
         <If Condition="QuestDone(40747) &amp;&amp; IsAtFountain()" >
-            <CustomBehavior File="InteractWith" MobId="245942" NumOfTimes="1" X="1792.744" Y="3650.518" Z="304.0344"   />
+            <CustomBehavior File="InteractWith" MobId="245942" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="1792.744" Y="3650.518" Z="304.0344"   />
             <MoveTo X="1800.066" Y="3646.988" Z="304.2827" />
         </If>
 

@@ -82,7 +82,7 @@
 
                     bool ShouldCastMask()
                     {
-                        return Me.IsAlive && IsInCity() && !Me.HasAura(202477);
+                        return Me.IsAlive && IsInCity() && (!Me.HasAura(202477) && !Me.HasAura(208824));
                     }
 
                     void CastMask()
@@ -192,7 +192,7 @@
             <CustomBehavior File="InteractWith" MobId="249021" X="765.7309" Y="4419.362" Z="123.4398" />
         </If>
 
-        <CustomBehavior File="Hooks\DoWhen" UseWhen="!Me.HasAura(208824) &amp;&amp; Me.MinimapZoneText == &quot;The Grand Promenade&quot; &amp;&amp; HasItem(136600)" ActivityName="applyMask" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" ActivityName="applyMask" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
             <CustomBehavior File="UseItem" ItemId="136600" />
         </CustomBehavior>
 
@@ -254,13 +254,23 @@
         <!-- 135 -->
         <CustomBehavior File="RunCode" Code="PrintStep(135)" />
         <If Condition="DoQuest(41989) &amp;&amp; !IsObjectiveComplete(2,41989)">
-            <CustomBehavior File="KillUntilComplete" MobIds="106173" QuestId="41989" QuestObjectiveIndex="2" X="532.6307" Y="4316.902" Z="132.9876" />
+            <If Condition="Me.IsHorde" >
+                <CustomBehavior File="KillUntilComplete" MobIds="106239" QuestId="41989" QuestObjectiveIndex="2" X="532.6307" Y="4316.902" Z="132.9876" />
+            </If>
+            <If Condition="Me.IsAlliance" >
+                <CustomBehavior File="KillUntilComplete" MobIds="106173" QuestId="41989" QuestObjectiveIndex="2" X="532.6307" Y="4316.902" Z="132.9876" />
+            </If>
         </If>
 
         <!-- 136 -->
         <CustomBehavior File="RunCode" Code="PrintStep(136)" />
         <If Condition="DoQuest(41989) &amp;&amp; !IsObjectiveComplete(3,41989)">
-            <CustomBehavior File="InteractWith" MobId="106173" InteractByGossipOptions="1" X="532.6307" Y="4316.902" Z="132.9876" />
+            <If Condition="Me.IsHorde" >
+                <CustomBehavior File="InteractWith" MobId="106239" InteractByGossipOptions="1" X="532.6307" Y="4316.902" Z="132.9876" />
+            </If>
+            <If Condition="Me.IsAlliance" >
+                <CustomBehavior File="InteractWith" MobId="106173" InteractByGossipOptions="1" X="532.6307" Y="4316.902" Z="132.9876" />
+            </If>
         </If>
 
         <!-- 137 -->
@@ -278,7 +288,12 @@
         <!-- 139 -->
         <CustomBehavior File="RunCode" Code="PrintStep(139)" />
         <If Condition="DoQuest(42079)">
-            <CustomBehavior File="InteractWith" MobId="106420" InteractByUsingItemId="136970" NumOfTimes="1" QuestId="42079"  />
+            <If Condition="Me.IsHorde" >
+                <CustomBehavior File="InteractWith" MobId="106418" InteractByUsingItemId="136970" NumOfTimes="1" QuestId="42079"  />
+            </If>
+            <If Condition="Me.IsAlliance" >
+                <CustomBehavior File="InteractWith" MobId="106420" InteractByUsingItemId="136970" NumOfTimes="1" QuestId="42079"  />
+            </If>
         </If>
 
         <!-- 140 -->

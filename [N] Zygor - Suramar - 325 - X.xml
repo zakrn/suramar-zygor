@@ -121,6 +121,7 @@
                                 Me.MinimapZoneText == "Evermoon Commons" ||
                                 Me.MinimapZoneText == "Shimmershade Garden" ||
                                 Me.MinimapZoneText == "Terrace of Order" ||
+                                Me.MinimapZoneText == "Lunastre Estate" ||
                                 Me.MinimapZoneText == "Suramar City";
                     }
 

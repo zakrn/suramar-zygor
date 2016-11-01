@@ -235,6 +235,15 @@
 
 
         <CustomBehavior File="RunCode" Code="PrintStep(399)" />
+        <If Condition="QuestDone(42489) &amp;&amp; QuestDone(42488) &amp;&amp; IsThalyssraThirsty()">
+            <If Condition="!HasAncientMana(50)">
+                <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-50" RememberProfile="true" />
+            </If>
+            <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945"  />
+            <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+            <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+            <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+        </If>
         <TurnIn Nav="Fly" QuestName="Thalyssra's Drawers" QuestId="42489" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1721.308" Y="4613.505" Z="123.8009" />
         <TurnIn Nav="Fly" QuestName="Thalyssra's Abode" QuestId="42488" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1721.308" Y="4613.505" Z="123.8009" />
 
@@ -248,6 +257,7 @@
 
         <CustomBehavior File="RunCode" Code="PrintStep(401)" />
         <While Condition="DoQuest(40266)">
+            <MoveTo X="1955.3" Y="4090.386" Z="263.6335" />
             <CustomBehavior File="InteractWith" QuestId="40266" MobId="245186" NumOfTimes="1" InteractBlacklistTimeInSeconds="1000">
                 <HuntingGrounds>
                     <Hotspot X="1981.782" Y="4070.541" Z="263.5798" />
@@ -461,17 +471,226 @@
         <TurnIn Nav="Fly" QuestName="Grimwing the Devourer" QuestId="40901" TurnInName="Lyana Darksorrow" TurnInId="99890" X="879.246" Y="4990.934" Z="25.92789"  />
         <PickUp Nav="Fly" QuestName="A Fate Worse Than Dying" QuestId="40328" GiverName="Lyana Darksorrow" GiverId="99890" X="879.246" Y="4990.934" Z="25.92789"/>
         <PickUp Nav="Fly" QuestName="Symbols of Power" QuestId="40929" GiverName="Lyana Darksorrow" GiverId="99890" X="879.246" Y="4990.934" Z="25.92789" />
-<!-- <TurnIn Nav="Fly" QuestName="Symbols of Power" QuestId="40929" TurnInName="Lyana Darksorrow" TurnInId="99890" /> -->
-<!-- <TurnIn Nav="Fly" QuestName="A Fate Worse Than Dying" QuestId="40328" TurnInName="Lyana Darksorrow" TurnInId="99890" /> -->
+
+        
+        <UseMount Value="false" />
+        <CustomBehavior File="ForcedDismount" />
 
         <CustomBehavior File="RunCode" Code="PrintStep(430)" />
-        <If Condition="DoQuest(40328)">
-            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="500" Range="5.0" >
+        <While Condition="DoQuest(40328)">
+            <MoveTo X="907.4639" Y="4713.876" Z="43.51472" />
+            <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="1" CollectionDistance="21.0" Range="21.0" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="907.4639" Y="4713.876" Z="43.51472" />
+
+            <MoveTo X="956.3354" Y="4699.007" Z="43.90011"  />
+            <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="1" CollectionDistance="21.0" Range="21.0" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="956.3354" Y="4699.007" Z="43.90011"  />
+
+            <MoveTo X="919.2921" Y="4649.644" Z="38.64106"  />
+            <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="1" CollectionDistance="21.0" Range="21.0" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="919.2921" Y="4649.644" Z="38.64106"  />
+
+            <MoveTo X="1006.53" Y="4739.956" Z="39.0179" />
+            <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="1" CollectionDistance="21.0" Range="21.0" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="1006.53" Y="4739.956" Z="39.0179"   />
+
+            <MoveTo X="900.4448" Y="4754.698" Z="41.06585" />
+            <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="1" CollectionDistance="21.0" Range="21.0" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="900.4448" Y="4754.698" Z="41.06585" />
+
+            <MoveTo X="933.193" Y="4766.787" Z="66.32096" />
+            <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="1" CollectionDistance="21.0" Range="21.0" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="933.193" Y="4766.787" Z="66.32096"  />
+
+            <MoveTo X="957.9017" Y="4763.552" Z="66.29777" />
+            <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="1" CollectionDistance="21.0" Range="21.0" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="957.9017" Y="4763.552" Z="66.29777" />
+
+            <MoveTo X="894.1814" Y="4730.729" Z="67.04298"   />
+            <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="1" CollectionDistance="19.0" Range="19.0" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="894.1814" Y="4730.729" Z="67.04298"     />
+
+            <MoveTo X="893.9567" Y="4693.953" Z="66.92442"   />
+            <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            <CustomBehavior File="InteractWith" QuestId="40328" MobId="246568" NumOfTimes="1" CollectionDistance="19.0" Range="19.0" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="893.9567" Y="4693.953" Z="66.92442" />
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(431)" />
+        <While Condition="DoQuest(40929)">
+            <CustomBehavior File="KillUntilComplete" MobIds="99762,101878,106339,102898,110805" TerminateWhen="IsObjectiveComplete(1,40929)" >
                 <HuntingGrounds>
-                    <Hotspot X="923.4418" Y="4752.103" Z="44.11855" />
+                    <Hotspot X="894.2945" Y="4713.803" Z="66.02782"  />
                 </HuntingGrounds>
             </CustomBehavior>
-        </If>   
+        </While>
+
+        <UseMount Value="true" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(432)" />
+        <TurnIn Nav="Fly" QuestName="Symbols of Power" QuestId="40929" TurnInName="Lyana Darksorrow" TurnInId="99890" X="879.246" Y="4990.934" Z="25.92789" />
+        <TurnIn Nav="Fly" QuestName="A Fate Worse Than Dying" QuestId="40328" TurnInName="Lyana Darksorrow" TurnInId="99890" X="879.246" Y="4990.934" Z="25.92789" />
+        <PickUp Nav="Fly" QuestName="Shard of Vorgos" QuestId="41097" GiverName="Lyana Darksorrow" GiverId="99890" X="879.246" Y="4990.934" Z="25.92789" />
+        <PickUp Nav="Fly" QuestName="Shard of Kozak" QuestId="41098" GiverName="Lyana Darksorrow" GiverId="99890" X="879.246" Y="4990.934" Z="25.92789" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(433)" />
+        <PickUp Nav="Fly" QuestName="The Key Is Around Here Somewhere..." QuestId="41139" GiverName="Angus Stormbrew" GiverId="103204" X="387.9645" Y="5079.631" Z="-87.42442"  />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(434)" />
+        <If Condition="DoQuest(41139)">
+            <CustomBehavior File="InteractWith" QuestId="41139" MobId="247063" NumOfTimes="500" ProactiveCombatStrategy="ClearMobsThatWillAggro" >
+                <HuntingGrounds>
+                    <Hotspot X="386.083" Y="5078.913" Z="-87.1555" />
+                    <Hotspot X="407.3662" Y="5030.951" Z="-88.56811" />
+                    <Hotspot X="459.8196" Y="5037.458" Z="-89.20588" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(435)" />
+        <TurnIn Nav="Fly" QuestName="The Key Is Around Here Somewhere..." QuestId="41139" TurnInName="Angus Stormbrew" TurnInId="103204" X="387.9645" Y="5079.631" Z="-87.42442"  />
+        <PickUp Nav="Fly" QuestName="Search and Rescue!" QuestId="41140" GiverName="Angus Stormbrew" GiverId="103204" X="387.9645" Y="5079.631" Z="-87.42442" />
+    
+        <CustomBehavior File="RunCode" Code="PrintStep(436)" />
+        <If Condition="DoQuest(41140)">
+            <CustomBehavior File="InteractWith" QuestId="41140" QuestObjectiveIndex="1" MobId="247062" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="387.9645" Y="5079.631" Z="-87.42442" />
+            <CustomBehavior File="RunCode" Code="PrintStep(438)" />
+            <CustomBehavior File="InteractWith" QuestId="41140" QuestObjectiveIndex="3" MobId="247291" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="259.7566" Y="5147.722" Z="-86.47305" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(439)" />
+        <PickUp Nav="Fly" QuestName="Leyline Feed: Halls of the Eclipse" QuestId="43594" GiverName="Leyline Feed" GiverId="252264" X="249.9548" Y="5145.342" Z="-86.97169" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(440)" />
+        <If Condition="DoQuest(43594)  &amp;&amp; !HasAncientMana(250)">
+            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-300" RememberProfile="true" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(441)" />
+        <TurnIn Nav="Fly" QuestName="Leyline Feed: Halls of the Eclipse" QuestId="43594" TurnInName="Leyline Feed" TurnInId="252264" X="249.9548" Y="5145.342" Z="-86.97169" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(442)" />
+        <If Condition="DoQuest(41098)">
+            <CustomBehavior File="KillUntilComplete" MobIds="99485" TerminateWhen="IsObjectiveComplete(1,41098)" >
+                <HuntingGrounds>
+                    <Hotspot X="259.7926" Y="5180.165" Z="-86.48199" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(443)" />
+        <If Condition="DoQuest(41140)">
+            <CustomBehavior File="InteractWith" QuestId="41140" QuestObjectiveIndex="4" MobId="247398" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="154.2228" Y="5132.499" Z="-116.4004" />
+            <CustomBehavior File="RunCode" Code="PrintStep(444)" />
+            <CustomBehavior File="InteractWith" QuestId="41140" QuestObjectiveIndex="5" MobId="247292" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="255.1553" Y="5152.27" Z="-86.57502" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(445)" />
+        <TurnIn Nav="Fly" QuestName="Search and Rescue!" QuestId="41140" TurnInName="Selthaes Starsong" TurnInId="102365" X="255.1553" Y="5152.27" Z="-86.57502" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(446)" />
+        <PickUp Nav="Fly" QuestName="Into The Pit!" QuestId="41222" GiverName="Angus Stormbrew" GiverId="103437" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(447)" />
+        <TurnIn Nav="Fly" QuestName="Shard of Kozak" QuestId="41098" TurnInName="Portal Activation Altar" TurnInId="246885" X="294.8321" Y="4925.355" Z="-83.89065" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(448)" />
+        <If Condition="DoQuest(41097)">
+            <CustomBehavior File="KillUntilComplete" MobIds="103089" TerminateWhen="IsObjectiveComplete(1,41097)" >
+                <HuntingGrounds>
+                    <Hotspot X="681.1089" Y="4498.025" Z="-120.2052" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(449)" />
+        <TurnIn Nav="Fly" QuestName="Shard of Vorgos" QuestId="41097" TurnInName="Portal Activation Altar" TurnInId="246884" X="294.8321" Y="4925.355" Z="-83.89065"/>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(450)" />
+        <PickUp Nav="Fly" QuestName="Azoran Must Die" QuestId="40412" GiverName="Lyana Darksorrow" GiverId="100823" X="294.8321" Y="4925.355" Z="-83.89065"/>
+    
+
+        <CustomBehavior File="RunCode" Code="PrintStep(451)" />
+        <If Condition="DoQuest(40412) &amp;&amp; !IsObjectiveComplete(1,40412)">
+            <If Condition="Me.MinimapZoneText == &quot;Felsoul Command&quot;">
+                <CustomBehavior File="InteractWith" QuestId="40412" MobId="247027" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="302.2647" Y="4935.062" Z="-83.89333" />
+            </If>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(452)" />
+            <CustomBehavior File="KillUntilComplete" MobIds="100019" TerminateWhen="IsObjectiveComplete(1,40412)" >
+                <HuntingGrounds>
+                    <Hotspot X="707.5012" Y="4824.322" Z="-65.15475" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(453)" />
+        <If Condition="QuestDone(40412) &amp;&amp; Me.MinimapZoneText == &quot;The Lightbreaker&quot;">
+            <CustomBehavior File="InteractWith" MobId="247029" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="665.0742" Y="4827.471" Z="-89.9126"  />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(454)" />
+        <TurnIn Nav="Fly" QuestName="Azoran Must Die" QuestId="40412" TurnInName="Lyana Darksorrow" TurnInId="100878" />
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(455)" />
+        <If Condition="DoQuest(41222)">
+            <MoveTo X="710.5515" Y="4746.496" Z="-193.784" />        
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(456)" />
+        <TurnIn Nav="Fly" QuestName="Into The Pit!" QuestId="41222" TurnInName="Angus Stormbrew" TurnInId="103437" X="710.5515" Y="4746.496" Z="-193.784" />
+        <PickUp Nav="Fly" QuestName="Parts Unknown" QuestId="41214" GiverName="Angus Stormbrew" GiverId="103437" X="710.5515" Y="4746.496" Z="-193.784" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(457)" />
+        <If Condition="DoQuest(41214)">
+            <CustomBehavior File="InteractWith" MobId="247389" QuestId="41214" QuestObjectiveIndex="1" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="708.1723" Y="4751.759" Z="-194.0068" />
+            
+            <CustomBehavior File="RunCode" Code="PrintStep(458)" />
+            <CustomBehavior File="InteractWith" MobId="247393" QuestId="41214" QuestObjectiveIndex="2" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="714.3679" Y="4707.842" Z="-203.0887" />
+            
+            <CustomBehavior File="RunCode" Code="PrintStep(459)" />
+            <CustomBehavior File="InteractWith" MobId="247394" QuestId="41214" QuestObjectiveIndex="3" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="763.2656" Y="4674.016" Z="-210.7676" />
+
+            <CustomBehavior File="RunCode" Code="PrintStep(460)" />
+            <CustomBehavior File="InteractWith" MobId="247395" QuestId="41214" QuestObjectiveIndex="4" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="767.9184" Y="4593.873" Z="-202.6894"  />
+
+            <CustomBehavior File="RunCode" Code="PrintStep(461)" />
+            <!-- there is a hill that moveto has a problem with here -->
+            <If Condition="!IsObjectiveComplete(5,41214)">
+                <CustomBehavior File="MyCTM" X="759.5448" Y="4605.535" Z="-202.6931" />
+                <CustomBehavior File="MyCTM" X="804.5924" Y="4633.766" Z="-194.3151" />
+            </If>
+            <CustomBehavior File="InteractWith" MobId="247392" QuestId="41214" QuestObjectiveIndex="5" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="804.5924" Y="4633.766" Z="-194.3151"  />
+
+            <CustomBehavior File="RunCode" Code="PrintStep(462)" />
+            <CustomBehavior File="InteractWith" MobId="247390" QuestId="41214" QuestObjectiveIndex="6" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="826.684" Y="4672.645" Z="-179.3425" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(463)" />
+        <TurnIn Nav="Fly" QuestName="Parts Unknown" QuestId="41214" TurnInName="Angus Stormbrew" TurnInId="103437" X="824.0563" Y="4668.925" Z="-180.2363" />
+        <PickUp Nav="Fly" QuestName="Mangelrath" QuestId="41309" GiverName="Angus Stormbrew" GiverId="103437" X="824.0563" Y="4668.925" Z="-180.2363" />
+<!-- <TurnIn Nav="Fly" QuestName="Mangelrath" QuestId="41309" TurnInName="Brambley Morrison" TurnInId="104161" /> -->
+    
+        <CustomBehavior File="RunCode" Code="PrintStep(464)" />
+        <If Condition="DoQuest(41309)">
+            <CustomBehavior File="KillUntilComplete" MobIds="103671" TerminateWhen="IsObjectiveComplete(1,41309)" >
+                <HuntingGrounds>
+                    <Hotspot X="824.0563" Y="4668.925" Z="-180.2363" />
+                </HuntingGrounds>
+            </CustomBehavior>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(465)" />
+            <CustomBehavior File="InteractWith" MobId="103852" QuestId="41309" QuestObjectiveIndex="2" NumOfTimes="1" InteractByGossipOptions="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="823.6934" Y="4702.49" Z="-179.0435"   />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(467)" />
+        <If Condition="QuestDone(41309) &amp;&amp; Me.MinimapZoneText == &quot;Felmaw Cavern&quot;">
+            <CustomBehavior File="MyCTM" X="761.6248" Y="4670.727" Z="-210.7676" />
+        </If>
+        <TurnIn Nav="Fly" QuestName="Mangelrath" QuestId="41309" TurnInName="Brambley Morrison" TurnInId="104161" X="761.6248" Y="4670.727" Z="-210.7676"  />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(468)" />
+        <!-- HONORED NOW REQUIRED -->
 
     </QuestOrder>
 </HBProfile>

@@ -1,0 +1,49 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[N]IncreaseManaCap</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>false</TargetElites>
+    <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
+    <Blackspots>
+        <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
+    </Blackspots>
+    <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
+    <Vendors>
+    </Vendors>
+    <!--These are the locations of the available mailboxes that you want your character to use-->
+    <Mailboxes>
+    </Mailboxes>
+    <!--Setting these would make sure the character stays away from and does not attack these mobs-->
+    <AvoidMobs>
+        <Mob Name="Koralune Ettin" Entry="99791" />
+        <Mob Name="Elfbane" Entry="99792" />
+        <Mob Name="Tideclaw" Entry="110824" />
+        <Mob Name="Leytusk" Entry="100846" />
+    </AvoidMobs>
+    <!--Here is where the meat of the profile will take place-->
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Code="RoutineManager.SetCapabilityState(CapabilityFlags.MultiMobPull, CapabilityState.Disallowed);"/>
+        <DisableBehavior Name="Pull" />
+        <CustomBehavior File="UserSettings" HarvestHerbs="false" HarvestMinerals="false" /> <!-- Harvesting will bug out CTMs. --> 
+
+        <If Condition="!IsQuestCompleted(42842)" >
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Kel'danath's Flask &quot;);" />
+            <MoveTo DestName="Kel'danath's Flask" X="1423.234" Y="5471.044" Z="78.43398" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="248407" X="1429.733" Y="5468.991" Z="79.20701" />
+            <If Condition="HasItem(136269)">
+                <CustomBehavior File="UseItem" ItemId="136269" />
+            </If>
+        </If>
+
+    </QuestOrder>
+</HBProfile>
