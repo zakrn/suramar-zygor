@@ -75,6 +75,33 @@
                         }
                         return 0;
                     }
+
+                    bool IsThalyssraThirsty()
+                    {
+                        return IsThirsty(1860);
+                    }
+
+                    bool IsThirsty( uint friendId )
+                    {
+                        List<string> values = Lua.GetReturnValues("return GetFriendshipReputation(" + friendId +")");
+
+                        if( values.Count == 0 )
+                        {   
+                            Logging.Write(System.Windows.Media.Colors.Red, "[Zak]: Failed to get arcane thirst");
+                            return false;
+                        }
+
+                        int level = Int32.Parse( values[1]);
+                        int threshold = Int32.Parse( values[7]);
+                        int newlevel = level - threshold;
+
+                        return newlevel <= 1;
+                    }
+
+                    bool HasAncientMana( uint amount )
+                    {
+                        return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
+                    }
                 ]]>
         </CustomBehavior>
 
@@ -88,7 +115,7 @@
         <If Condition="!IsQuestCompleted(42842)" >
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Kel'danath's Flask &quot;);" />
             <MoveTo DestName="Kel'danath's Flask" X="1423.234" Y="5471.044" Z="78.43398" />
-            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="248407" X="1429.733" Y="5468.991" Z="79.20701" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="Dismount" MobIds="248407" X="1429.733" Y="5468.991" Z="79.20701" />
             <If Condition="HasItem(136269)">
                 <CustomBehavior File="UseItem" ItemId="136269" />
             </If>
@@ -99,7 +126,7 @@
         </If>
         <If Condition="!IsQuestCompleted(43988)">
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Volatile Leyline Crystal&quot;);" />
-            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="254009" X="2197.311" Y="5471.879" Z="-26.0712" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="Dismount" MobIds="254009" X="2197.311" Y="5471.879" Z="-26.0712" />
             <If Condition="HasItem(140328)">
                 <CustomBehavior File="UseItem" ItemId="140328" />
             </If>
@@ -111,10 +138,11 @@
         <If Condition="!IsQuestCompleted(43989)">
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Infinite Stone&quot;);" />
             <MoveTo X="2989.819" Y="4690.892" Z="421.0724" />
-            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="254023" X="2989.819" Y="4690.892" Z="421.0724" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="Dismount" MobIds="254023" X="2989.819" Y="4690.892" Z="421.0724" />
             <If Condition="HasItem(140329)">
                 <CustomBehavior File="UseItem" ItemId="140329" />
             </If>
+            <CustomBehavior File="WaitTimer" WaitTime="2000" />
             <If Condition="HasItem(141605)">
                 <CustomBehavior File="UseItem" ItemId="141605" />
             </If>
@@ -125,10 +153,11 @@
         </If>
         <If Condition="!IsQuestCompleted(43986)">
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Enchanted Burial Urn&quot;);" />
-            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="254006" X="2304.84" Y="4162.628" Z="295.1306" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="Dismount" MobIds="254006" X="2304.84" Y="4162.628" Z="295.1306" />
             <If Condition="HasItem(140326)">
                 <CustomBehavior File="UseItem" ItemId="140326" />
             </If>
+            <CustomBehavior File="WaitTimer" WaitTime="2000" />
             <If Condition="HasItem(141605)">
                 <CustomBehavior File="UseItem" ItemId="141605" />
             </If>
@@ -139,7 +168,7 @@
         </If>
         <If Condition="!IsQuestCompleted(43987)">
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Getting Kyrtos's Research Notes&quot;);" />
-            <CustomBehavior File="InteractWith" PreInteractMountStrategy="DismountOrCancelShapeshift" MobIds="254008" X="827.1096" Y="5172.174" Z="37.62635" />
+            <CustomBehavior File="InteractWith" PreInteractMountStrategy="Dismount" MobIds="254008" X="827.1096" Y="5172.174" Z="37.62635" />
             <If Condition="HasItem(140327)">
                 <CustomBehavior File="UseItem" ItemId="140327" />
             </If>
@@ -177,7 +206,131 @@
 <!-- <TurnIn Nav="Fly" QuestName="The Road to Fel" QuestId="40657" TurnInName="Kyrtos" TurnInId="101076" /> -->
         <PickUp Nav="Fly" QuestName="Discovery Requires Experimentation" QuestId="40683" GiverName="Kyrtos" GiverId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
 <!-- <TurnIn Nav="Fly" QuestName="Discovery Requires Experimentation" QuestId="40683" TurnInName="Kyrtos" TurnInId="101076" /> -->
+        
+        <If Condition="DoQuest(40683)">
+            <CustomBehavior File="KillUntilComplete" QuestId="40683" MobIds="101868" TerminateWhen="IsObjectiveComplete(1,40657)" >
+                <HuntingGrounds>
+                    <Hotspot X="977.7839" Y="5035.745" Z="41.80395" />
+                    <Hotspot X="1151.063" Y="5064.911" Z="57.7223" />
+                    <Hotspot X="1246.142" Y="5043.22" Z="59.69713" />
+                    <Hotspot X="1188.747" Y="5213.322" Z="69.24733" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
 
+        <If Condition="DoQuest(40657)">
+            <CustomBehavior File="InteractWith" QuestId="40657" MobIds="246527,245940,246525" NumOfTimes="500" ProactiveCombatStrategy="ClearMobsThatWillAggro" >
+                <Blackspots>
+                    <Blackspot X="1160.374" Y="5106.026" Z="54.75046" Radius="5"/>
+                </Blackspots>
+                <HuntingGrounds>
+                    <Hotspot X="1038.659" Y="5047.393" Z="57.45785" />
+                    <Hotspot X="1151.063" Y="5064.911" Z="57.7223" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <TurnIn Nav="Fly" QuestName="The Road to Fel" QuestId="40657" TurnInName="Kyrtos" TurnInId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+        <TurnIn Nav="Fly" QuestName="Discovery Requires Experimentation" QuestId="40683" TurnInName="Kyrtos" TurnInId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+        <PickUp Nav="Fly" QuestName="One Small Step for Magic" QuestId="40694" GiverName="Kyrtos" GiverId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+        
+        <If Condition="DoQuest(40694)">
+            <CustomBehavior File="InteractWith" QuestId="40694" MobId="101076" NumOfTimes="1" InteractByGossipOptions="1" X="827.1096" Y="5172.174" Z="37.62635" />
+
+            <CustomBehavior File="KillUntilComplete" QuestId="40694" MobIds="101256" >
+                <HuntingGrounds>
+                    <Hotspot X="827.1096" Y="5172.174" Z="37.62635" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+
+        <TurnIn Nav="Fly" QuestName="One Small Step for Magic" QuestId="40694" TurnInName="Kyrtos" TurnInId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+        <PickUp Nav="Fly" QuestName="The Black Tome" QuestId="40713" GiverName="Kyrtos" GiverId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+        <PickUp Nav="Fly" QuestName="Fel Bent for Leather" QuestId="40919" GiverName="Kyrtos" GiverId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+        <PickUp Nav="Fly" QuestName="Power! Get The Power!" QuestId="40642" GiverName="Kyrtos" GiverId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+
+        <CustomBehavior File="Hooks\Avoid" AvoidName="infernals" ObjectId="99764" Radius="20" />
+
+        <While Condition="DoQuest(40713)">
+            <CustomBehavior File="InteractWith" QuestId="40713" MobId="99462" NumOfTimes="1" ProactiveCombatStrategy="ClearMobsThatWillAggro" X="376.9511" Y="5009.437" Z="-85.39641" />
+
+            <CustomBehavior File="KillUntilComplete" QuestId="40713" MobIds="101434" >
+                <HuntingGrounds>
+                    <Hotspot X="382.3796" Y="5007.812" Z="-88.14307" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+
+        <While Condition="DoQuest(40642)">
+            <CustomBehavior File="KillUntilComplete" QuestId="40642" MobIds="99581,99762,101878" >
+                <HuntingGrounds>
+                    <Hotspot X="713.8118" Y="5021.628" Z="-8.698384" />
+                    <Hotspot X="531.7601" Y="4973.904" Z="-83.20177" />
+                    <Hotspot X="462.6511" Y="5046.349" Z="-88.55232" />
+                    <Hotspot X="342.1763" Y="5038.289" Z="-87.09193" />
+                    <Hotspot X="485.914" Y="4773.052" Z="-127.3949" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+
+        <While Condition="DoQuest(40919)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: 40919&quot;);" />
+
+            <CustomBehavior File="Hooks\DoWhen" UseAtInterval="3000" LogExecution="true" ActivityName="killbat" StopMovingToConductActivity="true" >
+                <CustomBehavior File="UseItem" ItemId="133925" />
+            </CustomBehavior>
+
+            <CustomBehavior File="KillUntilComplete" QuestId="40919" MobIds="101900" >
+                <HuntingGrounds>
+                    <Hotspot X="951.5614" Y="5003.577" Z="37.8807" />
+                </HuntingGrounds>
+            </CustomBehavior>
+
+            <CustomBehavior File="Hooks\DoWhen" ActivityName="killbat" Command="Remove" />
+        </While>
+
+        <TurnIn Nav="Fly" QuestName="The Black Tome" QuestId="40713" TurnInName="Kyrtos" TurnInId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+        <TurnIn Nav="Fly" QuestName="Fel Bent for Leather" QuestId="40919" TurnInName="Kyrtos" TurnInId="101076" X="827.1096" Y="5172.174" Z="37.62635"  />
+        <TurnIn Nav="Fly" QuestName="Power! Get The Power!" QuestId="40642" TurnInName="Kyrtos" TurnInId="101076" X="827.1096" Y="5172.174" Z="37.62635" />
+
+        <CustomBehavior File="Hooks\Avoid" AvoidName="infernals" Command="Remove" />
+
+        <PickUp Nav="Fly" QuestName="The Bigger They Are, The Harder They Fel" QuestId="42366" GiverName="Kyrtos" GiverId="101076" />
+
+        <If Condition="DoQuest(42366) &amp;&amp; !IsObjectiveComplete(1,42366)">
+            <If Condition="Me.MinimapZoneText != &quot;The Lightbreaker&quot;">
+                <CustomBehavior File="InteractWith" QuestId="42366" MobId="251435" NumOfTimes="1" X="820.9311" Y="5175.876" Z="37.2856" />
+            </If>
+
+            <If Condition="Me.MinimapZoneText == &quot;The Lightbreaker&quot;">
+                <CustomBehavior File="InteractWith" QuestId="42366" MobId="100858" NumOfTimes="1" InteractByGossipOptions="1" X="674.2408" Y="4837.921" Z="-131.513" />
+
+                <CustomBehavior File="KillUntilComplete" QuestId="42366" MobIds="100858" >
+                    <HuntingGrounds>
+                        <Hotspot X="674.2408" Y="4837.921" Z="-131.513" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+
+            </If>
+
+        </If>
+
+        <If Condition="DoQuest(42366) &amp;&amp; !IsObjectiveComplete(2,42366) &amp;&amp; Me.MinimapZoneText == &quot;The Lightbreaker&quot;">
+            <CustomBehavior File="InteractWith" QuestId="42366" MobId="251436" NumOfTimes="1" X="674.2408" Y="4837.921" Z="-131.513" />
+        </If>
+        
+        <If Condition="QuestDone(42366)">
+            <MoveTo X="1722.122" Y="4614.906" Z="123.7989" />
+
+            <If Condition="IsThalyssraThirsty() &amp;&amp; HasAncientMana(50)">
+                <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945"  />
+                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+            </If>
+
+            <TurnIn Nav="Fly" QuestName="The Bigger They Are, The Harder They Fel" QuestId="42366" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1722.122" Y="4614.906" Z="123.7989"  />
+        </If>
 
 
     </QuestOrder>

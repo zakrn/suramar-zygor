@@ -388,9 +388,9 @@
             <RunTo X="601.0023" Y="4132.224" Z="1.504109" />
             <CustomBehavior File="WaitTimer" WaitTime="7000" />
             <RunTo X="642.8672" Y="4151.944" Z="1.493407" />
-            <CustomBehavior File="WaitTimer" WaitTime="20000" />
+            <CustomBehavior File="WaitTimer" WaitTime="22000" />
             <RunTo X="699.1943" Y="4162.536" Z="1.493563" />
-            <CustomBehavior File="WaitTimer" WaitTime="7000" />
+            <CustomBehavior File="WaitTimer" WaitTime="10000" />
             <RunTo X="736.7871" Y="4169.114" Z="1.823373" />
         </If>
 

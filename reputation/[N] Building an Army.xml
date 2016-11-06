@@ -135,6 +135,34 @@
                         return Bots.DungeonBuddy.Helpers.ScenarioInfo.Current.CurrentStageNumber;
                     }
 
+                    WoWUnit NearestBuddy()
+                    {
+                        return ObjectManager.GetObjectsOfType<WoWUnit>()
+                            .OrderBy(ret => ret.Distance)
+                            .FirstOrDefault(target =>
+                                target.Distance <= 30 &&
+                                target.IsAlive &&
+                                (int)target.FactionId == 1665 &&
+                                (int)target.Entry == 110141 );
+                    }
+
+                    bool IsNearBuddy() 
+                    {
+                        return NearestBuddy() != null;
+                    }
+
+                    bool FetchBuddy()
+                    {
+                        WoWUnit obj = NearestBuddy();
+                        if( obj != null)
+                        {
+                            Navigator.MoveTo(obj.Location);
+                            obj.Interact();
+                            return true;
+                        }
+                        return false;
+                    }
+
                 ]]>
         </CustomBehavior>
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: ZoneId: &quot; + Me.AreaId);" />
@@ -145,19 +173,55 @@
             <CustomBehavior File="InteractWith" MobIds="109008" NumOfTimes="1" InteractByGossipOptions="1" X="2102.989" Y="5392.836" Z="48.12273" />
         </If>
 
+<!--         <CustomBehavior File="Hooks\DoWhen" UseWhen="IsNearBuddy()" LogExecution="true" ActivityName="killbat" >
+            <CustomBehavior File="InteractWith" FactionId1="1665" MobId1="110141" NumOfTimes="1" InteractByGossipOptions="1" />
+        </CustomBehavior> -->
+
         <While Condition="StageNumber() == 2" >
-            <CustomBehavior File="KillUntilComplete" MobIds="110371, 110369, 110374, 110373" TerminateWhen="StageNumber() != 2">
-                <HuntingGrounds>
+            <CustomBehavior File="KillUntilComplete" TerminateWhen="StageNumber() != 2">
+                <Blackspots>
+                </Blackspots>
+                <PursuitList>
+                    <PursueUnit Id="110771" />
+                    <PursueUnit Id="110370" />
+                    <PursueUnit Id="110371" />
+                    <PursueUnit Id="110028" />
+                    <PursueUnit Id="110369" />
+                    <PursueUnit Id="110374" />
+                    <PursueUnit Id="110373" />
+                </PursuitList>
+                <HuntingGrounds WaypointVisitStrategy="InOrder">
                     <Hotspot X="2238.1" Y="5520.415" Z="1.640649" />
-                    <Hotspot X="2095.856" Y="5447.035" Z="-34.2065" />
+                    <Hotspot X="2182.601" Y="5340.604" Z="36.87735" />
+                    <Hotspot X="2211.059" Y="5513.781" Z="2.456362" />
+                    <Hotspot X="2184.996" Y="5536.097" Z="1.640901" />
+                    <Hotspot X="2183.622" Y="5437.963" Z="2.455849"  />
+                    <Hotspot X="2149.939" Y="5432.132" Z="1.641164" />
+                    <Hotspot X="2215.865" Y="5480.848" Z="-24.81746"  />
+                    <Hotspot X="2179.644" Y="5514.032" Z="-25.09391"  />
+                    <Hotspot X="2205.223" Y="5447.873" Z="-25.09367" />
+                    <Hotspot X="2166.159" Y="5451" Z="-25.09335" />
+                    <Hotspot X="2154.367" Y="5481.855" Z="-25.09366" />
+                    <Hotspot X="2104.992" Y="5491.617" Z="2.94622"  />
+                    <Hotspot X="2098.97" Y="5425.288" Z="-34.42006"  />
+                    <Hotspot X="2106.7" Y="5380.214" Z="-36.91072"  />
+                    <Hotspot X="2062.226" Y="5400.027" Z="-34.82651"  />
+                    <Hotspot X="1985.431" Y="5442.301" Z="-36.515"  />
+                    <Hotspot X="1954.135" Y="5395.235" Z="-37.15387"  />
+                    <Hotspot X="1932.193" Y="5400.017" Z="-29.44996"  />
+                    <Hotspot X="1901.371" Y="5363.266" Z="-37.1947"  />
+                    <Hotspot X="1856.103" Y="5373.897" Z="-53.81489"  />
                 </HuntingGrounds>
             </CustomBehavior>
         </While>
+
+        <!-- <CustomBehavior File="Hooks\DoWhen" ActivityName="killbat" Command="Remove" /> -->
 
 
         <CustomBehavior File="RunCode" Code="Print(&quot;looting chest&quot;)" />
         <If Condition="StageNumber() == 3">
             <CustomBehavior File="InteractWith" MobIds="252451" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitForNpcs="false" />
+            <CustomBehavior File="InteractWith" MobIds="252452" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitForNpcs="false" />
         </If>
 
         <CustomBehavior File="RunCode" Code="Print(&quot;using rep items&quot;)" />
@@ -170,43 +234,6 @@
 
         <CustomBehavior File="InteractWith" MobIds="258976" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitForNpcs="false" />
         <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
-        
-        <!-- <CustomBehavior File="RunCode" Code="PrintStep(390)" />
-        
-
-        <CustomBehavior File="RunCode" Code="PrintStep(391)" />
-        <CustomBehavior File="RunCode" Code="PrintStep(392)" />
-        <If Condition="Me.AreaId == 1033 &amp;&amp; Bots.DungeonBuddy.Helpers.ScenarioInfo.Current.CurrentStageNumber == 2" >
-            <CustomBehavior File="RunCode" Code="PrintStep(3921)" />
-            <CustomBehavior File="Hooks\DoWhen" UseAtInterval="5000" LogExecution="true" ActivityName="use_ability" AllowUseDuringCombat="true" >
-                <If Condition="Me.IsActuallyInCombat">
-                    <CustomBehavior File="Misc\RunLua" Lua="ExtraActionButton1:Click();" />
-                </If>
-            </CustomBehavior> -->
-
-<!--             <MoveTo X="2161.402" Y="5379.453" Z="36.87641" />
-            <MoveTo X="2198.6" Y="5398.503" Z="36.87683" />
-            <MoveTo X="2221.614" Y="5362.199" Z="36.87586" />
-            <MoveTo X="2203.118" Y="5340.991" Z="36.87623" />
-            <CustomBehavior File="InteractWith" MobIds="110141" NumOfTimes="1" X="2203.118" Y="5340.991" Z="36.87623"  />
-            <MoveTo X="2161.402" Y="5379.453" Z="36.87641" />
-            <MoveTo X="2192.154" Y="5369.486" Z="35.50682" /> -->
-            
-<!--             <MoveTo X="2254.594" Y="5356.899" Z="37.02238" />
-            <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="2" X="2254.594" Y="5356.899" Z="37.02238" WaitForNpcs="false"  />
-            <Hotspot X="2272.458" Y="5455.635" Z="9.342071" />
-            <CustomBehavior File="InteractWith" MobIds="110141" NumOfTimes="1" X="2272.458" Y="5455.635" Z="9.342071"  />
-
-
-            <CustomBehavior File="Hooks\DoWhen" ActivityName="use_ability" Command="Remove" />
-        </If> -->
-
-
-        <!-- <TurnIn Nav="Fly" QuestName="Building an Army" QuestId="44636" TurnInName="First Arcanist Thalyssra" TurnInId="97140" /> -->
-        <!-- <TurnIn Nav="Fly" QuestName="Thalyssra's Abode" QuestId="42488" TurnInName="First Arcanist Thalyssra" TurnInId="97140" /> -->
-
-
-
 
     </QuestOrder>
 </HBProfile>
