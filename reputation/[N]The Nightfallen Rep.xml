@@ -112,18 +112,26 @@
 
                     bool IsInCity()
                     {
-                        return  Me.MinimapZoneText == "The Grand Promenade" || 
-                                Me.MinimapZoneText == "Starcaller Retreat"  ||
-                                Me.MinimapZoneText == "The Waning Crescent" ||
-                                Me.MinimapZoneText == "Artisan's Gallery" ||
-                                Me.MinimapZoneText == "Astravar Harbor" ||
-                                Me.MinimapZoneText == "Evermoon Bazaar" ||
-                                Me.MinimapZoneText == "Evermoon Commons" ||
-                                Me.MinimapZoneText == "Shimmershade Garden" ||
-                                Me.MinimapZoneText == "Terrace of Order" ||
+                        return  Me.SubZoneId == 7963 || //The Grand Promenade
+                                Me.SubZoneId == 8021 || //Lunastre Estate
+                                Me.SubZoneId == 8434 || //Starcaller Retreat
+                                Me.SubZoneId == 8382 || //The Waning Crescent
+                                Me.SubZoneId == 8383 || //Artisan's Gallery
+                                Me.SubZoneId == 8395 || //Astravar Harbor
+                                Me.SubZoneId == 8385 || //Evermoon Bazaar
+                                Me.SubZoneId == 7970 || //Evermoon Commons
+                                Me.SubZoneId == 8386 || //Shimmershade Garden
+                                Me.SubZoneId == 8398 || //Terrace of Order
                                 Me.MinimapZoneText == "Estate of the First Arcanist" ||
-                                Me.MinimapZoneText == "Twilight Vineyards" ||
-                                Me.MinimapZoneText == "Suramar City";
+                                Me.SubZoneId == 8149 || //Twilight Vineyards
+                                Me.SubZoneId == 8353 || //Concourse of Destiny
+                                Me.SubZoneId == 8397 || //Terrace of Enlightenment
+                                Me.SubZoneId == 8441 || //Moonbeam Causeway
+                                Me.SubZoneId == 8436 || //Sunset Park
+                                Me.SubZoneId == 8351 || //The Menagerie
+                                Me.SubZoneId == 8379 || //The Gilded Market
+                                Me.SubZoneId == 8378 || //Moonlit Landing
+                                Me.SubZoneId == 8148;   //Suramar City
                     }
 
                     bool IsThirsty( uint friendId )
