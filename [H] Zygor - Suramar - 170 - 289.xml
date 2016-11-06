@@ -846,6 +846,8 @@
         <EnableBehavior Name="Pull" />
 
         <!-- go farm another shard if we need it -->
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Checking for Rain Death Upon Them - 41111&quot;);" />
+
         <If Condition="NeedsQuest(41111) || HasQuest(41111)">
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Farming up a volatile spell focus&quot;);" />
 
@@ -868,12 +870,15 @@
 
 
         <!-- go farm some mana before we get too deep -->
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Checking if we need mana for Moon Guard Teleporter Online! - 43808&quot;);" />
+
         <If Condition="( NeedsQuest(43808) || HasQuest(43808) ) &amp;&amp; !HasAncientMana(100)" >
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Pre-farming some ancient mana&quot;);" />
             <MoveTo X="2539.183" Y="4482.568" Z="234.0783" />
             <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-100" RememberProfile="true" />
         </If>
 
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Turning in many quests.&quot;);" />
         <TurnIn Nav="Fly" QuestName="Precious Little Left" QuestId="40967" TurnInName="Lothrius Mooncaller" TurnInId="101768" X="2618.521" Y="4638.142" Z="258.9366" />
         <TurnIn Nav="Fly" QuestName="Lay Waste, Lay Mines" QuestId="40965" TurnInName="Lothrius Mooncaller" TurnInId="101768" X="2618.521" Y="4638.142" Z="258.9366" />
         <TurnIn Nav="Fly" QuestName="Stop the Spell Seekers" QuestId="41032" TurnInName="Lothrius Mooncaller" TurnInId="101768" X="2618.521" Y="4638.142" Z="258.9366" />
