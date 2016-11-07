@@ -131,6 +131,7 @@
                                 Me.SubZoneId == 8351 || //The Menagerie
                                 Me.SubZoneId == 8379 || //The Gilded Market
                                 Me.SubZoneId == 8378 || //Moonlit Landing
+                                Me.SubZoneId == 8431 || //Sanctum of Order
                                 Me.SubZoneId == 8148;   //Suramar City
                     }
 

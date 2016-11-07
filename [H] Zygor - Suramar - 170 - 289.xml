@@ -378,7 +378,6 @@
         <If Condition="!IsQuestCompleted(44561) &amp;&amp; !HasQuest(44561)">
             <CustomBehavior File="InteractWith" MobId="107126" X="1722.54" Y="4615.137" Z="123.8005" />
             <CustomBehavior File="Misc\RunLua" Lua="AcceptQuest()" WaitTime="200" />
-            <!-- <PickUp Nav="Fly" QuestName="Seed of Hope" QuestId="44561" GiverName="Valewalker Farodin" GiverId="107126" X="1722.54" Y="4615.137" Z="123.8005" /> -->
         </If>
         
         <!-- 198 -->

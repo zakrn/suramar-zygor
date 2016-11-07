@@ -131,6 +131,7 @@
                                 Me.SubZoneId == 8351 || //The Menagerie
                                 Me.SubZoneId == 8379 || //The Gilded Market
                                 Me.SubZoneId == 8378 || //Moonlit Landing
+                                Me.SubZoneId == 8431 || //Sanctum of Order
                                 Me.SubZoneId == 8148;   //Suramar City
                     }
 
@@ -677,7 +678,6 @@
         <CustomBehavior File="RunCode" Code="PrintStep(463)" />
         <TurnIn Nav="Fly" QuestName="Parts Unknown" QuestId="41214" TurnInName="Angus Stormbrew" TurnInId="103437" X="824.0563" Y="4668.925" Z="-180.2363" />
         <PickUp Nav="Fly" QuestName="Mangelrath" QuestId="41309" GiverName="Angus Stormbrew" GiverId="103437" X="824.0563" Y="4668.925" Z="-180.2363" />
-<!-- <TurnIn Nav="Fly" QuestName="Mangelrath" QuestId="41309" TurnInName="Brambley Morrison" TurnInId="104161" /> -->
     
         <CustomBehavior File="RunCode" Code="PrintStep(464)" />
         <If Condition="DoQuest(41309)">

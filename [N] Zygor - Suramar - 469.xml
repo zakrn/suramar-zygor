@@ -1,0 +1,929 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[N] Zygor Suramar 469</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
+    <Blackspots>
+        <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
+    </Blackspots>
+    <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
+    <Vendors>
+    </Vendors>
+    <!--These are the locations of the available mailboxes that you want your character to use-->
+    <Mailboxes>
+    </Mailboxes>
+    <!--Setting these would make sure the character stays away from and does not attack these mobs-->
+    <AvoidMobs>
+        <Mob Name="Koralune Ettin" Entry="99791" />
+        <Mob Name="Elfbane" Entry="99792" />
+    </AvoidMobs>
+    <!--Here is where the meat of the profile will take place-->
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+
+                    bool DoQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (!HasQuest(questId) && !IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+                    bool NeedsBreadcrumbQuest(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (IsQuestCompleted(questId)) return false;
+                        }
+                        return true;
+                    }
+                    bool QuestDone(params uint[] questIds)
+                    {
+                        foreach (var questId in questIds)
+                        {
+                            if (HasQuest(questId) && IsQuestCompleted(questId)) return true;
+                        }
+                        return false;
+                    }
+
+                    bool HasAncientMana( uint amount )
+                    {
+                        return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
+                    }
+
+                    uint MaxAncientMana()
+                    {
+                        if( WoWCurrency.GetCurrencyById(1155) != null )
+                        {
+                            return WoWCurrency.GetCurrencyById(1155).TotalMax;
+                        }
+                        return 0;
+                    }
+
+                    double DistFrom253()
+                    {
+                        Vector2 loc = new Vector2( Me.Location.X, Me.Location.Y);
+                        Vector2 res = new Vector2( 2949.458f, 4882.862f );
+
+                        return CalcDist( loc, res );
+                    }
+
+                    double CalcDist( Vector2 v1, Vector2 v2 )
+                    {
+                        double dx = v2.X - v1.X;
+                        double dy =  v2.Y - v1.Y;
+                        double r = Math.Pow( dx , 2) - Math.Pow( dy, 2);
+
+                        if( r < 0 )
+                            r *= -1;
+
+                        return Math.Sqrt(  r );
+                    }
+
+                    bool ShouldCastMask()
+                    {
+                        return Me.IsAlive && !Me.IsActuallyInCombat && IsInCity() && !Me.HasAura(202477);
+                    }
+
+                    void CastMask()
+                    {
+                        Lua.DoString("ExtraActionButton1:Click();");
+                    }
+
+                    bool IsInCity()
+                    {
+                        return  Me.SubZoneId == 7963 || //The Grand Promenade
+                                Me.SubZoneId == 8021 || //Lunastre Estate
+                                Me.SubZoneId == 8434 || //Starcaller Retreat
+                                Me.SubZoneId == 8382 || //The Waning Crescent
+                                Me.SubZoneId == 8383 || //Artisan's Gallery
+                                Me.SubZoneId == 8395 || //Astravar Harbor
+                                Me.SubZoneId == 8385 || //Evermoon Bazaar
+                                Me.SubZoneId == 7970 || //Evermoon Commons
+                                Me.SubZoneId == 8386 || //Shimmershade Garden
+                                Me.SubZoneId == 8398 || //Terrace of Order
+                                Me.MinimapZoneText == "Estate of the First Arcanist" ||
+                                Me.SubZoneId == 8149 || //Twilight Vineyards
+                                Me.SubZoneId == 8353 || //Concourse of Destiny
+                                Me.SubZoneId == 8397 || //Terrace of Enlightenment
+                                Me.SubZoneId == 8441 || //Moonbeam Causeway
+                                Me.SubZoneId == 8436 || //Sunset Park
+                                Me.SubZoneId == 8351 || //The Menagerie
+                                Me.SubZoneId == 8379 || //The Gilded Market
+                                Me.SubZoneId == 8378 || //Moonlit Landing
+                                Me.SubZoneId == 8431 || //Sanctum of Order
+                                Me.SubZoneId == 8148;   //Suramar City
+                    }
+
+                    bool IsThirsty( uint friendId )
+                    {
+                        List<string> values = Lua.GetReturnValues("return GetFriendshipReputation(" + friendId +")");
+
+                        if( values.Count == 0 )
+                        {   
+                            Logging.Write(System.Windows.Media.Colors.Red, "[Zak]: Failed to get arcane thirst");
+                            return false;
+                        }
+
+                        int level = Int32.Parse( values[1]);
+                        int threshold = Int32.Parse( values[7]);
+                        int newlevel = level - threshold;
+
+                        return newlevel <= 1;
+                    }
+
+                    bool IsThalyssraThirsty()
+                    {
+                        return IsThirsty(1860);
+                    }
+
+                    bool IsOculethThirsty()
+                    {
+                        return IsThirsty(1862);
+                    }
+
+                    bool IsValtroisThirsty()
+                    {
+                        return IsThirsty(1919);
+                    }
+
+                    void PrintStep( uint step )
+                    {
+                        Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: " + step);
+                    }
+
+                    bool IsAtleastHonored() 
+                    {
+                        return (int)Me.GetReputationLevelWith(1859) >= 5;
+                    }
+                ]]>
+        </CustomBehavior>
+
+        <!-- all credit to EchoTiger -->
+        <CustomBehavior File="RunCode" Type="Definition"><![CDATA[
+
+                    static double KILL_DIST = 30.0;
+
+                    async Task VehicleMove(WoWPoint moveTo, bool allowCombat = true)
+                    {
+                        if (!StyxWoW.Me.InVehicle) return;
+                        while (Me.Location.Distance(moveTo) >= 5)
+                        {
+                            WoWMovement.ClickToMove(moveTo);
+                            if( allowCombat )
+                            {
+                                await CombatAwareness();
+                            }
+                            
+                            await Coroutine.Yield();
+                        }
+                    }
+
+                    async Task VehicleCombat(WoWUnit vehicleKill)
+                    {
+                        if (!StyxWoW.Me.InVehicle) return;
+                        if (vehicleKill.Distance > KILL_DIST) return;
+                        if (Me.CurrentTarget != vehicleKill)
+                        {
+                            vehicleKill.Target();
+                        }
+                        await Coroutine.Sleep(150);
+                        Styx.Helpers.KeyboardManager.KeyUpDown((char)System.Windows.Forms.Keys.D1);
+                        //Styx.Helpers.KeyboardManager.KeyUpDown((char)System.Windows.Forms.Keys.D2);
+                        //Styx.Helpers.KeyboardManager.KeyUpDown((char)System.Windows.Forms.Keys.D3);
+                        //Styx.Helpers.KeyboardManager.KeyUpDown((char)System.Windows.Forms.Keys.D4);
+                        await Coroutine.Sleep(1050);
+                    }
+
+                    async Task CombatAwareness()
+                    {
+                        if (!StyxWoW.Me.InVehicle) return;
+                        var killArray = ObjectManager.GetObjectsOfType<WoWUnit>().Where(u => u.IsTargetingMeOrPet && u.Distance <= KILL_DIST);
+                        if (killArray == null) return;
+
+                        foreach (WoWUnit killMe in killArray)
+                        {
+                            while (killMe != null && killMe.IsTargetingMeOrPet && killMe.Distance <= KILL_DIST)
+                            {
+                                await CommonCoroutines.StopMoving();
+                                StyxWoW.Me.SetFacing(killMe.Location);
+                                await VehicleCombat(killMe);
+                                await Coroutine.Yield();
+                            }
+                       }
+                    }
+                ]]>
+        </CustomBehavior>   
+
+        <!-- arcwine mini event code, this was interesting to write :P  -->
+        <CustomBehavior File="RunCode" Type="Definition"><![CDATA[
+                async Task MakeWine() {
+                    var margaux = Unit(112055);
+                    while( margaux != null && margaux.HasAura(224237) ){
+                        if( margaux.HasAura(217204) )
+                        {
+                            await AddPurifiedWater();
+                        }
+                        else if( margaux.HasAura(217205))
+                        {
+                            await AddNightLily();
+                        }
+                        else if( margaux.HasAura(217203))
+                        {
+                            await AddShadefruit();
+                        }
+                        else if( margaux.HasAura(217202))
+                        {
+                            await StompGrapes();
+                        }
+                        await Coroutine.Yield();
+                    }
+                }
+
+                WoWObject GetObj( int objid)
+                {
+                    return ObjectManager.GetObjectsOfType<WoWGameObject>()
+                        .OrderBy(ret => ret.Distance)
+                        .FirstOrDefault(target =>
+                            (int)target.Entry == objid );
+                }
+
+                async Task AddShadefruit()
+                {
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: AddShadefruit");
+                    await LeaveGrapes();
+                    WoWObject fruit = GetObj(251493);
+                    if( fruit != null )
+                        fruit.Interact();
+                    await Coroutine.Sleep(3000);
+                    await Coroutine.Yield();
+                }
+
+                async Task AddNightLily()
+                {   
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: AddNightLily");
+                    //this spell name doesnt match Silver Jasmine object
+                    await LeaveGrapes();
+                    WoWObject silverJasmine = GetObj(251494);
+                    if( silverJasmine != null )
+                        silverJasmine.Interact();
+                    await Coroutine.Sleep(3000);
+                    await Coroutine.Yield();
+                }
+
+                async Task AddPurifiedWater() 
+                {
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: AddPurifiedWater");
+                    await LeaveGrapes();
+                    WoWObject water = GetObj(251492);
+                    if( water != null )
+                        water.Interact();
+                    await Coroutine.Sleep(3000);
+                    await Coroutine.Yield();
+                }
+
+                async Task StompGrapes() {
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: StompGrapes");
+                    await HopInGrapes();
+
+                    var margaux = Unit(112055);
+                    while( margaux != null && margaux.HasAura(224237) && margaux.HasAura(217202) )
+                    {
+                        Lua.DoString("JumpOrAscendStart()");
+                        await Coroutine.Sleep(1000);
+                        await Coroutine.Yield();
+                    }
+                }
+
+                async Task LeaveGrapes() {
+                    WoWPoint grapeGoto = new WoWPoint(1354.776,3297.472,132.8778);
+                    while (Me.Location.Distance(grapeGoto) > 1)
+                    {   
+                        WoWMovement.ClickToMove(grapeGoto);
+                        await Coroutine.Yield();
+                    }
+                    await CommonCoroutines.StopMoving();
+                }
+
+                async Task HopInGrapes() {
+                    await LeaveGrapes();
+                    Me.SetFacing( new WoWPoint(1358.507,3294.529,133.5807) );
+                    await Coroutine.Sleep(500);
+                    Lua.DoString("MoveForwardStart()");
+                    await Coroutine.Sleep(150);
+                    Lua.DoString("JumpOrAscendStart()");
+                    await Coroutine.Sleep(150);
+                    Lua.DoString("MoveForwardStop()");
+                }
+
+            ]]>
+        </CustomBehavior> 
+
+        <!-- settings setup, original credit to the Nuok and the world quests team-->
+        <CustomBehavior File="RunCode" Type="Definition">
+        <![CDATA[
+                public class Settings : Styx.Helpers.Settings
+                {
+                    public static readonly string _settingsPath = Path.Combine(CharacterSettingsDirectory, "Profiles", "ZakrnSuramarSettings.xml");
+                    private static Settings _instance;
+                    public static Settings Instance => _instance ?? (_instance = new Settings());
+                    public Settings() : base(_settingsPath)
+                    {
+                    }
+                    [Setting]
+                    [Styx.Helpers.DefaultValue(100)]
+                    public int ManaTarget { get; set; }
+
+                    [Setting]
+                    [Styx.Helpers.DefaultValue("")]
+                    public string ReturnProfile { get; set; }
+
+                }
+
+                void SetManaTarget( int manaTarget){
+                    var s = Settings.Instance;
+                    s.ManaTarget = manaTarget;
+                    s.Save();
+                }
+
+                void PrepManaFarm( string returnProfile, int manaGoal )
+                {
+                    SetManaTarget( manaGoal );
+                    var s = Settings.Instance;
+                    s.ReturnProfile = returnProfile;
+                    s.Save();
+                }
+        ]]>
+        </CustomBehavior> 
+
+        <If Condition="!IsAtleastHonored()">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Red, &quot;[Zak]: You must be atleast honored with The Nightfallen to continue.&quot;);" />
+            <CustomBehavior File="Halt" />
+        </If>
+
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" LogExecution="true" ActivityName="apply_mask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <CustomBehavior File="RunCode" Code="CastMask()" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+        </CustomBehavior>
+
+        <!-- <CustomBehavior File="Hooks\Avoid" AvoidName="MaskDetectors" ObjectIds="99755, 113633, 107717, 107727, 113738, 114470, 107521, 105292" Radius="20" /> -->
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(469)" />
+        <TurnIn Nav="Fly" QuestName="Seed of Hope" QuestId="44561" TurnInName="Valewalker Farodin" TurnInId="107126" X="1715.662" Y="4625.09" Z="123.9462" />
+        <PickUp Nav="Fly" QuestName="Moths to a Flame" QuestId="42828" GiverName="Valewalker Farodin" GiverId="107126" X="1715.662" Y="4625.09" Z="123.9462" />
+        <PickUp Nav="Fly" QuestName="Growing Strong" QuestId="44562" GiverName="Valewalker Farodin" GiverId="107126" X="1715.662" Y="4625.09" Z="123.9462" />
+<!-- <TurnIn Nav="Fly" QuestName="Growing Strong" QuestId="44562" TurnInName="Valewalker Farodin" TurnInId="107126" /> -->
+
+        <CustomBehavior File="RunCode" Code="PrintStep(470)" />
+        <If Condition="DoQuest(42828)">
+            <CustomBehavior File="InteractWith" QuestId="42828" NumOfTimes="500" ProactiveCombatStrategy="ClearMobsThatWillAggro" >
+                <HuntingGrounds>
+                    <Hotspot X="1715.662" Y="4625.09" Z="123.9462" />
+                </HuntingGrounds>
+                <PursuitList>
+                    <PursueUnit Id="109158" />
+                </PursuitList>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(471)" />
+        <TurnIn Nav="Fly" QuestName="Moths to a Flame" QuestId="42828" TurnInName="Valewalker Farodin" TurnInId="107126" X="1715.662" Y="4625.09" Z="123.9462"/>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(472)" />
+        <If Condition="NeedsQuest(42829) &amp;&amp; IsThalyssraThirsty()">
+            <If Condition="!HasAncientMana(50)">
+                <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-50" RememberProfile="true" />
+            </If>
+            <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945"  />
+            <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+            <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+            <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+        </If>
+
+        <PickUp Nav="Fly" QuestName="Make an Entrance" QuestId="42829" GiverName="First Arcanist Thalyssra" GiverId="97140" X="1715.662" Y="4625.09" Z="123.9462" />
+    
+        <CustomBehavior File="RunCode" Code="PrintStep(473)" />
+        <If Condition="NeedsQuest(41216) &amp;&amp; Me.SubZoneId == 7928">
+            <CustomBehavior File="InteractWith" NumOfTimes="1" MobIds="254143" X="1786.192" Y="4620.642" Z="123.9933" />
+        </If>
+
+        <If Condition="NeedsQuest(41216)">
+            <MoveTo X="1372.218" Y="3812.731" Z="21.11643" />
+            <CustomBehavior File="MyCTM" X="1351.879" Y="3842.024" Z="13.69992" />
+            <PickUp Nav="Fly" QuestName="Survival of the Fittest" QuestId="41216" GiverName="Nighteyes" GiverId="110987" />
+        </If>
+        
+        <CustomBehavior File="Hooks\DoWhen" ActivityName="apply_mask" Command="Remove" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(474)" />
+        <If Condition="DoQuest(41216)">
+            <CustomBehavior File="InteractWith" QuestId="41216" NumOfTimes="500" InteractByUsingItemId="134119" ProactiveCombatStrategy="ClearMobsThatWillAggro" WaitTime="6000" >
+                <HuntingGrounds>
+                    <Hotspot X="1372.218" Y="3812.731" Z="21.11643" />
+                    <Hotspot X="1485.477" Y="3827.797" Z="15.44154" />
+                </HuntingGrounds>
+                <PursuitList>
+                    <PursueUnit Id="105653" />
+                    <PursueUnit Id="105656" />
+                    <PursueUnit Id="99638" />
+                    <PursueUnit Id="105640" />
+                    <PursueUnit Id="105654" />
+                    <PursueUnit Id="105644" />
+                    <PursueUnit Id="103631" />
+                    <PursueUnit Id="104837" />
+                    <PursueUnit Id="105655" />
+                </PursuitList>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(475)" />
+
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" LogExecution="true" ActivityName="apply_mask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <CustomBehavior File="RunCode" Code="CastMask()" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+        </CustomBehavior>
+
+        <TurnIn Nav="Fly" QuestName="Survival of the Fittest" QuestId="41216" TurnInName="Nighteyes" TurnInId="111019" X="1513.069" Y="3994.252" Z="-12.2995" />
+        <PickUp Nav="Fly" QuestName="Apex Predator" QuestId="41231" GiverName="Nighteyes" GiverId="111019" X="1513.069" Y="3994.252" Z="-12.2995" />
+    
+        <CustomBehavior File="RunCode" Code="PrintStep(476)" />
+        <If Condition="DoQuest(41231)">
+            <CustomBehavior File="KillUntilComplete" TerminateWhen="IsObjectiveComplete(1,41231)" >
+                <HuntingGrounds>
+                    <Hotspot X="1470.083" Y="4066.207" Z="-13.86744" />
+                </HuntingGrounds>
+                <PursuitList>
+                    <PursueUnit Id="103677" />
+                </PursuitList>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(477)" />
+        <TurnIn Nav="Fly" QuestName="Apex Predator" QuestId="41231" TurnInName="Nighteyes" TurnInId="111019" X="1513.069" Y="3994.252" Z="-12.2995" />
+        <PickUp Nav="Fly" QuestName="Shalassic Park" QuestId="43582" GiverName="Nighteyes" GiverId="111019" X="1513.069" Y="3994.252" Z="-12.2995" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(478)" />
+        <If Condition="DoQuest(43582)">
+            <If Condition="!IsObjectiveComplete(1,43582)">
+                <CustomBehavior File="InteractWith" MobId="111062" X="1481.71" Y="4049.166" Z="-14.48639"  TerminateWhen="Me.InVehicle" />
+            </If>
+
+            <DisableBehavior Name="Combat" />
+
+            <CustomBehavior File="RunCode" Code="PrintStep(479)" />
+            <If Condition="!IsObjectiveComplete(2,43582)">
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1516.029, 3961.502, 5.249563), false);" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1500.292, 3910.733, 19.28840), false);" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1498.144, 3869.376, 31.73428), false);" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1486.712, 3856.559, 30.98180), false);" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1485.412, 3825.464, 30.87040), false);" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1462.756, 3808.687, 30.95982), false);" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1371.434, 3766.487, 36.21667), false);" />   
+            </If>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(480)" />
+            <While Condition="!IsObjectiveComplete(3,43582)">
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1306.700, 3727.239, 16.72994));" TerminateWhen="IsObjectiveComplete(3,43582)" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1309.095, 3663.132, 27.17959));" TerminateWhen="IsObjectiveComplete(3,43582)" /> 
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1293.345, 3603.784, 35.45182));" TerminateWhen="IsObjectiveComplete(3,43582)" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1288.865, 3633.881, 35.57856));" TerminateWhen="IsObjectiveComplete(3,43582)" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1295.761, 3579.178, 35.45150));" TerminateWhen="IsObjectiveComplete(3,43582)" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1348.853, 3543.749, 35.45167));" TerminateWhen="IsObjectiveComplete(3,43582)" />
+
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1308.398, 3506.934, 35.51929));" TerminateWhen="IsObjectiveComplete(3,43582)" />
+
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1348.853, 3543.749, 35.45167));" TerminateWhen="IsObjectiveComplete(3,43582)" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1295.761, 3579.178, 35.45150));" TerminateWhen="IsObjectiveComplete(3,43582)" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1288.865, 3633.881, 35.57856));" TerminateWhen="IsObjectiveComplete(3,43582)" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1293.345, 3603.784, 35.45182));" TerminateWhen="IsObjectiveComplete(3,43582)" />   
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1309.095, 3663.132, 27.17959));" TerminateWhen="IsObjectiveComplete(3,43582)" /> 
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1306.700, 3727.239, 16.72994));" TerminateWhen="IsObjectiveComplete(3,43582)" />   
+            </While>
+
+            <EnableBehavior Name="Combat" />
+
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(481)" />
+        <If Condition="QuestDone(43582)">
+            <MoveTo X="1372.218" Y="3812.731" Z="21.11643" />
+            <CustomBehavior File="MyCTM" X="1351.879" Y="3842.024" Z="13.69992" />
+            <TurnIn Nav="Fly" QuestName="Shalassic Park" QuestId="43582" TurnInName="Nighteyes" TurnInId="110987" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(482)" />
+        <If Condition="NeedsQuest(41107) &amp;&amp; Me.SubZoneId == 8351">
+            <MoveTo X="1214.059" Y="3886.588" Z="18.29058" />
+            <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStart();" WaitTime="900" />
+            <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStop();" WaitTime="100" />
+            <CustomBehavior File="WaitTimer" WaitTime="5000" />
+        </If>
+
+        <PickUp Nav="Fly" QuestName="Bad Apples" QuestId="41107" GiverName="Keelay Moongrow" GiverId="103131" X="1356.974" Y="4035.571" Z="113.246"  />
+        <PickUp Nav="Fly" QuestName="Blast of Spice Fish" QuestId="41256" GiverName="Keelay Moongrow" GiverId="103131" X="1356.974" Y="4035.571" Z="113.246" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(483)" />
+        <If Condition="DoQuest(42829)">
+            <If Condition="!IsObjectiveComplete(1,42829)">
+                <CustomBehavior File="InteractWith" QuestId="42829" InteractByGossipOptions="1" MobId="109144" NumOfTimes="1" PreInteractMountStrategy="Dismount" X="1513.64" Y="3823.192" Z="114.9037" />
+                <CustomBehavior File="WaitTimer" WaitTime="5000" />
+            </If>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(484)" />
+            <If Condition="!IsObjectiveComplete(2,42829)">
+                <CustomBehavior File="InteractWith" QuestId="42829" MobId="109114" NumOfTimes="1" PreInteractMountStrategy="Dismount" X="1513.64" Y="3823.192" Z="114.9037" />
+                <CustomBehavior File="WaitTimer" WaitTime="45000" />
+            </If>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(485)" />
+            <If Condition="!IsObjectiveComplete(3,42829)">
+                <CustomBehavior File="InteractWith" QuestId="42829" MobId="108872" NumOfTimes="1" InteractByGossipOptions="1" PreInteractMountStrategy="Dismount" X="1514.659" Y="3629.984" Z="122.8405" />
+                <CustomBehavior File="WaitTimer" WaitTime="5000" />
+            </If>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(486)" />
+        <TurnIn Nav="Fly" QuestName="Make an Entrance" QuestId="42829" TurnInName="Margaux" TurnInId="108872" X="1514.659" Y="3629.984" Z="122.8405"/>
+        <PickUp Nav="Fly" QuestName="The Fruit of Our Efforts" QuestId="42832" GiverName="Margaux" GiverId="108872" X="1514.659" Y="3629.984" Z="122.8405" />
+        <If Condition="DoQuest(42832)">
+            <CustomBehavior File="RunCode" Code="PrintStep(487)" />
+            <CustomBehavior File="InteractWith" QuestId="42832" MobIds="251499,251506,251507" NumOfTimes="3" PreInteractMountStrategy="Dismount" X="1523.954" Y="3549.183" Z="136.5532" WaitTime="8000" />
+
+            <CustomBehavior File="RunCode" Code="PrintStep(488)" />
+            <CustomBehavior File="RunCode" Code="PrintStep(489)" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(490)" />
+        <TurnIn Nav="Fly" QuestName="The Fruit of Our Efforts" QuestId="42832" TurnInName="Margaux" TurnInId="108872" X="1523.954" Y="3549.183" Z="136.5532" />
+        <PickUp Nav="Fly" QuestName="How It's Made: Arcwine" QuestId="42833" GiverName="Margaux" GiverId="108872" X="1523.954" Y="3549.183" Z="136.5532"/>
+
+        <If Condition="DoQuest(42833)">
+            <CustomBehavior File="RunCode" Code="PrintStep(491)" />
+            <If Condition="!IsObjectiveComplete(1,42833)">
+                <CustomBehavior File="InteractWith" QuestId="42833" InteractByGossipOptions="1,1" MobId="109223" NumOfTimes="1" PreInteractMountStrategy="Dismount" X="1469.043" Y="3551.549" Z="132.8791" />
+            </If>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(492)" />
+            <If Condition="!IsObjectiveComplete(2,42833)">
+                <CustomBehavior File="InteractWith" QuestId="42833" InteractByGossipOptions="1,1" MobId="109223" NumOfTimes="1" PreInteractMountStrategy="Dismount" X="1441.927" Y="3483.277" Z="133.1465"  />
+            </If>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(493)" />
+            <If Condition="!IsObjectiveComplete(3,42833)">
+                <CustomBehavior File="InteractWith" QuestId="42833" InteractByGossipOptions="1,1" MobId="109223" NumOfTimes="1" PreInteractMountStrategy="Dismount" X="1390.182" Y="3430.714" Z="132.8788" />
+                <CustomBehavior File="WaitTimer" WaitTime="30000" />
+            </If>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(495)" />
+        <TurnIn Nav="Fly" QuestName="How It's Made: Arcwine" QuestId="42833" TurnInName="Sylverin" TurnInId="108870" X="1477.832" Y="3425.004" Z="132.8178"  />
+        <PickUp Nav="Fly" QuestName="Intense Concentration" QuestId="42834" GiverName="Sylverin" GiverId="108870" X="1477.832" Y="3425.004" Z="132.8178" />
+
+        <If Condition="DoQuest(42834)">
+            <CustomBehavior File="RunCode" Code="PrintStep(496)" />
+            <If Condition="!IsObjectiveComplete(1,42834)">
+                <CustomBehavior File="InteractWith" QuestId="42834" MobId="251556" NumOfTimes="1" PreInteractMountStrategy="Dismount" X="1477.832" Y="3425.004" Z="132.8178" />
+            </If>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(497)" />
+            <UseMount Value="false" />
+            <!-- this is just a terrible way to do this, but i cant find how to get the ground effect id? -->
+            <While Condition="!IsObjectiveComplete(2,42834)">
+                <MoveTo X="1458.159" Y="3443.252" Z="130.8239" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+                <MoveTo X="1442.431" Y="3448.478" Z="130.8239" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+                <MoveTo X="1454.094" Y="3459.467" Z="130.8239" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+                <MoveTo X="1455.988" Y="3472.963" Z="130.8239" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+                <MoveTo X="1462.65" Y="3466.574" Z="130.8239" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+                <MoveTo X="1477.055" Y="3464.512" Z="130.8239" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+                <MoveTo X="1487.374" Y="3474.033" Z="130.8239" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+            </While>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(498)" />
+            <If Condition="!IsObjectiveComplete(3,42834)">
+                <CustomBehavior File="InteractWith" QuestId="42834" MobId="251565" NumOfTimes="1" PreInteractMountStrategy="Dismount" X="1477.832" Y="3425.004" Z="132.8178" />
+            </If>
+
+            <UseMount Value="true" />
+
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(499)" />
+        <TurnIn Nav="Fly" QuestName="Intense Concentration" QuestId="42834" TurnInName="Sylverin" TurnInId="108870" X="1477.832" Y="3425.004" Z="132.8178" />
+        <PickUp Nav="Fly" QuestName="The Old Fashioned Way" QuestId="42835" GiverName="Sylverin" GiverId="108870" X="1477.832" Y="3425.004" Z="132.8178" />
+    
+        <If Condition="DoQuest(42835)">
+            <If Condition="!IsObjectiveComplete(1,42835)" >
+                <CustomBehavior File="RunCode" Code="PrintStep(500)" />
+                <CustomBehavior File="InteractWith" QuestId="42835" MobId="108872" NumOfTimes="1" PreInteractMountStrategy="Dismount" InteractByGossipOptions="1" X="1355.248" Y="3289.176" Z="132.8778" />
+                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+            </If>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(501)" />
+            <CustomBehavior File="RunCode" Code="await MakeWine();" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(502)" />
+        <TurnIn Nav="Fly" QuestName="The Old Fashioned Way" QuestId="42835" TurnInName="Margaux" TurnInId="108872" X="1355.248" Y="3289.176" Z="132.8778" />
+        <PickUp Nav="Fly" QuestName="Balance to Spare" QuestId="42837" GiverName="Margaux" GiverId="108872" X="1355.248" Y="3289.176" Z="132.8778"/>
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(503)" />
+        <PickUp Nav="Fly" QuestName="Silkwing Sabotage" QuestId="42836" GiverName="Sylverin" GiverId="112653" X="1371.193" Y="3257.562" Z="132.8846"  />
+
+        <If Condition="DoQuest(42837)">
+            <CustomBehavior File="RunCode" Code="PrintStep(504)" />
+            <CustomBehavior File="InteractWith" QuestId="42837" NumOfTimes="500" ProactiveCombatStrategy="ClearMobsThatWillAggro" >
+                <HuntingGrounds>
+                    <Hotspot X="1367.29" Y="3227.853" Z="130.8203" />
+                    <Hotspot X="1333.545" Y="3151.549" Z="132.9341" />
+                    <Hotspot X="1246.529" Y="3136.601" Z="130.8201" />
+                    <Hotspot X="1269.603" Y="3217.064" Z="130.8205" />
+                    <Hotspot X="1341.403" Y="3253.043" Z="130.8881" />
+                </HuntingGrounds>
+                <PursuitList>
+                    <PursueUnit Id="109023" />
+                </PursuitList>
+            </CustomBehavior>
+        </If>
+
+        <If Condition="DoQuest(42836)">
+            <CustomBehavior File="RunCode" Code="PrintStep(505)" />
+            <CustomBehavior File="KillUntilComplete" TerminateWhen="IsObjectiveComplete(1,42836)" >
+                <HuntingGrounds>
+                    <Hotspot X="1367.29" Y="3227.853" Z="130.8203" />
+                    <Hotspot X="1333.545" Y="3151.549" Z="132.9341" />
+                    <Hotspot X="1246.529" Y="3136.601" Z="130.8201" />
+                    <Hotspot X="1269.603" Y="3217.064" Z="130.8205" />
+                    <Hotspot X="1341.403" Y="3253.043" Z="130.8881" />
+                </HuntingGrounds>
+                <PursuitList>
+                    <PursueUnit Id="109180" />
+                </PursuitList>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(506)" />
+        <If Condition="QuestDone(42837) || QuestDone(42836) || NeedsQuest(42838)">
+            <MoveTo X="1388.067" Y="3266.223" Z="132.8777" />
+            <CustomBehavior File="ForcedDismount" />
+            <CustomBehavior File="MyCTM" X="1403.816" Y="3252.064" Z="134.8037" />
+        </If>
+
+        <TurnIn Nav="Fly" QuestName="Balance to Spare" QuestId="42837" TurnInName="Sylverin" TurnInId="108870" X="1402.432" Y="3253.044" Z="134.7884" />
+        <TurnIn Nav="Fly" QuestName="Silkwing Sabotage" QuestId="42836" TurnInName="Sylverin" TurnInId="108870" X="1402.432" Y="3253.044" Z="134.7884" />
+        <If Condition="NeedsQuest(42838)">
+            <PickUp Nav="Fly" QuestName="Reversal" QuestId="42838" GiverName="Sylverin" GiverId="108870" X="1402.432" Y="3253.044" Z="134.7884" />
+            <CustomBehavior File="WaitTimer" WaitTime="40000" />
+        </If>
+
+        <While Condition="DoQuest(42838)" >
+            <CustomBehavior File="MyCTM" X="1388.067" Y="3266.223" Z="132.8777" />
+            <MoveTo X="1428.815" Y="3302.345" Z="132.6766" />
+        </While>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(507)" />
+        <If Condition="QuestDone(42838) || NeedsQuest(44084)">
+            <MoveTo X="1388.067" Y="3266.223" Z="132.8777" />
+            <CustomBehavior File="ForcedDismount" />
+            <CustomBehavior File="MyCTM" X="1403.816" Y="3252.064" Z="134.8037" />
+        </If>
+        
+        <TurnIn Nav="Fly" QuestName="Reversal" QuestId="42838" TurnInName="Sylverin" TurnInId="108870" X="1402.432" Y="3253.044" Z="134.7884" />
+        
+        <If Condition="NeedsQuest(44084)">
+            <PickUp Nav="Fly" QuestName="Vengeance for Margaux" QuestId="44084" GiverName="Sylverin" GiverId="108870" X="1402.432" Y="3253.044" Z="134.7884" />
+            <CustomBehavior File="MyCTM" X="1388.067" Y="3266.223" Z="132.8777" />
+        </If>
+    
+        <If Condition="DoQuest(44084)">
+            <CustomBehavior File="RunCode" Code="PrintStep(508)" />
+            <CustomBehavior File="KillUntilComplete" TerminateWhen="IsObjectiveComplete(1,44084)" >
+                <HuntingGrounds>
+                    <Hotspot X="1381.946" Y="3275.877" Z="132.8779" />
+                    <Hotspot X="1428.619" Y="3316.798" Z="132.6652" />
+                    <Hotspot X="1470.629" Y="3403.613" Z="131.5479" />
+                    <Hotspot X="1445.192" Y="3468.13" Z="130.8234" />
+                </HuntingGrounds>
+                <PursuitList>
+                    <PursueUnit Id="108875" />
+                    <PursueUnit Id="108871" />
+                </PursuitList>
+            </CustomBehavior>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(509)" />
+            <If Condition="!IsObjectiveComplete(2,44084)" >
+                <DisableBehavior Name="Combat" />
+                <MoveTo X="1215.259" Y="3109.413" Z="132.8846" />
+                <CustomBehavior File="RunCode" Code="StyxWoW.Me.SetFacing(new WoWPoint(1209.2, 3105.023, 133.1468));" />
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStart();" WaitTime="900" />
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStop();" WaitTime="100" />
+                <EnableBehavior Name="Combat" />
+            </If>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(510)" />
+        <TurnIn Nav="Fly" QuestName="Vengeance for Margaux" QuestId="44084" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1721.559" Y="4616.276" Z="123.9464" />
+        <PickUp Nav="Fly" QuestName="Seek the Unsavory" QuestId="42839" GiverName="First Arcanist Thalyssra" GiverId="97140" X="1721.559" Y="4616.276" Z="123.9464" />
+<!-- <TurnIn Nav="Fly" QuestName="Seek the Unsavory" QuestId="42839" TurnInName="Vanthir" TurnInId="107598" /> -->
+    
+        <If Condition="DoQuest(41256)" >
+            <CustomBehavior File="RunCode" Code="PrintStep(511)" />
+            <CustomBehavior File="KillUntilComplete" TerminateWhen="IsObjectiveComplete(1,41256)" >
+                <HuntingGrounds>
+                    <Hotspot X="1448.793" Y="4568.941" Z="121.6638" />
+                    <Hotspot X="1321.765" Y="4515.043" Z="117.0051" />
+                    <Hotspot X="1269.71" Y="4509.012" Z="116.9641" />
+                </HuntingGrounds>
+                <PursuitList>
+                    <PursueUnit Id="105014" />
+                </PursuitList>
+            </CustomBehavior>
+        </If>
+
+        <If Condition="DoQuest(41107)" >
+            <CustomBehavior File="RunCode" Code="PrintStep(512)" />
+            <CustomBehavior File="InteractWith" QuestId="41107" NumOfTimes="500" ProactiveCombatStrategy="ClearMobsThatWillAggro" >
+                <HuntingGrounds>
+                    <Hotspot X="1448.793" Y="4568.941" Z="121.6638" />
+                    <Hotspot X="1321.765" Y="4515.043" Z="117.0051" />
+                    <Hotspot X="1269.71" Y="4509.012" Z="116.9641" />
+                </HuntingGrounds>
+                <PursuitList>
+                    <PursueGameObject Id="247023" />
+                </PursuitList>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(513)" />
+        <TurnIn Nav="Fly" QuestName="Bad Apples" QuestId="41107" TurnInName="Keelay Moongrow" TurnInId="103131"  X="1356.974" Y="4035.571" Z="113.246"/>
+        <TurnIn Nav="Fly" QuestName="Blast of Spice Fish" QuestId="41256" TurnInName="Keelay Moongrow" TurnInId="103131" X="1356.974" Y="4035.571" Z="113.246" />
+        <PickUp Nav="Fly" QuestName="Fruit of the Doom" QuestId="41258" GiverName="Keelay Moongrow" GiverId="103131" X="1356.974" Y="4035.571" Z="113.246" />
+    
+        <If Condition="DoQuest(41258)" >
+            <CustomBehavior File="RunCode" Code="PrintStep(513)" />
+            <CustomBehavior File="InteractWith" QuestId="41258" NumOfTimes="500" ProactiveCombatStrategy="ClearMobsThatWillAggro" >
+                <HuntingGrounds>
+                    <Hotspot X="1353.395" Y="4038.376" Z="114.3628" />
+                    <Hotspot X="1383.284" Y="4052.54" Z="111.5764" />
+                    <Hotspot X="1453.127" Y="3921.701" Z="113.0718" />
+                </HuntingGrounds>
+                <PursuitList>
+                    <PursueUnit Id="103005" />
+                </PursuitList>
+            </CustomBehavior>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(517)" />
+        <TurnIn Nav="Fly" QuestName="Fruit of the Doom" QuestId="41258" TurnInName="Keelay Moongrow" TurnInId="103131" X="1356.974" Y="4035.571" Z="113.246"/>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(518)" />
+        <TurnIn Nav="Fly" QuestName="Seek the Unsavory" QuestId="42839" TurnInName="Vanthir" TurnInId="107598" X="358.6021" Y="3975.843" Z="1.388276" />
+        <PickUp Nav="Fly" QuestName="Hired Help" QuestId="43969" GiverName="Vanthir" GiverId="107598" X="358.6021" Y="3975.843" Z="1.388276" />
+
+        <If Condition="DoQuest(43969)">
+            <CustomBehavior File="RunCode" Code="PrintStep(519)" />
+            <CustomBehavior File="InteractWith" QuestId="43969" MobId="107253" NumOfTimes="1" PreInteractMountStrategy="Dismount" InteractByGossipOptions="1" X="728.9383" Y="3943.648" Z="5.685581" />
+            <CustomBehavior File="InteractWith" QuestId="43969" MobId="107253" NumOfTimes="1" PreInteractMountStrategy="Dismount" InteractByGossipOptions="1" X="728.9383" Y="3943.648" Z="5.685581" WaitTime="4000" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(520)" />
+        <TurnIn Nav="Fly" QuestName="Hired Help" QuestId="43969" TurnInName="Arluin" TurnInId="107253" X="728.9383" Y="3943.648" Z="5.685581" />
+        <PickUp Nav="Fly" QuestName="If Words Don't Work..." QuestId="42840" GiverName="Arluin" GiverId="107253" X="728.9383" Y="3943.648" Z="5.685581" />
+        
+        <CustomBehavior File="RunCode" Code="PrintStep(521)" />
+        <If Condition="DoQuest(42840)  &amp;&amp; !HasAncientMana(800)">
+            <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;../[N] Zygor - Suramar - 469&quot;, 800)" />
+            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana" RememberProfile="true" />
+        </If>
+
+        <If Condition="DoQuest(42840)">
+            <CustomBehavior File="InteractWith" QuestId="42840" MobId="107253" NumOfTimes="1" PreInteractMountStrategy="Dismount"  X="728.9383" Y="3943.648" Z="5.685581" />
+            <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton3" />
+            <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(522)" />
+        <TurnIn Nav="Fly" QuestName="If Words Don't Work..." QuestId="42840" TurnInName="Arluin" TurnInId="107253" X="728.9383" Y="3943.648" Z="5.685581" />
+        <PickUp Nav="Fly" QuestName="A Big Score" QuestId="42841" GiverName="Arluin" GiverId="107253" X="728.9383" Y="3943.648" Z="5.685581" />
+        <PickUp Nav="Fly" QuestName="Asset Security" QuestId="43352" GiverName="Arluin" GiverId="107253" X="728.9383" Y="3943.648" Z="5.685581" />
+
+        <If Condition="DoQuest(43352)">
+            <If Condition="!IsObjectiveComplete(1,43352)">
+                <CustomBehavior File="RunCode" Code="PrintStep(523)" />
+                <CustomBehavior File="InteractWith" QuestId="43352" MobId="110419" NumOfTimes="1" PreInteractMountStrategy="Dismount"  X="654.4089" Y="4128.802" Z="1.493812" />
+            </If>
+
+            <If Condition="!IsObjectiveComplete(2,43352)">
+                <CustomBehavior File="RunCode" Code="PrintStep(524)" />
+                <!-- walk from the landing to the kill target -->
+                <DisableBehavior Name="Combat" />
+                <CustomBehavior File="MyCTM" X="684.3331" Y="4141.635" Z="31.55171" />
+                <CustomBehavior File="MyCTM" X="686.1141" Y="4153.976" Z="30.20317"  />
+                <CustomBehavior File="MyCTM" X="692.4055" Y="4170.374" Z="30.17895"  />
+
+                <CustomBehavior File="RunCode" Code="StyxWoW.Me.SetFacing(new WoWPoint(689.9739, 4189.923, 32.56955))" />
+
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStart();" WaitTime="150" />
+                <CustomBehavior File="Misc\RunLua" Lua="JumpOrAscendStart();" WaitTime="150" />
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStop();" WaitTime="1000" />
+
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStart();" WaitTime="150" />
+                <CustomBehavior File="Misc\RunLua" Lua="JumpOrAscendStart();" WaitTime="150" />
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStop();" WaitTime="150" />
+                <EnableBehavior Name="Combat" />
+
+                <CustomBehavior File="KillUntilComplete" TerminateWhen="IsObjectiveComplete(2,43352)" >
+                    <HuntingGrounds>
+                        <Hotspot X="689.9739" Y="4189.923" Z="32.56929" />
+                    </HuntingGrounds>
+                    <PursuitList>
+                        <PursueUnit Id="110415" />
+                    </PursuitList>
+                </CustomBehavior>
+
+                <!-- leave the platform -->
+                <CustomBehavior File="MyCTM" X="693.3759" Y="4161.584" Z="30.19845" />
+                <CustomBehavior File="RunCode" Code="StyxWoW.Me.SetFacing(new WoWPoint(756.0891, 4167.954, 1.493856))" />
+                <CustomBehavior File="WaitTimer" WaitTime="1000" />
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStart();" WaitTime="4000" />
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStop();" WaitTime="150" />
+            </If>
+        </If>
+
+        <If Condition="DoQuest(42841)">
+            <CustomBehavior File="RunCode" Code="PrintStep(525)" />
+            <MoveTo X="1442.481" Y="4008.396" Z="113.0712" />
+            <CustomBehavior File="InteractWith" QuestId="42841" MobId="251626" NumOfTimes="1" PreInteractMountStrategy="Dismount" X="1454.863" Y="3694.355" Z="115.0098" />
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(526)" />
+        <TurnIn Nav="Fly" QuestName="A Big Score" QuestId="42841" TurnInName="Arluin" TurnInId="107253" X="728.9383" Y="3943.648" Z="5.685581" />
+        <TurnIn Nav="Fly" QuestName="Asset Security" QuestId="43352" TurnInName="Arluin" TurnInId="107253" X="728.9383" Y="3943.648" Z="5.685581" />
+        <PickUp Nav="Fly" QuestName="Make Your Mark" QuestId="42792" GiverName="Arluin" GiverId="107253" X="728.9383" Y="3943.648" Z="5.685581" />
+        
+        <If Condition="DoQuest(42792)">
+            <If Condition="!IsObjectiveComplete(2,42792)">
+                <CustomBehavior File="RunCode" Code="PrintStep(527)" />
+                <MoveTo X="814.5476" Y="4014.616" Z="1.49327" />
+                <CustomBehavior File="InteractWith" QuestId="42792" MobId="107349" NumOfTimes="1" PreInteractMountStrategy="Dismount" InteractByGossipOptions="1" QuestObjectiveIndex="2" X="814.5476" Y="4014.616" Z="1.49327"  />
+            </If>
+
+            <CustomBehavior File="RunCode" Code="PrintStep(528)" />
+            <CustomBehavior File="InteractWith" QuestId="42792" MobId="107348" NumOfTimes="1" PreInteractMountStrategy="Dismount" InteractByGossipOptions="1" QuestObjectiveIndex="3" X="586.0084" Y="4015.937" Z="1.732223"  />
+
+            <CustomBehavior File="RunCode" Code="PrintStep(529)" />
+            <CustomBehavior File="InteractWith" QuestId="42792" MobId="107350" NumOfTimes="1" PreInteractMountStrategy="Dismount" InteractByGossipOptions="1" QuestObjectiveIndex="1" X="570.5559" Y="3894.306" Z="5.685245"  />
+
+            <If Condition="!IsObjectiveComplete(4,42792)">
+                <CustomBehavior File="RunCode" Code="PrintStep(530)" />
+                <CustomBehavior File="KillUntilComplete" TerminateWhen="IsObjectiveComplete(4,42792)" >
+                    <HuntingGrounds>
+                        <Hotspot X="786.1823" Y="4109.854" Z="2.992425" />
+                    </HuntingGrounds>
+                    <PursuitList>
+                        <PursueUnit Id="107333" />
+                    </PursuitList>
+                </CustomBehavior>
+                <CustomBehavior File="MyCTM" X="800.9719" Y="4109.26" Z="1.493231" />
+            </If>
+        </If>
+
+        <CustomBehavior File="RunCode" Code="PrintStep(531)" />
+        <!-- finishes Why Cant I Hold All This Mana? achievement -->
+        <TurnIn Nav="Fly" QuestName="Make Your Mark" QuestId="42792" TurnInName="Vanthir" TurnInId="107598" X="358.6021" Y="3975.843" Z="1.388276" />
+        <PickUp Nav="Fly" QuestName="And They Will Tremble" QuestId="44052" GiverName="Vanthir" GiverId="107598" X="358.6021" Y="3975.843" Z="1.388276" />
+
+        <CustomBehavior File="RunCode" Code="PrintStep(532)" />
+        <!-- now 8/11 story progress -->
+        <TurnIn Nav="Fly" QuestName="And They Will Tremble" QuestId="44052" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1715.662" Y="4625.09" Z="123.9462" />
+
+        <!-- next steps requires 8000 honored, whew -->
+
+    </QuestOrder>
+</HBProfile>

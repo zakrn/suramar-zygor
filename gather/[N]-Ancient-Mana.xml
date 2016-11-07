@@ -1,5 +1,5 @@
 <HBProfile xsi:noNamespaceSchemaLocation="../../Schemas/QuestProfileSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <Name>[N]-Ancient-Mana-Zinner-Zak-100</Name>
+    <Name>[N]-Ancient-Mana-Zak</Name>
     <MinLevel>110</MinLevel>
     <MaxLevel>1001</MaxLevel>
     <MinDurability>0.3</MinDurability>
@@ -31,16 +31,51 @@
         <UseMount Value="true" />
         <CustomBehavior File="RunCode" Type="Definition">
             <![CDATA[
-                    bool HasAncientMana( uint amount )
+                    public class Settings : Styx.Helpers.Settings
+                    {
+                        public static readonly string _settingsPath = Path.Combine(CharacterSettingsDirectory, "Profiles", "ZakrnSuramarSettings.xml");
+                        private static Settings _instance;
+                        public static Settings Instance => _instance ?? (_instance = new Settings());
+                        public Settings() : base(_settingsPath)
+                        {
+                        }
+                        [Setting]
+                        [Styx.Helpers.DefaultValue(100)]
+                        public int ManaTarget { get; set; }
+
+                        [Setting]
+                        [Styx.Helpers.DefaultValue("")]
+                        public string ReturnProfile { get; set; }
+
+                    }
+
+                    void SetManaTarget( int manaTarget)
+                    {
+                        var s = Settings.Instance;
+                        s.ManaTarget = manaTarget;
+                        s.Save();
+                    }
+
+                    int GetManaTarget() 
+                    {
+                        return Settings.Instance.ManaTarget;
+                    }
+
+                    string GetReturnProfile()
+                    {
+                        return Settings.Instance.ReturnProfile;
+                    }
+
+                    bool HasAncientMana( int amount )
                     {
                         return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
                     }
 
-                    uint MaxAncientMana()
+                    int MaxAncientMana()
                     {
                         if( WoWCurrency.GetCurrencyById(1155) != null )
                         {
-                            return WoWCurrency.GetCurrencyById(1155).TotalMax;
+                            return (int)WoWCurrency.GetCurrencyById(1155).TotalMax;
                         }
                         return 0;
                     }
@@ -70,6 +105,8 @@
                     }
                 ]]>
         </CustomBehavior>
+        
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Harvesting &quot; + GetManaTarget() + &quot; Ancient Mana&quot; );" />
 
         <CustomBehavior File="RunCode" Code="await UseRareItems();" />
         
@@ -84,7 +121,7 @@
                 <CustomBehavior File="UseItem" ItemId="139890" />
             </If>
         </CustomBehavior>
-        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" TerminateWhen="HasAncientMana(100)" >
+        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" TerminateWhen="HasAncientMana( GetManaTarget() )" >
             <HuntingGrounds>
                 <Hotspot X="1305.939" Y="4830.756" Z="172.1508" />
                 <Hotspot X="1386.644" Y="4670.978" Z="128.5061" />
@@ -150,6 +187,10 @@
         </CustomBehavior>
         <CustomBehavior File="Hooks\DoWhen" ActivityName="use_mana_item" Command="Remove" />
 
-        <CustomBehavior File="LoadProfile" ProfileName="..\[H] Zygor - Suramar - 6 - 91" RememberProfile="true" />
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Ancient Mana Harvest Complete.&quot;);" />
+
+        <CustomBehavior File="RunCode" Code="SetManaTarget(0)" />
+        <CustomBehavior File="LoadProfile" ProfileName="../[H] Zygor - Suramar - 6 - 91" RememberProfile="true" />
+
     </QuestOrder>
 </HBProfile>
