@@ -66,16 +66,16 @@
                         return false;
                     }
 
-                    bool HasAncientMana( uint amount )
+                    bool HasAncientMana( int amount )
                     {
                         return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
                     }
 
-                    uint MaxAncientMana()
+                    int MaxAncientMana()
                     {
                         if( WoWCurrency.GetCurrencyById(1155) != null )
                         {
-                            return WoWCurrency.GetCurrencyById(1155).TotalMax;
+                            return (int)WoWCurrency.GetCurrencyById(1155).TotalMax;
                         }
                         return 0;
                     }
@@ -180,11 +180,51 @@
                     
                 ]]>
         </CustomBehavior>
+
+        <!-- settings setup, original credit to the Nuok and the world quests team-->
+        <CustomBehavior File="RunCode" Type="Definition">
+        <![CDATA[
+                public class Settings : Styx.Helpers.Settings
+                {
+                    public static readonly string _settingsPath = Path.Combine(CharacterSettingsDirectory, "Profiles", "ZakrnSuramarSettings.xml");
+                    private static Settings _instance;
+                    public static Settings Instance => _instance ?? (_instance = new Settings());
+                    public Settings() : base(_settingsPath)
+                    {
+                    }
+                    [Setting]
+                    [Styx.Helpers.DefaultValue(100)]
+                    public int ManaTarget { get; set; }
+
+                    [Setting]
+                    [Styx.Helpers.DefaultValue("")]
+                    public string ReturnProfile { get; set; }
+
+                }
+
+                void SetManaTarget( int manaTarget){
+                    var s = Settings.Instance;
+                    s.ManaTarget = manaTarget;
+                    s.Save();
+                }
+
+                void PrepManaFarm( string returnProfile, int manaGoal )
+                {
+                    SetManaTarget( manaGoal );
+                    var s = Settings.Instance;
+                    s.ReturnProfile = returnProfile;
+                    s.Save();
+                }
+        ]]>
+        </CustomBehavior> 
         
         <!-- do the daily 50 mana rep boosts -->
-        <If Condition="HasQuest(43587) &amp;&amp; !HasAncientMana(150)">
-            <CustomBehavior File="LoadProfile" ProfileName="gather\[N]-Ancient-Mana-Zinner-Zak-200" RememberProfile="true" />
+
+        <If Condition="!HasAncientMana(150)">
+            <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;REP&quot;, 150)" />
+            <CustomBehavior File="LoadProfile" ProfileName="..\gather\[N]-Ancient-Mana" RememberProfile="true" />
         </If>
+
         <MoveTo X="1716.453" Y="4625.14" Z="123.9462" />
 
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Checking Thalyssra&quot;);" />
@@ -212,12 +252,17 @@
         <!-- check withered army training -->
         <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945"  />
         <If Condition="CanDoArmyTraining()">
+            <If Condition="!HasAncientMana(MaxAncientMana())">
+                <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;REP&quot;, MaxAncientMana())" />
+                <CustomBehavior File="LoadProfile" ProfileName="..\gather\[N]-Ancient-Mana" RememberProfile="true" />
+            </If>
+
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Can Train Army&quot;);" />
             
             <If Condition="MaxAncientMana() &gt;= 2000">
                 <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 2000 mana&quot;);" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton5" />
+                <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(1);" WaitTime="500" />
+                <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(5);" WaitTime="500" />
                 <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
                 <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
 

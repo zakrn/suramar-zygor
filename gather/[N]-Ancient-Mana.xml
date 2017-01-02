@@ -30,42 +30,54 @@
     <QuestOrder>
         <UseMount Value="true" />
         <CustomBehavior File="RunCode" Type="Definition">
+        <![CDATA[
+                public class Settings : Styx.Helpers.Settings
+                {
+                    public static readonly string _settingsPath = Path.Combine(CharacterSettingsDirectory, "Profiles", "ZakrnSuramarSettings.xml");
+                    private static Settings _instance;
+                    public static Settings Instance => _instance ?? (_instance = new Settings());
+                    public Settings() : base(_settingsPath) {}
+                    
+                    [Setting]
+                    [Styx.Helpers.DefaultValue(100)]
+                    public int ManaTarget { get; set; }
+
+                    [Setting]
+                    [Styx.Helpers.DefaultValue("")]
+                    public string ReturnProfile { get; set; }
+
+                    [Setting]
+                    [Styx.Helpers.DefaultValue(true)]
+                    public bool UseArtifactPowerItems { get; set; }
+                }
+
+                void SetManaTarget( int manaTarget){
+                    var s = Settings.Instance;
+                    s.ManaTarget = manaTarget;
+                    s.Save();
+                }
+
+                void PrepManaFarm( string returnProfile, int manaGoal )
+                {
+                    SetManaTarget( manaGoal );
+                    var s = Settings.Instance;
+                    s.ReturnProfile = returnProfile;
+                    s.Save();
+                }
+
+                int GetManaTarget() 
+                {
+                    return Settings.Instance.ManaTarget;
+                }
+
+                string GetReturnProfile()
+                {
+                    return Settings.Instance.ReturnProfile;
+                }
+        ]]>
+        </CustomBehavior> 
+        <CustomBehavior File="RunCode" Type="Definition">
             <![CDATA[
-                    public class Settings : Styx.Helpers.Settings
-                    {
-                        public static readonly string _settingsPath = Path.Combine(CharacterSettingsDirectory, "Profiles", "ZakrnSuramarSettings.xml");
-                        private static Settings _instance;
-                        public static Settings Instance => _instance ?? (_instance = new Settings());
-                        public Settings() : base(_settingsPath)
-                        {
-                        }
-                        [Setting]
-                        [Styx.Helpers.DefaultValue(100)]
-                        public int ManaTarget { get; set; }
-
-                        [Setting]
-                        [Styx.Helpers.DefaultValue("")]
-                        public string ReturnProfile { get; set; }
-
-                    }
-
-                    void SetManaTarget( int manaTarget)
-                    {
-                        var s = Settings.Instance;
-                        s.ManaTarget = manaTarget;
-                        s.Save();
-                    }
-
-                    int GetManaTarget() 
-                    {
-                        return Settings.Instance.ManaTarget;
-                    }
-
-                    string GetReturnProfile()
-                    {
-                        return Settings.Instance.ReturnProfile;
-                    }
-
                     bool HasAncientMana( int amount )
                     {
                         return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
@@ -80,49 +92,55 @@
                         return 0;
                     }
 
-                    async Task UseRareItems()
+                    bool HasManaItems()
                     {
-                        var items = Me.BagItems.Where( item=> 
-                                                (int)item.Entry == 137010 ||    //Half-Full Bottle of Arcwine
-                                                (int)item.Entry == 140235 ||    //Small Jar of Arcwine
-                                                (int)item.Entry == 140245 ||    //The Tidemistress' Enchanted Pearl
-                                                (int)item.Entry == 140242 ||    //Astromancer's Compass
-                                                (int)item.Entry == 140406 ||    //Primed Arcane Charge
-                                                (int)item.Entry == 140240 ||    //Enchanted Moonwell Waters
-                                                (int)item.Entry == 140246       //Arc of Snow
-                                    );
+                        bool hasItems = Me.BagItems.FirstOrDefault(x => x.ItemInfo.SubClassId.Equals(8) && x.GetEffect(0) != null && x.GetEffect(0).Spell.LocalizedName.Contains("Ancient Mana")) != null;
+                        return hasItems;
+                    }
 
-                        if( items == null )
-                            return;
+                    async Task UseManaItems()
+                    {
+                        var items = Me.BagItems.Where(x => x.ItemInfo.SubClassId.Equals(8) && x.GetEffect(0) != null && x.GetEffect(0).Spell.LocalizedName.Contains("Ancient Mana"));
+
+                        //var items = Me.BagItems.Where( item=> 
+                        //                        (int)item.Entry == 137010 ||    //Half-Full Bottle of Arcwine
+                        //                        (int)item.Entry == 140235 ||    //Small Jar of Arcwine
+                        //                        (int)item.Entry == 140245 ||    //The Tidemistress' Enchanted Pearl
+                        //                        (int)item.Entry == 140242 ||    //Astromancer's Compass
+                        //                        (int)item.Entry == 140406 ||    //Primed Arcane Charge
+                        //                        (int)item.Entry == 140240 ||    //Enchanted Moonwell Waters
+                        //                        (int)item.Entry == 140399 ||    //Yellow Or'ligai Egg
+                        //                        (int)item.Entry == 140405 ||    //Illusion Matrix Crystal
+                        //                        (int)item.Entry == 140246       //Arc of Snow
+                        //            );
 
                         foreach( WoWItem item in items )
                         {
+                            await CommonCoroutines.StopMoving();
                             Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: using mana item: " + item.Name);
                             item.Use();
-                            await Coroutine.Sleep(3000);
+                            await Coroutine.Sleep(500);
+                            await Coroutine.Wait(1600, () => !SpellManager.GlobalCooldown);
+                            await Coroutine.Wait(2500, () => !Me.IsCasting);
                             await Coroutine.Yield();
                         }
                     }
                 ]]>
         </CustomBehavior>
         
+        <CustomBehavior File="UserSettings" HarvestHerbs="false" HarvestMinerals="false" />
+
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Harvesting &quot; + GetManaTarget() + &quot; Ancient Mana&quot; );" />
 
-        <CustomBehavior File="RunCode" Code="await UseRareItems();" />
-        
-        <!-- Ones you may find while farming -->
-        <CustomBehavior File="Hooks\DoWhen" UseWhen="HasItem(139786) || HasItem(139890)" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
-            <!-- Ancient Mana Crystal -->
-            <If Condition="HasItem(139786)">
-                <CustomBehavior File="UseItem" ItemId="139786" />
-            </If>
-            <!-- Ancient Mana Gem -->
-            <If Condition="HasItem(139890)">
-                <CustomBehavior File="UseItem" ItemId="139890" />
-            </If>
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="HasManaItems()" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
+            <CustomBehavior File="RunCode" Code="await UseManaItems();" />
         </CustomBehavior>
-        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" TerminateWhen="HasAncientMana( GetManaTarget() )" >
+
+        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" CollectionDistance="80" TerminateWhen="HasAncientMana( GetManaTarget() )" >
             <HuntingGrounds>
+                <Hotspot X="1611.525" Y="4302.211" Z="135.5855" />
+                <Hotspot X="1758.481" Y="4791.606" Z="147.6049" />
+                <Hotspot X="1737.297" Y="4714.273" Z="170.1424" />
                 <Hotspot X="1305.939" Y="4830.756" Z="172.1508" />
                 <Hotspot X="1386.644" Y="4670.978" Z="128.5061" />
                 <Hotspot X="1331.427" Y="4492.01" Z="122.9617" />
@@ -190,7 +208,13 @@
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Ancient Mana Harvest Complete.&quot;);" />
 
         <CustomBehavior File="RunCode" Code="SetManaTarget(0)" />
-        <CustomBehavior File="LoadProfile" ProfileName="../[H] Zygor - Suramar - 6 - 91" RememberProfile="true" />
+
+        <If Condition="GetReturnProfile().Equals(&quot;REP&quot;)" >
+            <CustomBehavior File="LoadProfile" ProfileName="..\reputation\[N]The Nightfallen Rep" RememberProfile="true" />
+        </If>
+        <If Condition="GetReturnProfile().Equals(&quot;MAIN&quot;)">
+            <CustomBehavior File="LoadProfile" ProfileName="../[H] Zygor - Suramar" RememberProfile="true" />
+        </If>
 
     </QuestOrder>
 </HBProfile>

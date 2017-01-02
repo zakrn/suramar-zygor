@@ -347,9 +347,8 @@
                     public static readonly string _settingsPath = Path.Combine(CharacterSettingsDirectory, "Profiles", "ZakrnSuramarSettings.xml");
                     private static Settings _instance;
                     public static Settings Instance => _instance ?? (_instance = new Settings());
-                    public Settings() : base(_settingsPath)
-                    {
-                    }
+                    public Settings() : base(_settingsPath) {}
+                    
                     [Setting]
                     [Styx.Helpers.DefaultValue(100)]
                     public int ManaTarget { get; set; }
@@ -358,6 +357,9 @@
                     [Styx.Helpers.DefaultValue("")]
                     public string ReturnProfile { get; set; }
 
+                    [Setting]
+                    [Styx.Helpers.DefaultValue(true)]
+                    public bool UseArtifactPowerItems { get; set; }
                 }
 
                 void SetManaTarget( int manaTarget){
