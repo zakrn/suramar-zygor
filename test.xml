@@ -1,0 +1,194 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[N] Zygor Suramar 469</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
+    <Blackspots>
+        <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
+    </Blackspots>
+    <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
+    <Vendors>
+    </Vendors>
+    <!--These are the locations of the available mailboxes that you want your character to use-->
+    <Mailboxes>
+    </Mailboxes>
+    <!--Setting these would make sure the character stays away from and does not attack these mobs-->
+    <AvoidMobs>
+        <Mob Name="Koralune Ettin" Entry="99791" />
+        <Mob Name="Elfbane" Entry="99792" />
+    </AvoidMobs>
+    <!--Here is where the meat of the profile will take place-->
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition"><![CDATA[
+                async Task MakeWine() {
+                    var margaux = Unit(112055);
+                    while( margaux != null && margaux.HasAura(224237) ){
+                        if( margaux.HasAura(217204) )
+                        {
+                            await AddPurifiedWater();
+                        }
+                        else if( margaux.HasAura(217205))
+                        {
+                            await AddNightLily();
+                        }
+                        else if( margaux.HasAura(217203))
+                        {
+                            await AddShadefruit();
+                        }
+                        else if( margaux.HasAura(217202))
+                        {
+                            await StompGrapes();
+                        }
+                        await Coroutine.Yield();
+                    }
+                }
+
+                WoWObject GetObj( int objid)
+                {
+                    return ObjectManager.GetObjectsOfType<WoWGameObject>()
+                        .OrderBy(ret => ret.Distance)
+                        .FirstOrDefault(target =>
+                            (int)target.Entry == objid );
+                }
+
+                async Task AddShadefruit()
+                {
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: AddShadefruit");
+                    await LeaveGrapes();
+                    WoWObject fruit = GetObj(251493);
+                    if( fruit != null )
+                        fruit.Interact();
+                    await Coroutine.Sleep(3000);
+                    await Coroutine.Yield();
+                }
+
+                async Task AddNightLily()
+                {   
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: AddNightLily");
+                    //this spell name doesnt match Silver Jasmine object
+                    await LeaveGrapes();
+                    WoWObject silverJasmine = GetObj(251494);
+                    if( silverJasmine != null )
+                        silverJasmine.Interact();
+                    await Coroutine.Sleep(3000);
+                    await Coroutine.Yield();
+                }
+
+                async Task AddPurifiedWater() 
+                {
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: AddPurifiedWater");
+                    await LeaveGrapes();
+                    WoWObject water = GetObj(251492);
+                    if( water != null )
+                        water.Interact();
+                    await Coroutine.Sleep(3000);
+                    await Coroutine.Yield();
+                }
+
+                async Task StompGrapes() {
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: StompGrapes");
+                    await HopInGrapes();
+
+                    var margaux = Unit(112055);
+                    while( margaux != null && margaux.HasAura(224237) && margaux.HasAura(217202) )
+                    {
+                        Lua.DoString("JumpOrAscendStart()");
+                        await Coroutine.Sleep(1000);
+                        await Coroutine.Yield();
+                    }
+                }
+
+                async Task LeaveGrapes() {
+                    WoWPoint grapeGoto = new WoWPoint(1354.776,3297.472,132.8778);
+                    while (Me.Location.Distance(grapeGoto) > 1)
+                    {   
+                        WoWMovement.ClickToMove(grapeGoto);
+                        await Coroutine.Yield();
+                    }
+                    await CommonCoroutines.StopMoving();
+                }
+
+                async Task HopInGrapes() {
+                    await LeaveGrapes();
+                    Me.SetFacing( new WoWPoint(1358.507,3294.529,133.5807) );
+                    await Coroutine.Sleep(500);
+                    Lua.DoString("MoveForwardStart()");
+                    await Coroutine.Sleep(150);
+                    Lua.DoString("JumpOrAscendStart()");
+                    await Coroutine.Sleep(150);
+                    Lua.DoString("MoveForwardStop()");
+                }
+
+                async Task UseRareItems()
+                {
+                    var items = Me.BagItems.Where( item=> 
+                                                (int)item.Entry == 137010 ||    //Half-Full Bottle of Arcwine
+                                                (int)item.Entry == 140235 ||    //Small Jar of Arcwine
+                                                (int)item.Entry == 140245 ||    //The Tidemistress' Enchanted Pearl
+                                                (int)item.Entry == 140242 ||    //Astromancer's Compass
+                                                (int)item.Entry == 140406 ||    //Primed Arcane Charge
+                                                (int)item.Entry == 140240 ||    //Enchanted Moonwell Waters
+                                                (int)item.Entry == 140246       //Arc of Snow
+                                    );
+
+                    if( items == null )
+                        return;
+
+                    foreach( WoWItem item in items )
+                    {
+                        Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: using mana item: " + item.Name);
+                        item.Use();
+                        await Coroutine.Sleep(3000);
+                        await Coroutine.Yield();
+                    }
+                }
+            ]]>
+        </CustomBehavior> 
+
+        <CustomBehavior File="RunCode" Type="Definition">
+      <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 42169 then
+            return true;
+            end
+    end
+end
+return false;", 0);]]>
+    </CustomBehavior>
+
+        <!-- <CustomBehavior File="RunCode" Code="await UseRareItems();" /> -->
+
+    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;&quot; + OnQuest );" />
+
+
+     <!--    <PickUp Nav="Fly" QuestName="The Old Fashioned Way" QuestId="42835" GiverName="Sylverin" GiverId="108870" X="1477.832" Y="3425.004" Z="132.8178" />
+
+        <CustomBehavior File="InteractWith" MobId="108872" NumOfTimes="1" InteractByGossipOptions="1" X="1355.248" Y="3289.176" Z="132.8778" />
+        <CustomBehavior File="WaitTimer" WaitTime="2000" />
+        <CustomBehavior File="RunCode" Code="await MakeWine();" /> -->
+        
+<!--         <MoveTo X="1354.776" Y="3297.472" Z="132.8778" />
+        <CustomBehavior File="RunCode" Code="Me.SetFacing( new WoWPoint(1358.507,3294.529,133.5807) );" />
+        <CustomBehavior File="WaitTimer" WaitTime="500" />
+        <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStart()" />
+        <CustomBehavior File="WaitTimer" WaitTime="150" />
+        <CustomBehavior File="Misc\RunLua" Lua="JumpOrAscendStart()" />
+        <CustomBehavior File="WaitTimer" WaitTime="150" />
+        <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStop()" /> -->
+
+
+    </QuestOrder>
+</HBProfile>
