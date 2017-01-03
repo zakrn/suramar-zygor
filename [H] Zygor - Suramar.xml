@@ -55,7 +55,7 @@
                     public string ReturnProfile { get; set; }
 
                     [Setting]
-                    [Styx.Helpers.DefaultValue(true)]
+                    [Styx.Helpers.DefaultValue(false)]
                     public bool UseArtifactPowerItems { get; set; }
                 }
 
