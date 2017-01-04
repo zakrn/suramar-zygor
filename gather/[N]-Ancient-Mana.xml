@@ -202,6 +202,10 @@
                 <Hotspot X="1619.317" Y="4887.14" Z="162.7641" />
                 <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
             </HuntingGrounds>
+            <Blackspots>
+                <Blackspot X="1478.984" Y="5442.051" Z="75.68926" Radius="20.0"/>
+                <Blackspot X="1071.589" Y="5265.232" Z="106.5904" Radius="40.0"/>
+            </Blackspots>
         </CustomBehavior>
         <CustomBehavior File="Hooks\DoWhen" ActivityName="use_mana_item" Command="Remove" />
 
@@ -210,7 +214,7 @@
         <CustomBehavior File="RunCode" Code="SetManaTarget(0)" />
 
         <If Condition="GetReturnProfile().Equals(&quot;REP&quot;)" >
-            <CustomBehavior File="LoadProfile" ProfileName="..\reputation\[N]The Nightfallen Rep" RememberProfile="true" />
+            <CustomBehavior File="LoadProfile" ProfileName="../reputation/[N]The Nightfallen Rep" RememberProfile="true" />
         </If>
         <If Condition="GetReturnProfile().Equals(&quot;MAIN&quot;)">
             <CustomBehavior File="LoadProfile" ProfileName="../[H] Zygor - Suramar" RememberProfile="true" />

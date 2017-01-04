@@ -1,0 +1,93 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[N] Gather Max Ancient Mana</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
+    <Blackspots>
+    </Blackspots>
+    <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
+    <Vendors>
+    </Vendors>
+    <!--These are the locations of the available mailboxes that you want your character to use-->
+    <Mailboxes>
+    </Mailboxes>
+    <!--Setting these would make sure the character stays away from and does not attack these mobs-->
+    <AvoidMobs>
+    </AvoidMobs>
+    <!--Here is where the meat of the profile will take place-->
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                    bool HasAncientMana( int amount )
+                    {
+                        return WoWCurrency.GetCurrencyById(1155) != null && WoWCurrency.GetCurrencyById(1155).Amount >= amount;
+                    }
+
+                    int MaxAncientMana()
+                    {
+                        if( WoWCurrency.GetCurrencyById(1155) != null )
+                        {
+                            return (int)WoWCurrency.GetCurrencyById(1155).TotalMax;
+                        }
+                        return 0;
+                    }
+
+                    void PrintStep( uint step )
+                    {
+                        Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: " + step);
+                    }
+                ]]>
+        </CustomBehavior>
+        <!-- settings setup, original credit to the Nuok and the world quests team-->
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                public class Settings : Styx.Helpers.Settings
+                {
+                    public static readonly string _settingsPath = Path.Combine(CharacterSettingsDirectory, "Profiles", "ZakrnSuramarSettings.xml");
+                    private static Settings _instance;
+                    public static Settings Instance => _instance ?? (_instance = new Settings());
+                    public Settings() : base(_settingsPath)
+                    {
+                    }
+                    [Setting]
+                    [Styx.Helpers.DefaultValue(100)]
+                    public int ManaTarget { get; set; }
+
+                    [Setting]
+                    [Styx.Helpers.DefaultValue("")]
+                    public string ReturnProfile { get; set; }
+
+                }
+
+                void SetManaTarget( int manaTarget){
+                    var s = Settings.Instance;
+                    s.ManaTarget = manaTarget;
+                    s.Save();
+                }
+
+                void PrepManaFarm( int manaGoal )
+                {
+                    SetManaTarget( manaGoal );
+                    var s = Settings.Instance;
+                    s.ReturnProfile = "NONE";
+                    s.Save();
+                }
+        ]]>
+        </CustomBehavior>
+        <If Condition="!HasAncientMana(MaxAncientMana())">
+            <CustomBehavior File="RunCode" Code="PrepManaFarm(MaxAncientMana())" />
+            <CustomBehavior File="LoadProfile" ProfileName="./[N]-Ancient-Mana" RememberProfile="true" />
+        </If>
+    </QuestOrder>
+</HBProfile>
