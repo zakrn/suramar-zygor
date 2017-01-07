@@ -128,7 +128,7 @@
                 ]]>
         </CustomBehavior>
         
-        <CustomBehavior File="UserSettings" HarvestHerbs="false" HarvestMinerals="false" />
+        <!-- <CustomBehavior File="UserSettings" HarvestHerbs="false" HarvestMinerals="false" /> -->
 
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Harvesting &quot; + GetManaTarget() + &quot; Ancient Mana&quot; );" />
 
@@ -136,7 +136,7 @@
             <CustomBehavior File="RunCode" Code="await UseManaItems();" />
         </CustomBehavior>
 
-        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" CollectionDistance="80" TerminateWhen="HasAncientMana( GetManaTarget() )" >
+        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" TerminateWhen="HasAncientMana( GetManaTarget() )" >
             <HuntingGrounds>
                 <Hotspot X="1611.525" Y="4302.211" Z="135.5855" />
                 <Hotspot X="1758.481" Y="4791.606" Z="147.6049" />
@@ -205,6 +205,10 @@
             <Blackspots>
                 <Blackspot X="1478.984" Y="5442.051" Z="75.68926" Radius="20.0"/>
                 <Blackspot X="1071.589" Y="5265.232" Z="106.5904" Radius="40.0"/>
+                <Blackspot X="1628.706" Y="5424.287" Z="65.01992" Radius="20.0" />
+                <Blackspot X="1638.807" Y="5458.747" Z="61.90379" Radius="20.0" />
+                <Blackspot X="1577.444" Y="5412.718" Z="64.95435" Radius="20.0" />
+                <Blackspot X="1262.418" Y="5258.036" Z="94.50412" Radius="20.0" />
             </Blackspots>
         </CustomBehavior>
         <CustomBehavior File="Hooks\DoWhen" ActivityName="use_mana_item" Command="Remove" />
