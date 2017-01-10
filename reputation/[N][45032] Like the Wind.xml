@@ -1,0 +1,200 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[Zakrn] Like the Wind</Name>
+    <MinDurability>0.2</MinDurability>
+    <MinFreeBagSlots>1</MinFreeBagSlots>
+    <MinLevel>1</MinLevel>
+    <MaxLevel>1000</MaxLevel>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                WoWUnit GetNearestField()
+                {
+                    return ObjectManager.GetObjectsOfType<WoWUnit>()
+                        .OrderBy(ret => ret.Distance)
+                        .FirstOrDefault(target => (int)target.Entry == 115868 );
+                }
+
+                WoWUnit GetNextField()
+                {
+                    return GetFieldAtIndex(1);
+                }
+
+                WoWUnit GetFieldAtIndex( int idx )
+                {
+                  return ObjectManager.GetObjectsOfType<WoWUnit>()
+                        .Where( t => (int)t.Entry == 115868 )
+                        .OrderBy(ret => ret.Distance)
+                        .ElementAt(idx);
+                }
+
+                WoWUnit GetFieldByGuid( string g )
+                {
+                  var guid = new WoWGuid();
+                  WoWGuid.TryParse(g, out guid);
+                  return ObjectManager.GetObjectsOfType<WoWUnit>().FirstOrDefault(target => target.Guid.Equals(guid) );
+                }
+
+                WoWUnit GetGoal()
+                {
+                    return ObjectManager.GetObjectsOfType<WoWUnit>()
+                        .FirstOrDefault(target => (int)target.Entry == 115884 );
+                }
+
+                double DistFromStart( Vector3 v )
+                {
+                  Vector3 start3d = new Vector3(2654.576f, 4386.836f, 413.972f);
+                  return CalcDist( start3d, v);
+                  //Vector2 start = new Vector2( 2654.576f, 4386.836f );
+                  //return CalcDist( start, v );
+                }
+
+                bool IsOnCheckpoint() 
+                {
+                  Vector3 chkpt = new Vector3(2550.091f, 4416.622f, 364.6238f);
+                  return CalcDist( chkpt, Me.Location ) < 10;
+                }
+
+                double CalcDist( Vector3 v1, Vector3 v2 )
+                {
+                  return Vector3.Distance( v1, v2);
+                }
+
+                async Task FaceIndex( int idx)
+                {
+                  var field = GetFieldAtIndex( idx );
+                  field.Face();
+                  await Coroutine.Yield();
+                }
+                async Task FaceGuid( string g )
+                {
+                  Print("facing guid " + g );
+                  var field = GetFieldByGuid(g);
+                  field.Face();
+                  await Coroutine.Sleep(300);
+                  await Coroutine.Yield();
+                }
+                async Task FaceNext()
+                {
+                  var field = GetNextField();
+                  field.Face();
+                  await Coroutine.Yield();
+                }
+
+                async Task FaceNearest()
+                {
+                  var field = GetNearestField();
+                  Logging.Write(System.Windows.Media.Colors.Yellow, "FaceNearest: " + field.Guid);
+                  field.Face();
+                  await Coroutine.Yield();
+                }
+
+                async Task GoForward( int wait = 2000)
+                {
+                  Styx.Helpers.KeyboardManager.KeyUpDown((char)System.Windows.Forms.Keys.D1);
+                  await Coroutine.Sleep(wait);
+                }
+
+                void Print( string msg )
+                {
+                  Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: " + msg);
+                }
+
+                void CalcAll()
+                {
+                  Logging.Write(System.Windows.Media.Colors.Yellow, "====");
+
+                  var fields = ObjectManager.GetObjectsOfType<WoWUnit>()
+                                .Where(target => (int)target.Entry == 115868 )
+                                .OrderBy( t => t.Distance );
+                  foreach( WoWUnit f in fields )
+                  {
+                    var dist = CalcDist(Me.Location, f.Location);
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "" + f.Guid  + ", " + dist);
+                  }
+
+                  Logging.Write(System.Windows.Media.Colors.Yellow, ">>>");
+                  var orderedFields = ObjectManager.GetObjectsOfType<WoWUnit>()
+                                        .Where(target => (int)target.Entry == 115868 )
+                                        .OrderBy( t => {
+                                            //Vector2 v = new Vector2( t.Location.X, t.Location.Y );
+                                            return DistFromStart(t.Location);
+                                        });
+                  foreach( WoWUnit f in orderedFields )
+                  {
+                    //Vector2 v = new Vector2( f.Location.X, f.Location.Y );
+                    var dist = DistFromStart(f.Location);
+                    if( dist > 142.0 && dist < 159 )
+                    {
+                      Logging.Write(System.Windows.Media.Colors.Yellow, "Checkpoint");
+                    }
+                    Logging.Write(System.Windows.Media.Colors.Yellow, "" + f.Guid  + ", " + dist);
+                  }
+                }
+            ]]>
+        </CustomBehavior>
+        <While Condition="!IsQuestCompleted(45032)">
+            <!-- <CustomBehavior File="RunCode" Code="CalcAll()" /> -->
+            <If Condition="!IsOnCheckpoint()">
+                <MoveTo X="2654.576" Y="4386.836" Z="413.972" />
+                <CustomBehavior File="ForcedDismount" />
+                <CustomBehavior File="WaitTimer" WaitTime="500" />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C3000072B094&quot;)" />
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStart();" WaitTime="150" />
+                <!-- <CustomBehavior File="Misc\RunLua" Lua="JumpOrAscendStart();" WaitTime="150" /> -->
+                <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStop();" WaitTime="150" />
+                <CustomBehavior File="RunCode" Code="await GoForward() " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C30000F2B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward() " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C30005F2B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward() " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C3000172B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(700) " />
+                <CustomBehavior File="RunCode" Code="Me.SetFacing(new Vector3(2550.091f, 4416.622f, 364.6238f))" />
+                <CustomBehavior File="RunCode" Code="await GoForward() " />
+                <CustomBehavior File="WaitTimer" WaitTime="2500" />
+            </If>
+            <If Condition="IsOnCheckpoint()">
+                <CustomBehavior File="RunCode" Code="Print(&quot;Checkpoint&quot;);" />
+                <CustomBehavior File="MyCTM" X="2546.459" Y="4419.683" Z="364.6239" />
+                <CustomBehavior File="WaitTimer" WaitTime="500" />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C30001F2B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(3300) " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C3000272B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(1000) " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C30002F2B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(1000) " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C3000372B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(1000) " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C3000472B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(2500) " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C30003F2B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(1000) " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C30004F2B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(700) " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C3000572B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(700) " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C3000572B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(700) " />
+                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC9880712B000064C3000072B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(700) " />
+            </If>
+            <CustomBehavior File="WaitTimer" WaitTime="10000" />
+        </While>
+        <!-- use whistle -->
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

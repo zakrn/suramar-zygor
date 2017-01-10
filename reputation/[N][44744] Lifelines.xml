@@ -1,0 +1,80 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- Original contribution by EchoTiger -->
+    <!-- credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>44744-[N]-[QUEST]-Wq-Lifelines-Zinner.xml</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 44744 then
+            return true;
+            end
+    end
+end
+return false;", 0);]]>
+        </CustomBehavior>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool NeedsMask()
+        {
+            if (Me.Combat || Me.HasAura(202477)) return false;
+            var extraAction = Styx.CommonBot.Bars.ActionBar.Extra;
+            return extraAction.IsActive && extraAction.Buttons[0].Id == 202477;
+        }
+
+        public async Task UseMask()
+        {
+          while (NeedsMask())
+          {
+            var extraAction = Styx.CommonBot.Bars.ActionBar.Extra;
+            await CommonCoroutines.StopMoving();
+            extraAction.Buttons[0].Use();
+            await Coroutine.Sleep(1500);
+            await Coroutine.Yield();
+          }
+        }]]>
+        </CustomBehavior>
+        <CustomBehavior File="Hooks\Avoid" AvoidName="DispelIllusions" Command="Add" AvoidWhen="UNIT.CastingSpellId == 203750" Radius="18" IgnoreLootInAvoid="true" IgnoreIfBlocking="true" />
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="NeedsMask()" LogExecution="true" ActivityName="apply_mask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <While Condition="NeedsMask()">
+                <CustomBehavior File="RunCode" Code="UseMask()" />
+                <CustomBehavior File="WaitTimer" WaitTime="1500" TerminateWhen="Me.HasAura(202477)" />
+            </While>
+        </CustomBehavior>
+        <While Condition="OnQuest">
+            <If Condition="!HasQuest(44744)">
+                <RunTo X="755.1429" Y="3915.212" Z="5.678289" />
+            </If>
+            <CustomBehavior File="KillUntilComplete" MobIds="115216, 115249" TerminateWhen="!OnQuest">
+                <HuntingGrounds>
+                    <Hotspot X="807.134" Y="3923.751" Z="10.56891" />
+                    <Hotspot X="737.4764" Y="3913.519" Z="5.708167" />
+                    <Hotspot X="761.7164" Y="3917.625" Z="5.684854" />
+                    <Hotspot X="823.7905" Y="3917.387" Z="10.56884" />
+                    <Hotspot X="815.4624" Y="3943.422" Z="10.56884" />
+                    <Hotspot X="797.5574" Y="3942.801" Z="10.56884" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+        <RunTo X="755.1429" Y="3915.212" Z="5.678289" />
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

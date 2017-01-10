@@ -1,0 +1,59 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- Original contribution by EchoTiger -->
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>[42111] Aggressive Reconnaisance - Staal</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>false</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 42111 then
+            return true;
+            end
+    end
+end
+return false;", 0);]]>
+        </CustomBehavior>
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;Loading Profile [42111] Aggressive Reconnaisance - Staal!&quot;);" />
+        <While Condition="OnQuest">
+            <If Condition="!HasQuest(42111)">
+                <RunTo X="1341.437" Y="5021.282" Z="93.36089" />
+            </If>
+            <If Condition="HasQuest(42111)">
+                <CustomBehavior File="KillUntilComplete" MobIds="99581, 99767, 101291, 105269, 106348, 113675, 101868" TerminateWhen="!OnQuest || !HasQuest(42111)">
+                    <HuntingGrounds>
+                        <Hotspot X="1334.016" Y="5048.686" Z="83.61149" />
+                        <Hotspot X="1170.1" Y="5054.317" Z="56.66116" />
+                        <Hotspot X="966.5242" Y="4835.303" Z="34.82087" />
+                        <Hotspot X="918.95" Y="4729.892" Z="43.9065" />
+                        <Hotspot X="791.569" Y="5013.485" Z="-0.5916802" />
+                        <Hotspot X="534.8903" Y="4995.696" Z="-80.50095" />
+                        <Hotspot X="423.5463" Y="5054.112" Z="-89.46732" />
+                        <Hotspot X="370.4721" Y="4879.454" Z="-97.70879" />
+                        <Hotspot X="490.106" Y="4743.616" Z="-127.3955" />
+                        <Hotspot X="618.3708" Y="4804.606" Z="-183.5411" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+        </While>
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

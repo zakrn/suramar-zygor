@@ -666,6 +666,10 @@
                     {
                         return (int)Me.GetReputationLevelWith(1859) >= 5;
                     }
+                    int NightfallenRepAmt()
+                    {
+                        return (int)Me.GetReputationWith(1859);
+                    }
                 ]]>
         </CustomBehavior>
         <CustomBehavior File="Hooks\DoWhen" LogExecution="false" AllowExecutionWhileNotAlive="false" ActivityName="UseArtifactBoostItems" UseWhen="ReadyToEmpowerArtifact()">
@@ -5032,5 +5036,9 @@
         </If>
 
         <!-- Needs 8000 in honored to continue -->
+        <If Condition="NightfallenRepAmt() &lt; 17000">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: 8000 rep in honored required to continue, loading rep profile&quot;);" />
+            <CustomBehavior File="LoadProfile" ProfileName="reputation\[N] The Nightfallen Rep" RememberProfile="true" />
+        </If>
     </QuestOrder>
 </HBProfile>

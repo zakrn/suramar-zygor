@@ -1,0 +1,66 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- Original contribution by EchoTiger -->
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>45307-[N]-[QUEST]-Wq-Claws for Alarm!-Zinner.xml</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 45307 then
+            return true;
+            end
+    end
+end
+return false;", 0);]]>
+        </CustomBehavior>
+        <While Condition="OnQuest">
+            <RunTo X="1435.78" Y="2119.71" Z="4.26626" />
+            <CustomBehavior File="InteractWith" MobIds="116538" NumOfTimes="1" TerminateWhen="IsObjectiveComplete(1, 45307) || !OnQuest">
+                <HuntingGrounds>
+                    <Hotspot X="1432.361" Y="2103.203" Z="1.235482" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            <CustomBehavior File="Misc\RunLua" Lua="VehicleExit()" />
+            <CustomBehavior File="KillUntilComplete" MobIds="116489, 100998, 102913, 100999" TerminateWhen="IsObjectiveComplete(3, 45307) || !OnQuest">
+                <HuntingGrounds>
+                    <Hotspot X="1380.878" Y="2000.743" Z="7.156245" />
+                    <Hotspot X="1404.355" Y="2043.346" Z="1.054347" />
+                    <Hotspot X="1385.263" Y="2098.347" Z="9.090578" />
+                    <Hotspot X="1332.928" Y="2123.755" Z="16.90607" />
+                    <Hotspot X="1338.256" Y="2086.559" Z="16.92689" />
+                    <Hotspot X="1316.065" Y="2108.963" Z="16.86824" />
+                    <Hotspot X="1338.256" Y="2086.559" Z="16.92689" />
+                    <Hotspot X="1316.065" Y="2108.963" Z="16.86824" />
+                    <Hotspot X="1287.111" Y="2037.335" Z="17.05326" />
+                    <Hotspot X="1270.494" Y="2038.799" Z="17.51333" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            <CustomBehavior File="KillUntilComplete" MobIds="116489" TerminateWhen="IsObjectiveComplete(2, 45307) ||!OnQuest">
+                <HuntingGrounds>
+                    <Hotspot X="1160.693" Y="2023.235" Z="1.55093" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+        <RunTo X="1435.78" Y="2119.71" Z="4.26626" />
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

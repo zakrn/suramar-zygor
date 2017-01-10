@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- All credit to the amazing world quest team on this one -->
+<!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+<HBProfile>
+  <Name>[Nuok] Pest Management</Name>
+  <MinDurability>0.2</MinDurability>
+  <MinFreeBagSlots>1</MinFreeBagSlots>
+  <MinLevel>1</MinLevel>
+  <MaxLevel>1000</MaxLevel>
+  <MailGrey>false</MailGrey>
+  <MailWhite>true</MailWhite>
+  <MailGreen>true</MailGreen>
+  <MailBlue>true</MailBlue>
+  <MailPurple>true</MailPurple>
+  <SellGrey>true</SellGrey>
+  <SellWhite>false</SellWhite>
+  <SellGreen>false</SellGreen>
+  <SellBlue>false</SellBlue>
+  <SellPurple>false</SellPurple>
+  <TargetElites>true</TargetElites>
+  <QuestOrder>
+    <CustomBehavior File="RunCode" Type="Definition">
+  <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 42830 then
+            return true;
+            end
+    end
+end
+return false;", 0);
+
+public bool HasExtraActionBar => Lua.GetReturnVal<bool>("return HasExtraActionBar()", 0);]]></CustomBehavior>
+    <While Condition="OnQuest">
+      <If Condition="!HasQuest(42830)">
+        <While Condition="!HasExtraActionBar &amp;&amp; !Me.HasAura(202477)">
+          <RunTo X="1522.907" Y="3304.009" Z="143.0357" />
+        </While>
+        <While Condition="HasExtraActionBar &amp;&amp; !Me.HasAura(202477)">
+			<!-- Remove Form: Cat, Travel, Bear, SWolf, Moonkin -->
+			<CustomBehavior File="RunCode" QuestId="42830">
+        <![CDATA[ 
+                        foreach (var aura in new[]{768,783,5487,2645,24858}.Select(id =>Me.GetAuraById(id)).Where(a => a != null)) 
+                        aura.TryCancelAura();
+                    ]]>
+      </CustomBehavior>
+          <CustomBehavior File="RunMacro" Macro="/click ExtraActionButton1" />
+        </While>
+        <RunTo X="1320.28" Y="3183.539" Z="132.8776" />
+      </If>
+      <While Condition="HasQuest(42830)">
+        <While Condition="HasExtraActionBar &amp;&amp; !Me.HasAura(202477)">
+					<!-- Remove Form: Cat, Travel, Bear, SWolf, Moonkin -->
+			<CustomBehavior File="RunCode" QuestId="42830">
+        <![CDATA[ 
+                        foreach (var aura in new[]{768,783,5487,2645,24858}.Select(id =>Me.GetAuraById(id)).Where(a => a != null)) 
+                        aura.TryCancelAura();
+                    ]]>
+      </CustomBehavior>
+          <CustomBehavior File="RunMacro" Macro="/click ExtraActionButton1" />
+        </While>
+        <CustomBehavior File="InteractWith" MobIds="109023" NumOfTimes="100" TerminateWhen="!Me.HasAura(202477) || IsObjectiveComplete(1, 42830) || !OnQuest"
+                 X="1522.907" Y="3304.009" Z="143.0357" />
+        <CustomBehavior File="KillUntilComplete" MobIds="109180" TerminateWhen="!Me.HasAura(202477) || IsObjectiveComplete(2, 42830) || !OnQuest"
+         X="1522.907" Y="3304.009" Z="143.0357" />
+
+      </While>
+    </While>
+
+    <!-- use whistle -->
+    <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+      <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+    </If>
+    <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+  </QuestOrder>
+</HBProfile>

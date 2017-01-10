@@ -1,0 +1,82 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- Original contribution by EchoTiger -->
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>42859-[N]-[QUEST]-Wq-A Draught of Hope-Zinner.xml</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 42859 then
+            return true;
+            end
+    end
+end
+return false;", 0);]]>
+        </CustomBehavior>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool NeedsMask()
+        {
+            if (Me.Combat || Me.HasAura(202477)) return false;
+            var extraAction = Styx.CommonBot.Bars.ActionBar.Extra;
+            return extraAction.IsActive && extraAction.Buttons[0].Id == 202477;
+        }
+
+        public async Task UseMask()
+        {
+          while (NeedsMask())
+            {
+            var extraAction = Styx.CommonBot.Bars.ActionBar.Extra;
+            await CommonCoroutines.StopMoving();
+            extraAction.Buttons[0].Use();
+            await Coroutine.Sleep(1500);
+            await Coroutine.Yield();
+            }
+        }]]>
+        </CustomBehavior>
+        <CustomBehavior File="Hooks\Avoid" AvoidName="DispelIllusions" Command="Add" AvoidWhen="UNIT.CastingSpellId == 203750" Radius="18" IgnoreLootInAvoid="true" IgnoreIfBlocking="true" />
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="NeedsMask()" LogExecution="true" ActivityName="apply_mask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <CustomBehavior File="RunCode" Code="UseMask()" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+        </CustomBehavior>
+        <If Condition="OnQuest">
+            <RunTo X="478.419" Y="3752.09" Z="1.510134" />
+        </If>
+        <While Condition="OnQuest">
+            <CustomBehavior File="InteractWith" MobId="109442" GossipOptions="1" NonCompeteDistance="0" PreInteractMountStrategy="DismountOrCancelShapeshift" X="3811.76" Y="5414.135" Z="631.6297" TerminateWhen="IsObjectiveComplete(1, 42859) || !OnQuest">
+            </CustomBehavior>
+            <CustomBehavior File="InteractWith" MobId="109409" GossipOptions="1" NonCompeteDistance="0" PreInteractMountStrategy="DismountOrCancelShapeshift" TerminateWhen="IsObjectiveComplete(2, 42859) || !OnQuest">
+                <HuntingGrounds>
+                    <Hotspot X="478.8491" Y="3818.458" Z="1.494146" />
+                    <Hotspot X="593.6037" Y="3955.095" Z="5.685669" />
+                    <Hotspot X="537.194" Y="3988.04" Z="5.68583" />
+                    <Hotspot X="500.5509" Y="3931.943" Z="1.493742" />
+                    <Hotspot X="437.7549" Y="3865.315" Z="1.493742" />
+                    <Hotspot X="354.6107" Y="3817.72" Z="1.798387" />
+                    <Hotspot X="346.8972" Y="3853.687" Z="1.493007" />
+                    <Hotspot X="402.778" Y="3967.086" Z="1.388312" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+        <RunTo X="478.419" Y="3752.09" Z="1.510134" />
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

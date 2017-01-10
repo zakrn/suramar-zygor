@@ -16,7 +16,7 @@
     <MailBlue>true</MailBlue>
     <MailPurple>true</MailPurple>
     <AvoidMobs>
-        <Mob Name="Koralune Ettin" Entry="99791" />
+        <!-- <Mob Name="Koralune Ettin" Entry="99791" /> -->
         <Mob Name="Elfbane" Entry="99792" />
     </AvoidMobs>
     <Blackspots>
@@ -132,6 +132,8 @@
 
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Harvesting &quot; + GetManaTarget() + &quot; Ancient Mana&quot; );" />
 
+        <CustomBehavior File="Hooks\Avoid" AvoidName="elfbane" ObjectId="99792" Radius="40" />
+
         <CustomBehavior File="Hooks\DoWhen" UseWhen="HasManaItems()" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
             <CustomBehavior File="RunCode" Code="await UseManaItems();" />
         </CustomBehavior>
@@ -209,6 +211,12 @@
                 <Blackspot X="1638.807" Y="5458.747" Z="61.90379" Radius="20.0" />
                 <Blackspot X="1577.444" Y="5412.718" Z="64.95435" Radius="20.0" />
                 <Blackspot X="1262.418" Y="5258.036" Z="94.50412" Radius="20.0" />
+                <Blackspot X="880.9355" Y="5261.9" Z="50.20648" Radius="20.0" />
+                <Blackspot X="1912.03" Y="5459.361" Z="-8.040374" Radius="20.0" />
+                <Blackspot X="1920.892" Y="5466.942" Z="-31.94954" Radius="20.0" />
+                <Blackspot X="1939.038" Y="5390.631" Z="-32.52055" Radius="20.0" />
+                <Blackspot X="1988.597" Y="5394.301" Z="-37.26923" Radius="20.0" />
+                <Blackspot X="922.3163" Y="5324.399" Z="69.51901" Radius="20.0" />
             </Blackspots>
         </CustomBehavior>
         <CustomBehavior File="Hooks\DoWhen" ActivityName="use_mana_item" Command="Remove" />
@@ -218,7 +226,7 @@
         <CustomBehavior File="RunCode" Code="SetManaTarget(0)" />
 
         <If Condition="GetReturnProfile().Equals(&quot;REP&quot;)" >
-            <CustomBehavior File="LoadProfile" ProfileName="../reputation/[N]The Nightfallen Rep" RememberProfile="true" />
+            <CustomBehavior File="LoadProfile" ProfileName="../reputation/[N] The Nightfallen Rep" RememberProfile="true" />
         </If>
         <If Condition="GetReturnProfile().Equals(&quot;MAIN&quot;)">
             <CustomBehavior File="LoadProfile" ProfileName="../[H] Zygor - Suramar" RememberProfile="true" />

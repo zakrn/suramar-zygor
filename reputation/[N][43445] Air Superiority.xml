@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<HBProfile>
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>[Nuok] Air Superiority</Name>
+    <MinDurability>0.2</MinDurability>
+    <MinFreeBagSlots>1</MinFreeBagSlots>
+    <MinLevel>1</MinLevel>
+    <MaxLevel>1000</MaxLevel>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 43445 then
+            return true;
+            end
+    end
+end
+return false;", 0);]]>
+        </CustomBehavior>
+        <While Condition="OnQuest">
+            <If Condition="!HasQuest(43445)">
+                <RunTo X="2635.615" Y="5129.074" Z="143.672" />
+            </If>
+            <While Condition="HasQuest(43445)">
+                <!-- NOTE: <ConditionalCheck> : Make sure InVehicle returns true for this mob. -->
+                <If Condition="!Me.InVehicle">
+                    <CustomBehavior File="InteractWith" MobId="110565" X="2635.615" Y="5129.074" Z="143.672" TerminateWhen="Me.InVehicle" />
+                </If>
+                <While Condition="Me.InVehicle">
+                    <!--Credit to Echo for the Snip-->
+                    <CustomBehavior File="RunCode">
+                        <![CDATA[
+            while (OnQuest && Me.InVehicle)
+            {
+              WoWUnit attackUnit = ObjectManager.GetObjectsOfType<WoWUnit>().FirstOrDefault(x => new[]{114304, 114300, 114299}.Contains((int)x.Entry) && x.IsAlive && x.Distance < 100);
+              if (attackUnit != null)
+              {
+                Lua.DoString("CastPetAction(1);");
+                SpellManager.ClickRemoteLocation(attackUnit.Location);
+                await Coroutine.Sleep(1550);
+              }
+              await Coroutine.Yield();
+            }
+            if (!OnQuest)
+            {
+              await Coroutine.Wait(45000, () => !Me.InVehicle);
+            }
+          ]]>
+                    </CustomBehavior>
+                </While>
+            </While>
+        </While>
+        <While Condition="Me.InVehicle">
+            <CustomBehavior File="WaitTimer" WaitTime="5000" />
+        </While>
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

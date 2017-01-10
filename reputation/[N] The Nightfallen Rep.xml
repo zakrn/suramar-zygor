@@ -174,16 +174,16 @@
 
                     bool CanDoArmyTraining(){
                         List<string> values = Lua.GetReturnValues("return GetGossipOptions()");
-                        var matches = values.FirstOrDefault( str => str.Contains("I've come to help the withered with their combat training."));
-                        return matches != null;
+                        return values[0][0] != '>';
+                        //var matches = values.FirstOrDefault( str => str.Contains("I've come to help the withered with their combat training."));
+                        //return matches != null;
                     }
                     
                 ]]>
         </CustomBehavior>
-
         <!-- settings setup, original credit to the Nuok and the world quests team-->
         <CustomBehavior File="RunCode" Type="Definition">
-        <![CDATA[
+            <![CDATA[
                 public class Settings : Styx.Helpers.Settings
                 {
                     public static readonly string _settingsPath = Path.Combine(CharacterSettingsDirectory, "Profiles", "ZakrnSuramarSettings.xml");
@@ -208,40 +208,49 @@
                     s.Save();
                 }
 
-                void PrepManaFarm( string returnProfile, int manaGoal )
+                void PrepManaFarm( int manaGoal )
                 {
                     SetManaTarget( manaGoal );
                     var s = Settings.Instance;
-                    s.ReturnProfile = returnProfile;
+                    s.ReturnProfile = "REP";
                     s.Save();
                 }
+                bool IsWorldQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
         ]]>
-        </CustomBehavior> 
-        
+        </CustomBehavior>
         <!-- do the daily 50 mana rep boosts -->
-
         <If Condition="!HasAncientMana(150)">
-            <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;REP&quot;, 150)" />
+            <CustomBehavior File="RunCode" Code="PrepManaFarm(150)" />
             <CustomBehavior File="LoadProfile" ProfileName="..\gather\[N]-Ancient-Mana" RememberProfile="true" />
         </If>
-
-        <MoveTo X="1716.453" Y="4625.14" Z="123.9462" />
-
+        <!-- goto the outpost -->
+        <If Condition="Me.ZoneId != 7637 || Me.SubZoneId != 7928">
+            <MoveTo X="1716.453" Y="4625.14" Z="123.9462" />
+        </If>
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Checking Thalyssra&quot;);" />
         <If Condition="IsThalyssraThirsty()">
-            <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945"  />
+            <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
             <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
         </If>
-
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Checking Valtrois&quot;);" />
         <If Condition="IsValtroisThirsty()">
             <CustomBehavior File="InteractWith" MobId="103155" X="1731.536" Y="4606.796" Z="123.8035" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
         </If>
-
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Checking Oculeth&quot;);" />
         <If Condition="IsOculethThirsty()">
             <CustomBehavior File="InteractWith" MobId="98548" X="1773.629" Y="4626.259" Z="123.9869" />
@@ -249,63 +258,124 @@
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
         </If>
 
+
+        <!-- check Building an army 44636 -->
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Building an Army&quot;);" />
+        <If Condition="!IsQuestCompleted(44636) &amp;&amp; !HasQuest(44636)">
+            <PickUp Nav="Fly" QuestName="Building an Army" QuestId="44636" GiverName="First Arcanist Thalyssra" GiverId="97140" />
+        </If>
+        <!-- trigger the first run scenario -->
+        <If Condition="HasQuest(44636) &amp;&amp; Me.ZoneId == 7637">
+            <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
+            <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(1);" WaitTime="500" />
+            <CustomBehavior File="LoadProfile" ProfileName=".\[N] Building an Army" RememberProfile="true" />
+        </If>
         <!-- check withered army training -->
-        <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945"  />
-        <If Condition="CanDoArmyTraining()">
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Checking withered army training&quot;);" />
+        <If Condition="IsWorldQuestAvailable(43943)">
             <If Condition="!HasAncientMana(MaxAncientMana())">
-                <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;REP&quot;, MaxAncientMana())" />
+                <CustomBehavior File="RunCode" Code="PrepManaFarm(MaxAncientMana())" />
                 <CustomBehavior File="LoadProfile" ProfileName="..\gather\[N]-Ancient-Mana" RememberProfile="true" />
             </If>
 
-            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Can Train Army&quot;);" />
-            
+        <!-- <CustomBehavior File="Halt" /> -->
+
+            <!-- talk to her -->
+            <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
             <If Condition="MaxAncientMana() &gt;= 2000">
                 <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 2000 mana&quot;);" />
                 <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(1);" WaitTime="500" />
                 <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(5);" WaitTime="500" />
                 <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
                 <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
-
-            <ElseIf Condition="MaxAncientMana() &gt;= 1300">
-                <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 1300 mana&quot;);" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton4" />
+                <ElseIf Condition="MaxAncientMana() &gt;= 1300">
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 1300 mana&quot;);" />
+                    <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(1);" WaitTime="500" />
+                    <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(4);" WaitTime="500" />
+                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+                    <!-- <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(5);" WaitTime="500" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton4" />
+                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" /> -->
+                </ElseIf>
+                <ElseIf Condition="MaxAncientMana() &gt;= 900">
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 900 mana&quot;);" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton3" />
+                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
+                </ElseIf>
+                <ElseIf Condition="MaxAncientMana() &gt;= 650">
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 650 mana&quot;);" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton2" />
+                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
+                </ElseIf>
+                <ElseIf Condition="MaxAncientMana() &gt;= 400">
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 400 mana&quot;);" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
+                </ElseIf>
+                <Else>
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Red, &quot;[Zak]: Maximum Ancient Mana too low to train.&quot;);" />
+                </Else>
+            </If>
+        </If>
+        <!-- <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
+        <If Condition="CanDoArmyTraining()">
+            <If Condition="!HasAncientMana(MaxAncientMana())">
+                <CustomBehavior File="RunCode" Code="PrepManaFarm(MaxAncientMana())" />
+                <CustomBehavior File="LoadProfile" ProfileName="..\gather\[N]-Ancient-Mana" RememberProfile="true" />
+            </If>
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Can Train Army&quot;);" />
+            <If Condition="MaxAncientMana() &gt;= 2000">
+                <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 2000 mana&quot;);" />
+                <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(1);" WaitTime="500" />
+                <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(5);" WaitTime="500" />
                 <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
                 <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
-            </ElseIf>
-            
-            <ElseIf Condition="MaxAncientMana() &gt;= 900">
-                <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 900 mana&quot;);" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton3" />
-                <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />            
-                <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
-            </ElseIf>
-           
-            <ElseIf Condition="MaxAncientMana() &gt;= 650">
-                <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 650 mana&quot;);" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton2" />
-                <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />            
-                <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
-            </ElseIf>
-            
-            <ElseIf Condition="MaxAncientMana() &gt;= 400">
-                <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 400 mana&quot;);" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
-                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
-                <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />          
-                <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
-            </ElseIf>
-            
-            <Else>
-                <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Red, &quot;[Zak]: Maximum Ancient Mana too low to train.&quot;);" />
-            </Else>
+                <ElseIf Condition="MaxAncientMana() &gt;= 1300">
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 1300 mana&quot;);" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton4" />
+                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
+                </ElseIf>
+                <ElseIf Condition="MaxAncientMana() &gt;= 900">
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 900 mana&quot;);" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton3" />
+                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
+                </ElseIf>
+                <ElseIf Condition="MaxAncientMana() &gt;= 650">
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 650 mana&quot;);" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton2" />
+                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
+                </ElseIf>
+                <ElseIf Condition="MaxAncientMana() &gt;= 400">
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 400 mana&quot;);" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
+                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
+                </ElseIf>
+                <Else>
+                    <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Red, &quot;[Zak]: Maximum Ancient Mana too low to train.&quot;);" />
+                </Else>
             </If>
+        </If> -->
 
+        <If Condition="QuestDone(42421)">
+            <TurnIn Nav="Fly" QuestName="The Nightfallen" QuestId="42421" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1721.901" Y="4615.627" Z="123.9465" />
         </If>
 
-        
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="true" />
 
     </QuestOrder>
 </HBProfile>

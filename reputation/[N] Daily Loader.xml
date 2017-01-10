@@ -44,18 +44,73 @@
                        " end " +
                         "return false;", 0);
                 }
-
-                void printWQHeader( )
             ]]>
         </CustomBehavior>
 
-        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;&quot; + IsQuestAvailable(42169) );" />
+        <!-- <If Condition="IsQuestAvailable(42090)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][42090] Skittering Subjects" RememberProfile="false" />
+        </If> -->
 
-        <If Condition="IsQuestAvailable(42169)" >
-            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: World Quest - Left for Dead, available&quot;);" />
+        <If Condition="IsQuestAvailable(42111)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][42111] Aggressive Reconnaisance" RememberProfile="false" />
         </If>
 
-        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;Quest not available or complete.&quot;);" />
+        <If Condition="IsQuestAvailable(42151)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][42151] Clear the Skies" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(42209)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][42209] Freeing the Taken" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(42830)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][42830] Pest Management" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(42859)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][42859] A Draught of Hope" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(43445)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][43445] Air Superiority" RememberProfile="false" />
+        </If>
+
+        <!-- <If Condition="IsQuestAvailable(43583)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][43583] Life Finds a Way" RememberProfile="false" />
+        </If> -->
+
+        <If Condition="IsQuestAvailable(43807)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][43807] Withered Wrangling Ambervale" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(44002)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][44002] Undersea Survey" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(44744)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][44744] Lifelines" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(44802)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][44802] Ancient Guidance" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(44805)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][44805] In the Thick of It" RememberProfile="false" />
+        </If>
+
+        <!-- TODO -->
+        <!-- <If Condition="IsQuestAvailable(44816)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][44816] Continued Exposure" RememberProfile="false" />
+        </If> -->
+
+        <If Condition="IsQuestAvailable(45032)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][45032] Like the Wind" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(45307)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][45307] Claws for Alarm" RememberProfile="false" />
+        </If>
 
     </QuestOrder>
 </HBProfile>

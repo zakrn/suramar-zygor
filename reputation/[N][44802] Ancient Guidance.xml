@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- All credit to the amazing world quest team on this one -->
+<!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+<HBProfile>
+  <Name>[Nuok] Ancient Guidance - RareWQ</Name>
+  <MinDurability>0.2</MinDurability>
+  <MinFreeBagSlots>1</MinFreeBagSlots>
+  <MinLevel>1</MinLevel>
+  <MaxLevel>1000</MaxLevel>
+  <MailGrey>false</MailGrey>
+  <MailWhite>true</MailWhite>
+  <MailGreen>true</MailGreen>
+  <MailBlue>true</MailBlue>
+  <MailPurple>true</MailPurple>
+  <SellGrey>true</SellGrey>
+  <SellWhite>false</SellWhite>
+  <SellGreen>false</SellGreen>
+  <SellBlue>false</SellBlue>
+  <SellPurple>false</SellPurple>
+  <TargetElites>true</TargetElites>
+  <QuestOrder>
+    <CustomBehavior File="RunCode" Type="Definition"><![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033)
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 44802 then
+            return true;
+            end
+    end
+end
+return false;", 0);]]></CustomBehavior>
+    <While Condition="OnQuest">
+      <If Condition="!HasQuest(44802)">
+        <RunTo X="2787.88" Y="4378.993" Z="418.8143" />
+      </If>
+      <If Condition="HasQuest(44802)">
+        <!-- X="2787.88" Y="4378.993" Z="418.8143" /> -->
+        <!--<Vendor Name="Kir'altius" Entry="103055" Type="Repair" Nav="Fly" X="2716.62" Y="4322.81" Z="438.241" />-->
+        <!--<Vendor Name="Al'anath" Entry="115882" Type="Repair" Nav="Fly" X="2765.032" Y="4358.219" Z="418.8143" />-->
+        <CustomBehavior File="InteractWith" MobId="103055" GossipOptions="1" WaitForNpcs="false" X="2787.88" Y="4378.993" Z="418.8143" TerminateWhen="!OnQuest" />
+        <CustomBehavior File="KillUntilComplete" MobIds="115882,115880" WaitForNpcs="false" X="2771.848" Y="4362.941" Z="418.8651" TerminateWhen="!OnQuest" />
+      </If>
+    </While>
+    <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+      <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+    </If>
+
+    <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+  </QuestOrder>
+</HBProfile>
