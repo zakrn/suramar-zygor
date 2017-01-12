@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- All credit to the amazing world quest team on this one -->
+<!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+<HBProfile>
+    <Name>[Nuok] Ley Race $Rev: 0$</Name>
+    <MinDurability>0.2</MinDurability>
+    <MinFreeBagSlots>1</MinFreeBagSlots>
+    <MinLevel>1</MinLevel>
+    <MaxLevel>1000</MaxLevel>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 43774 then
+            return true;
+            end
+    end
+end
+return false;", 0);
+
+        public WoWAreaTrigger LeyLineNode
+            =>
+            ObjectManager.GetObjectsOfType<WoWAreaTrigger>()
+                .Where(o => o.IsValid && o.Entry == 12110 && !Blacklist.Contains(o, BlacklistFlags.All))
+                .OrderBy(o => o.Distance)
+                .FirstOrDefault();
+
+        async Task DoQuest()
+        {
+            var node = LeyLineNode;
+            if (node == null)
+            {
+                await CommonCoroutines.MoveTo(new Vector3(2766.377f, 4361.664f, 418.8143f));
+                return;
+            }
+            if (node.WithinInteractRange)
+            {
+                Blacklist.Add(node, BlacklistFlags.All, TimeSpan.FromSeconds(60));
+                return;
+            }
+            await CommonCoroutines.MoveTo(node.Location);
+        }
+
+]]>
+        </CustomBehavior>
+        <While Condition="OnQuest">
+            <If Condition="!HasQuest(43774)">
+                <RunTo X="1714.713" Y="4890.985" Z="141.6167" />
+            </If>
+            <If Condition="HasQuest(43774)">
+                <DisableBehavior Name="All" />
+                <If Condition="!Me.InVehicle">
+                    <CustomBehavior File="InteractWith" MobId="110903" TerminateWhen="!OnQuest || Me.InVehicle" X="1714.713" Y="4890.985" Z="141.6167" />
+                </If>
+                <While Condition="Me.InVehicle">
+                    <CustomBehavior File="RunCode" Code="await DoQuest();" />
+                </While>
+            </If>
+        </While>
+        <EnableBehavior Name="All" />
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

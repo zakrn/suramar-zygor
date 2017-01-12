@@ -1,0 +1,101 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- Original contribution by EchoTiger -->
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>43932-[N]-[QUEST]-Wq-Forces of Oppression-Zinner</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool IsQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
+    bool ShouldCastMask() 
+                     { 
+                         return Me.IsAlive && IsInCity() && !Me.HasAura(202477); 
+                     } 
+  
+                     void CastMask() 
+                     { 
+                         Lua.DoString("ExtraActionButton1:Click();"); 
+                     } 
+  
+                     bool IsInCity() 
+                     { 
+                        return  Me.MinimapZoneText == "The Grand Promenade" ||  
+                                Me.MinimapZoneText == "Starcaller Retreat"  || 
+                                 Me.MinimapZoneText == "The Waning Crescent" || 
+                                 Me.MinimapZoneText == "Artisan's Gallery" || 
+                                Me.MinimapZoneText == "Astravar Harbor" || 
+                                 Me.MinimapZoneText == "Evermoon Bazaar" || 
+                                 Me.MinimapZoneText == "Shimmershade Garden" || 
+                                 Me.MinimapZoneText == "Terrace of Order" || 
+                                 Me.MinimapZoneText == "Suramar City"; 
+                     } 
+
+                ]]>
+        </CustomBehavior>
+        <While Condition="IsQuestAvailable(43932)">
+            <!-- Get in range of quest to activate -->
+            <RunTo X="411.32" Y="4023.56" Z="1.38846" />
+            <PickUp Nav="Fly" QuestName="Forces of Oppression" QuestId="43932" GiverName="" GiverId="" />
+            <Objective QuestName="Forces of Oppression" QuestId="43932" Type="KillMob" Nav="Fly" MobId="111910" KillCount="17" />
+            <Objective QuestName="Forces of Oppression" QuestId="43932" Type="KillMob" Nav="Fly" MobId="111911" KillCount="10" />
+            <TurnIn Nav="Fly" QuestName="Forces of Oppression" QuestId="43932" TurnInName="" TurnInId="" />
+        </While>
+        <!-- 
+<Vendor Name="Fathnyr" Entry="91803" Type="Repair" Nav="Fly" X="1922.743" Y="2315.998" Z="507.618" />
+-->
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" LogExecution="true" ActivityName="apply_mask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <CustomBehavior File="RunCode" Code="CastMask()" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+        </CustomBehavior>
+        <While Condition="IsQuestAvailable(43932)">
+            <RunTo X="411.32" Y="4023.56" Z="1.38846" />
+            <CustomBehavior File="KillUntilComplete" MobIds="111910, 111911, 114472, 114474, 110418, 113738, 106032, 111446, 111612, 106654" TerminateWhen="!IsQuestAvailable(43932)">
+                <HuntingGrounds>
+                    <Hotspot X="438.3044" Y="3989.619" Z="1.38871" />
+                    <Hotspot X="478.7782" Y="3958.932" Z="7.458869" />
+                    <Hotspot X="533.1434" Y="3973.771" Z="5.876404" />
+                    <Hotspot X="552.5018" Y="3965.955" Z="5.685467" />
+                    <Hotspot X="590.7188" Y="3946.69" Z="5.685467" />
+                    <Hotspot X="621.5834" Y="3968.65" Z="1.493845" />
+                    <Hotspot X="618.0761" Y="3991.984" Z="1.493845" />
+                    <Hotspot X="632.7288" Y="4003.988" Z="1.493845" />
+                    <Hotspot X="682.4793" Y="3999.157" Z="1.493845" />
+                    <Hotspot X="644.6156" Y="4040.247" Z="1.493429" />
+                    <Hotspot X="633.1115" Y="4089.247" Z="1.493881" />
+                    <Hotspot X="599.5895" Y="4067.869" Z="6.021717" />
+                    <Hotspot X="569.33" Y="4046.47" Z="17.1559" />
+                    <Hotspot X="668.051" Y="4130.343" Z="1.493052" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+        <RunTo X="423.7536" Y="4007.23" Z="1.474784" />
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

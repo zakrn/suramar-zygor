@@ -1,0 +1,59 @@
+<HBProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>[42089] The Fallen Ones - WiN</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 42089 then
+            return true;
+            end
+    end
+end
+return false;", 0);]]>
+        </CustomBehavior>
+        <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;Loading Profile [42089] The Fallen Ones - WiN!&quot;);" />
+        <While Condition="OnQuest">
+            <If Condition="!HasQuest(42089)">
+                <RunTo X="2086.971" Y="5428.113" Z="-35.78005" />
+            </If>
+            <If Condition="HasQuest(42089)">
+                <CustomBehavior File="KillUntilComplete" TerminateWhen="!OnQuest || !HasQuest(42089)">
+                    <HuntingGrounds>
+                        <Hotspot X="2086.971" Y="5428.113" Z="-35.78005" />
+                        <Hotspot X="1940.874" Y="5368.78" Z="-37.02636" />
+                        <Hotspot X="1885.603" Y="5431.521" Z="-68.36303" />
+                        <Hotspot X="1927.36" Y="5493.281" Z="-67.47495" />
+                    </HuntingGrounds>
+                    <PursuitList>
+                        <PursueUnit Id="105686" PursueWhen="!IsObjectiveComplete(1, 42089) &amp;&amp; (UNIT.IsAlive)" />
+                        <PursueUnit Id="105623" PursueWhen="!IsObjectiveComplete(1, 42089) &amp;&amp; (UNIT.IsAlive)" />
+                        <PursueUnit Priority="100" Id="105676" PursueWhen="!IsObjectiveComplete(2, 42089)" />
+                        <PursueGameObject Id="105676" Priority="100" PursueWhen="!IsObjectiveComplete(2, 42089) &amp;&amp; (GAMEOBJECT.IsValid)" />
+                    </PursuitList>
+                </CustomBehavior>
+            </If>
+        </While>
+        <RunTo X="2122.578" Y="5388.645" Z="52.37748" />
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>
