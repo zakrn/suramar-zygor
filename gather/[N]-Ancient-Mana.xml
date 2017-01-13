@@ -138,7 +138,7 @@
             <CustomBehavior File="RunCode" Code="await UseManaItems();" />
         </CustomBehavior>
 
-        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" TerminateWhen="HasAncientMana( GetManaTarget() )" >
+        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" PreInteractMountStrategy="Dismount" TerminateWhen="HasAncientMana( GetManaTarget() )" >
             <HuntingGrounds>
                 <Hotspot X="1611.525" Y="4302.211" Z="135.5855" />
                 <Hotspot X="1758.481" Y="4791.606" Z="147.6049" />
@@ -217,6 +217,7 @@
                 <Blackspot X="1939.038" Y="5390.631" Z="-32.52055" Radius="20.0" />
                 <Blackspot X="1988.597" Y="5394.301" Z="-37.26923" Radius="20.0" />
                 <Blackspot X="922.3163" Y="5324.399" Z="69.51901" Radius="20.0" />
+                <Blackspot X="882.5545" Y="5280.472" Z="41.01726" Radius="20.0" />
             </Blackspots>
         </CustomBehavior>
         <CustomBehavior File="Hooks\DoWhen" ActivityName="use_mana_item" Command="Remove" />
