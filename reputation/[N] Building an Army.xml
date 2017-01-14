@@ -176,7 +176,7 @@
         </CustomBehavior>
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: ZoneId: &quot; + Me.AreaId);" />
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: StageNumber: &quot; + Bots.DungeonBuddy.Helpers.ScenarioInfo.Current.CurrentStageNumber );" />
-        <If Condition="Me.ZoneId != 7637">
+        <If Condition="Bots.DungeonBuddy.Helpers.ScenarioInfo.Current != null">
             <!-- turn in first time quest if we have it -->
             <If Condition="HasQuest(44636)">
                 <TurnIn Nav="Fly" QuestName="Building an Army" QuestId="44636" />
@@ -186,9 +186,15 @@
                 <CustomBehavior File="InteractWith" MobIds="109008" NumOfTimes="1" InteractByGossipOptions="1" X="2102.989" Y="5392.836" Z="48.12273" />
             </If>
             <While Condition="StageNumber() == 2">
-                <!-- go around the room -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;A&quot;)" />
                 <MoveTo X="2199.796" Y="5400.14" Z="36.8759" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;B&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
+                    <HuntingGrounds>
+                        <Hotspot X="2206" Y="5398.055" Z="36.87733" />
+                    </HuntingGrounds>
+                </CustomBehavior>
                 <MoveTo X="2219.827" Y="5360.882" Z="36.87654" />
                 <MoveTo X="2190.537" Y="5338.958" Z="36.87654" />
                 <!-- grab another guy if he's there -->
@@ -204,11 +210,10 @@
                 <MoveTo X="2287.91" Y="5431.884" Z="15.18522" />
                 <!-- grab another guy if he's there -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;D&quot;)" />
-                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                    <HuntingGrounds>
-                        <Hotspot X="2286.895" Y="5429.94" Z="15.12867" />
-                    </HuntingGrounds>
-                </CustomBehavior>
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="2286.895" Y="5429.94" Z="15.12867" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;D-2&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="2272.417" Y="5457.187" Z="9.422404" />
                 <!-- get 25% health treasure -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;E&quot;)" />
                 <If Condition="!IsQuestCompleted(43149)">
@@ -222,6 +227,8 @@
                 <CustomBehavior File="RunCode" Code="Print(&quot;F&quot;)" />
                 <MoveTo X="2239.739" Y="5521.931" Z="1.641034" />
                 <MoveTo X="2195.144" Y="5528.069" Z="1.641239" />
+                <!-- grab chest if we need it -->
+                <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="2184.927" Y="5539.891" Z="1.640897" />
                 <MoveTo X="2168.956" Y="5487.047" Z="1.652718" />
                 <!-- grab another guy if he's there -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;G&quot;)" />
@@ -236,11 +243,7 @@
                 <MoveTo X="2201.579" Y="5422.103" Z="1.640879" />
                 <!-- grab chest if we need it -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;AD&quot;)" />
-                <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                    <HuntingGrounds>
-                        <Hotspot X="2204.557" Y="5427.115" Z="1.65529" />
-                    </HuntingGrounds>
-                </CustomBehavior>
+                <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="2204.557" Y="5427.115" Z="1.65529" />
                 <!-- grab another guy if he's there -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;I&quot;)" />
                 <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
@@ -304,20 +307,21 @@
                 <CustomBehavior File="RunCode" Code="Print(&quot;P&quot;)" />
                 <MoveTo X="2109.6" Y="5501.621" Z="-12.25291" />
                 <MoveTo X="2098.635" Y="5423.809" Z="-34.46243" />
-                <!-- grab another guy if he's there -->
-                <CustomBehavior File="RunCode" Code="Print(&quot;Q&quot;)" />
-                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false">
-                    <HuntingGrounds>
-                        <Hotspot X="2102.527" Y="5390.494" Z="-36.91036" />
-                    </HuntingGrounds>
-                </CustomBehavior>
                 <!-- grab chest if we need it -->
-                <CustomBehavior File="RunCode" Code="Print(&quot;AG&quot;)" />
-                <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                    <HuntingGrounds>
-                        <Hotspot X="2102.527" Y="5390.494" Z="-36.91036" />
-                    </HuntingGrounds>
-                </CustomBehavior>
+                <CustomBehavior File="RunCode" Code="Print(&quot;AD&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="2097.004" Y="5443.904" Z="-34.06064" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" X="2102.527" Y="5390.494" Z="-36.91036" />
+                <!-- grab chest if we need it -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;AD&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="2102.527" Y="5390.494" Z="-36.91036" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" X="2107.246" Y="5378.495" Z="-36.90988" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" X="2077.865" Y="5391.806" Z="-37.24174" />
                 <!-- clear area -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;R&quot;)" />
                 <MoveTo X="2101.689" Y="5383.314" Z="-36.90977" />
@@ -336,11 +340,7 @@
                 </If>
                 <!-- grab another guy if he's there -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;T&quot;)" />
-                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                    <HuntingGrounds>
-                        <Hotspot X="1972.338" Y="5417" Z="-36.58504" />
-                    </HuntingGrounds>
-                </CustomBehavior>
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1972.338" Y="5417" Z="-36.58504" />
                 <!-- grab small chest if it's there -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;U&quot;)" />
                 <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
@@ -405,98 +405,191 @@
                         </HuntingGrounds>
                     </CustomBehavior>
                 </If>
+                <CustomBehavior File="RunCode" Code="Print(&quot;AW&quot;)" />
+                <MoveTo X="1848.885" Y="5590.573" Z="-66.0634" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" X="1845.218" Y="5589.861" Z="-66.0634" />
+                <CustomBehavior File="RunCode" Code="Print(&quot;AX&quot;)" />
+                <MoveTo X="1922.828" Y="5598.719" Z="-65.22453" />
+                <!-- check if we have seer -->
+                <If Condition="IsQuestCompleted(43134)">
+                    <!-- TODO add use door step -->
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" X="1974.977" Y="5624.386" Z="-65.64427" WaitTime="1200" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" X="1974.977" Y="5624.386" Z="-65.64427" WaitTime="1200" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" X="1966.188" Y="5632.374" Z="-65.64427" WaitTime="1200" />
+                    <!-- grab chest if we need it -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;AD&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1965.128" Y="5637.899" Z="-65.64427" />
+                    <!-- STARCALLER CHEST -->
+                    <If Condition="!IsQuestCompleted(43135)">
+                        <CustomBehavior File="RunCode" Code="Print(&quot;AY&quot;)" />
+                        <CustomBehavior File="InteractWith" MobIds="251744" NumOfTimes="1" CollectionDistance="20" InteractByGossipOptions="1" WaitForNpcs="false" X="1968.865" Y="5628.337" Z="-65.6438" />
+                    </If>
+                </If>
+                <CustomBehavior File="RunCode" Code="Print(&quot;AZ&quot;)" />
+                <MoveTo X="1976.796" Y="5577.009" Z="-65.22607" />
+                <MoveTo X="1986.209" Y="5539.057" Z="-65.22607" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1941.045" Y="5489.379" Z="-68.41636" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1920.216" Y="5510.435" Z="-68.35806" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1965.82" Y="5472.117" Z="-67.97966" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1933.793" Y="5419.9" Z="-68.41644" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1915.242" Y="5441.838" Z="-67.47449" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1902.186" Y="5472.925" Z="-67.47397" />
+                <!-- grab chest if we need it -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;AD&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1891.177" Y="5470.383" Z="-67.47397" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1868.421" Y="5451.505" Z="-68.35838" />
+                <!-- grab another guy if he's there -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1845.75" Y="5502.271" Z="-67.66523" />
+                <!-- TREASURE CHEST -->
+                <CustomBehavior File="RunCode" Code="Print(&quot;AY&quot;)" />
+                <CustomBehavior File="InteractWith" MobIds="251725" NumOfTimes="1" CollectionDistance="20" InteractByGossipOptions="1" WaitForNpcs="false" X="1855.034" Y="5510.718" Z="-68.15792" />
+                <!-- open door if we have spell seer -->
+                <If Condition="IsQuestCompleted(43134)">
+                    <CustomBehavior File="RunCode" Code="Print(&quot;S-1&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251779" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1854.244" Y="5354.546" Z="-53.88261" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1826.426" Y="5327.204" Z="-57.26361" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1818.015" Y="5312.09" Z="-57.26361" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1800.014" Y="5265.219" Z="-57.01384" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1802.012" Y="5253.696" Z="-57.26296" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1818.567" Y="5248.662" Z="-57.26296" />
+                    <!-- grab chest if we need it -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;AD&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1798.917" Y="5262.75" Z="-57.06308" />
+                    <!-- TREASURE CHEST -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;AY&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251726" NumOfTimes="1" CollectionDistance="20" InteractByGossipOptions="1" WaitForNpcs="false" X="1809.575" Y="5254.774" Z="-57.26146" />
+                </If>
+                <!-- open door if we have spell seer -->
+                <If Condition="IsQuestCompleted(43134)">
+                    <CustomBehavior File="RunCode" Code="Print(&quot;S-2&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251781" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1812.133" Y="5392.964" Z="-36.09425" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1803.98" Y="5333.153" Z="-36.64657" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1785.183" Y="5321.631" Z="-38.53296" />
+                    <!-- grab chest if we need it -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;AD&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1773.17" Y="5307.513" Z="-38.00289" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1761.726" Y="5306.701" Z="-38.53195" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1722.285" Y="5350.117" Z="-38.00419" />
+                    <!-- grab another guy if he's there -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" CollectionDistance="20" NumOfTimes="1" WaitForNpcs="false" WaitTime="1200" X="1736.728" Y="5365.94" Z="-38.52919" />
+                    <!-- MANA RAGER CHEST -->
+                    <CustomBehavior File="RunCode" Code="Print(&quot;AY&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251741" NumOfTimes="1" CollectionDistance="20" InteractByGossipOptions="1" WaitForNpcs="false" X="1731.382" Y="5317.235" Z="-38.00378" />
+                </If>
                 <!-- use dro's key -->
                 <CustomBehavior File="RunCode" Code="Print(&quot;AH&quot;)" />
                 <If Condition="HasItem(141593)">
-                    <CustomBehavior File="InteractWith" MobIds="259239" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                        <HuntingGrounds>
-                            <Hotspot X="1789.423" Y="5521.498" Z="-36.0944" />
-                        </HuntingGrounds>
-                    </CustomBehavior>
+                    <CustomBehavior File="InteractWith" MobIds="259239" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1789.423" Y="5521.498" Z="-36.0944" />
                     <CustomBehavior File="RunCode" Code="Print(&quot;AI&quot;)" />
                     <MoveTo X="1730.877" Y="5546.329" Z="-36.07941" />
                     <MoveTo X="1672.341" Y="5587.852" Z="-57.82885" />
                     <!-- grab another guy if he's there -->
-                    <CustomBehavior File="RunCode" Code="Print(&quot;AJ&quot;)" />
-                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                        <HuntingGrounds>
-                            <Hotspot X="1654.018" Y="5593.1" Z="-57.82885" />
-                        </HuntingGrounds>
-                    </CustomBehavior>
+                    <CustomBehavior File="RunCode" Code="Print(&quot;ZZ&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1654.018" Y="5593.1" Z="-57.82885" />
                     <CustomBehavior File="RunCode" Code="Print(&quot;AK&quot;)" />
                     <MoveTo X="1687.688" Y="5600.241" Z="-57.89384" />
                     <MoveTo X="1700.933" Y="5608.882" Z="-57.89384" />
                     <MoveTo X="1725.995" Y="5619.699" Z="-57.89384" />
                     <!-- chest -->
                     <CustomBehavior File="RunCode" Code="Print(&quot;AL&quot;)" />
-                    <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                        <HuntingGrounds>
-                            <Hotspot X="1737.485" Y="5637.328" Z="-56.97066" />
-                        </HuntingGrounds>
-                    </CustomBehavior>
+                    <CustomBehavior File="InteractWith" MobIds="251954" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1737.485" Y="5637.328" Z="-56.97066" />
                     <CustomBehavior File="RunCode" Code="Print(&quot;AM&quot;)" />
                     <MoveTo X="1720.804" Y="5664.918" Z="-57.89439" />
                     <!-- grab another guy if he's there -->
                     <CustomBehavior File="RunCode" Code="Print(&quot;AN&quot;)" />
-                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                        <HuntingGrounds>
-                            <MoveTo X="1720.804" Y="5664.918" Z="-57.89439" />
-                        </HuntingGrounds>
-                    </CustomBehavior>
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1720.804" Y="5664.918" Z="-57.89439" />
                     <CustomBehavior File="RunCode" Code="Print(&quot;AO&quot;)" />
                     <MoveTo X="1693.605" Y="5638.654" Z="-57.89355" />
                     <MoveTo X="1700.644" Y="5674.855" Z="-57.89374" />
                     <!-- grab another guy if he's there -->
                     <CustomBehavior File="RunCode" Code="Print(&quot;AP&quot;)" />
-                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                        <HuntingGrounds>
-                            <Hotspot X="1666.3" Y="5666.313" Z="-57.89393" />
-                        </HuntingGrounds>
-                    </CustomBehavior>
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1666.3" Y="5666.313" Z="-57.89393" />
                     <!-- Berserker -->
                     <CustomBehavior File="RunCode" Code="Print(&quot;AQ&quot;)" />
-                    <CustomBehavior File="InteractWith" MobIds="251740" NumOfTimes="1" CollectionDistance="20" InteractByGossipOptions="1" WaitForNpcs="false">
-                        <HuntingGrounds>
-                            <Hotspot X="1700.644" Y="5674.855" Z="-57.89374" />
-                        </HuntingGrounds>
-                    </CustomBehavior>
+                    <CustomBehavior File="InteractWith" MobIds="251740" NumOfTimes="1" CollectionDistance="20" InteractByGossipOptions="1" WaitForNpcs="false" X="1700.644" Y="5674.855" Z="-57.89374" />
                     <!-- leave wing -->
                     <CustomBehavior File="RunCode" Code="Print(&quot;AR&quot;)" />
                     <MoveTo X="1675.209" Y="5595.51" Z="-56.98892" />
                     <!-- grab another guy if he's there -->
                     <CustomBehavior File="RunCode" Code="Print(&quot;AS&quot;)" />
-                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                        <HuntingGrounds>
-                            <Hotspot X="1616.438" Y="5508.936" Z="-57.10097" />
-                        </HuntingGrounds>
-                    </CustomBehavior>
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1616.438" Y="5508.936" Z="-57.10097" />
                     <!-- grab another guy if he's there -->
                     <CustomBehavior File="RunCode" Code="Print(&quot;AT&quot;)" />
                     <MoveTo X="1633.375" Y="5477.652" Z="-57.94093" />
-                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                        <HuntingGrounds>
-                            <Hotspot X="1633.375" Y="5477.652" Z="-57.94093" />
-                        </HuntingGrounds>
-                    </CustomBehavior>
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1633.375" Y="5477.652" Z="-57.94093" />
                     <CustomBehavior File="RunCode" Code="Print(&quot;AU&quot;)" />
-                    <Hotspot X="1617.025" Y="5415.456" Z="-57.09699" />
+                    <MoveTo X="1617.025" Y="5415.456" Z="-57.09699" />
                     <!-- grab another guy if he's there -->
                     <CustomBehavior File="RunCode" Code="Print(&quot;AV&quot;)" />
                     <MoveTo X="1633.375" Y="5477.652" Z="-57.94093" />
-                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false">
-                        <HuntingGrounds>
-                            <Hotspot X="1630.266" Y="5411.881" Z="-57.30926" />
-                        </HuntingGrounds>
-                    </CustomBehavior>
+                    <CustomBehavior File="InteractWith" MobIds="110141" FactionId1="1665" NumOfTimes="1" CollectionDistance="20" WaitForNpcs="false" X="1626.653" Y="5411.746" Z="-57.3508" />
                 </If>
                 <CustomBehavior File="RunCode" Code="Print(&quot;End Stage 2&quot;)" />
             </While>
             <!-- stage 3 -->
             <While Condition="StageNumber() == 3">
                 <CustomBehavior File="RunCode" Code="Print(&quot;Looting reward chests&quot;)" />
+                <While Condition="IsObjectNearby(251756)">
+                    <CustomBehavior File="RunCode" Code="Print(&quot;Looting chest: 251756&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251756" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitTime="1000" WaitForNpcs="false" />
+                </While>
                 <While Condition="IsObjectNearby(251757)">
                     <CustomBehavior File="RunCode" Code="Print(&quot;Looting chest: 251757&quot;)" />
                     <CustomBehavior File="InteractWith" MobIds="251757" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitTime="1000" WaitForNpcs="false" />
+                </While>
+                <While Condition="IsObjectNearby(251746)">
+                    <CustomBehavior File="RunCode" Code="Print(&quot;Looting chest: 251746&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251746" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitTime="1000" WaitForNpcs="false" />
+                </While>
+                <While Condition="IsObjectNearby(251747)">
+                    <CustomBehavior File="RunCode" Code="Print(&quot;Looting chest: 251747&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251747" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitTime="1000" WaitForNpcs="false" />
+                </While>
+                <While Condition="IsObjectNearby(251759)">
+                    <CustomBehavior File="RunCode" Code="Print(&quot;Looting chest: 251759&quot;)" />
+                    <CustomBehavior File="InteractWith" MobIds="251759" NumOfTimes="1" X="2098.582" Y="5395.352" Z="47.30122" WaitTime="1000" WaitForNpcs="false" />
                 </While>
                 <While Condition="IsObjectNearby(251668)">
                     <CustomBehavior File="RunCode" Code="Print(&quot;Looting chest: 251668&quot;)" />
@@ -527,6 +620,14 @@
             <!-- spellseer / Lenses of Spellseer Dellian -->
             <If Condition="IsQuestCompleted(43134) &amp;&amp; HasItem(139027)">
                 <CustomBehavior File="UseItem" ItemId="139027" />
+            </If>
+            <!-- mana-rager 2 / Spellmask of Alla'onus -->
+            <If Condition="IsQuestCompleted(43128) &amp;&amp; HasItem(139019)">
+                <CustomBehavior File="UseItem" ItemId="139019" />
+            </If>
+            <!-- starcaller / Disc of the Starcaller -->
+            <If Condition="IsQuestCompleted(43135) &amp;&amp; HasItem(139028)">
+                <CustomBehavior File="UseItem" ItemId="139028" />
             </If>
             <!-- use rep items -->
             <CustomBehavior File="RunCode" Code="Print(&quot;using rep items&quot;)" />

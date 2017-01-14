@@ -1,7 +1,8 @@
-<!-- TODO -->
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <HBProfile>
-  <Name>[Zakrn] Continued Exposure</Name>
+  <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+  <Name>[Nuok] Continued Exposure - RareWQ ($Rev: 1320 $)</Name>
   <MinDurability>0.2</MinDurability>
   <MinFreeBagSlots>1</MinFreeBagSlots>
   <MinLevel>1</MinLevel>
@@ -18,5 +19,67 @@
   <SellPurple>false</SellPurple>
   <TargetElites>true</TargetElites>
   <QuestOrder>
+    <CustomBehavior File="RunCode" Type="Definition">
+  <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033)
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 44816 then
+            return true;
+            end
+    end
+end
+return false;", 0);
+
+        public WoWUnit VolatileFel
+            => ObjectManager.GetObjectsOfType<WoWUnit>().FirstOrDefault(u => u.IsValid && u.Distance < 20 && u.Entry == 116084);
+
+        public WoWItem WitheredTargetingOrb => Me.BagItems.FirstOrDefault(i => i.Entry == 142509);
+
+        public async Task DoQuest()
+        {
+            var item = WitheredTargetingOrb;
+            while (VolatileFel != null && OnQuest && item != null)
+            {
+                VolatileFel.Target();
+                WitheredTargetingOrb.Use(VolatileFel.Guid);
+                await Coroutine.Sleep(2000);
+                await Coroutine.Yield();
+            }
+        }
+  ]]></CustomBehavior>
+    
+    <!--<Hotspot X="521.1971" Y="4883.195" Z="-167.8837" />
+<Hotspot 
+Latency to Buddy service: 25 ms
+<Hotspot 
+<Hotspot 
+<Hotspot -->
+    <While Condition="OnQuest">
+      <RunTo X="444.3279" Y="4981.405" Z="-110.1184" TerminateWhen="!OnQuest"/>
+      <CustomBehavior File="RunCode" Code="await DoQuest();" TerminateWhen="!OnQuest"/>
+      
+      <RunTo TerminateWhen="!OnQuest" X="467.0048" Y="4925.818" Z="-143.8298" />
+      <CustomBehavior File="RunCode" Code="await DoQuest();" TerminateWhen="!OnQuest"/>
+      
+      <RunTo TerminateWhen="!OnQuest" X="521.1971" Y="4883.195" Z="-167.8837" />
+      <CustomBehavior File="RunCode" Code="await DoQuest();" TerminateWhen="!OnQuest"/>
+
+      <RunTo TerminateWhen="!OnQuest" X="567.458" Y="4853.077" Z="-178.0175" />
+      <CustomBehavior File="RunCode" Code="await DoQuest();" TerminateWhen="!OnQuest"/>
+
+      <RunTo TerminateWhen="!OnQuest" X="596.7591" Y="4832.888" Z="-179.5" />
+      <CustomBehavior File="RunCode" Code="await DoQuest();" TerminateWhen="!OnQuest"/>
+
+      <RunTo TerminateWhen="!OnQuest" X="669.6979" Y="4843.064" Z="-185.7864" />
+      <CustomBehavior File="RunCode" Code="await DoQuest();" TerminateWhen="!OnQuest"/>
+
+      <RunTo TerminateWhen="!OnQuest" X="699.5777" Y="4822.617" Z="-186.2048" />
+      <CustomBehavior File="RunCode" Code="await DoQuest();" TerminateWhen="!OnQuest"/>
+    </While>
+    <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+      <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+    </If>
+    <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
   </QuestOrder>
 </HBProfile>

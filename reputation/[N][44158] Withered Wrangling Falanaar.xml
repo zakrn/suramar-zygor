@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<HBProfile>
+    <Name>[Zakrn] Withered Wrangling Falanaar</Name>
+    <MinDurability>0.2</MinDurability>
+    <MinFreeBagSlots>1</MinFreeBagSlots>
+    <MinLevel>1</MinLevel>
+    <MaxLevel>1000</MaxLevel>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool IsQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
+
+                public bool HasExtraActionBar => Lua.GetReturnVal<bool>("return HasExtraActionBar()", 0);
+
+                long LastCast = 0;
+                bool ShouldCastSpell()
+                {
+                  long castDelta = DateTimeOffset.Now.ToUnixTimeSeconds() - LastCast;
+                  return HasExtraActionBar && 
+                  Me.CurrentTarget != null && 
+                  Me.CurrentTarget.Distance <= 30.0 && 
+                  Me.CurrentTarget.IsAlive && 
+                  Me.CurrentTarget.InLineOfSight && 
+                  !Me.CurrentTarget.HasAura(204844) && 
+                  (Me.CurrentTarget.Entry == 105885 ) && 
+                  castDelta >= 2;
+                }
+                async Task CastSpell()
+                {
+                  if( HasExtraActionBar )
+                  {
+                    Lua.DoString("ExtraActionButton1:Click();");
+                    await Coroutine.Sleep(3200);
+                    LastCast = DateTimeOffset.Now.ToUnixTimeSeconds();
+                  }
+                  await Coroutine.Yield();
+                }
+            ]]>
+        </CustomBehavior>
+        <If Condition="IsQuestAvailable(44158)">
+            <!-- go to area if we're not in it -->
+            <If Condition="Me.SubZoneId != 7843">
+                <MoveTo X="1704.507" Y="5693.628" Z="50.35132" />
+            </If>
+            <!-- cast our extra bar spell when we have something bad targeted -->
+            <CustomBehavior File="Hooks\DoWhen" LogExecution="true" AllowExecutionWhileNotAlive="false" ActivityName="castspell" UseWhen="ShouldCastSpell()" StopMovingToConductActivity="true" AllowUseWhileMounted="false" AllowUseDuringCombat="true">
+                <CustomBehavior File="RunCode" Code="await CastSpell()" />
+            </CustomBehavior>
+            <!-- find the targets -->
+            <CustomBehavior File="InteractWith" MobIds="105885" AuraIdMissingFromMob="204844" NumOfTimes="500" TerminateWhen="IsQuestCompleted(44158)">
+                <HuntingGrounds>
+                    <Hotspot X="1692.768" Y="5707.272" Z="47.61156" />
+                    <Hotspot X="1619.439" Y="5746.048" Z="27.06745" />
+                    <Hotspot X="1712.335" Y="5615.986" Z="58.11084" />
+                    <Hotspot X="1740.631" Y="5550.253" Z="58.25584" />
+                    <Hotspot X="1844.452" Y="5547.632" Z="62.49996" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

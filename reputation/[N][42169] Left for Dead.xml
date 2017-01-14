@@ -1,0 +1,53 @@
+<HBProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>[WQ] WorldQuest Left for Dead Zinner</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 42169 then
+            return true;
+            end
+    end
+end
+return false;", 0);]]>
+        </CustomBehavior>
+        <!--
+<WoWUnit Name="Prison Shackle" Entry="102450" X="420.8785" Y="5013.635" Z="-89.01844" />
+-->
+        <While Condition="OnQuest">
+            <RunTo X="432.7189" Y="5086.581" Z="-88.51279" />
+            <CustomBehavior File="InteractWith" MobId="102450" NumOfTimes="50" TerminateWhen="!OnQuest">
+                <HuntingGrounds>
+                    <Hotspot X="449.847" Y="5049.885" Z="-89.30132" />
+                    <Hotspot X="432.7189" Y="5086.581" Z="-88.51279" />
+                    <Hotspot X="373.6428" Y="5041.081" Z="-87.06934" />
+                    <Hotspot X="271.5541" Y="5075.951" Z="-86.26898" />
+                    <Hotspot X="232.425" Y="5112.252" Z="-86.47382" />
+                    <Hotspot X="115.491" Y="5024.948" Z="-145.1527" />
+                    <Hotspot X="274.9245" Y="5064.069" Z="-86.9704" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </While>
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

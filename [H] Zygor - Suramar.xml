@@ -581,7 +581,6 @@
                     WoWItem GetBagItem(uint itemId )
                     {
                         return StyxWoW.Me.BagItems.FirstOrDefault(x => x.Entry == itemId);
-
                     }
 
                     bool HasItem(uint itemId)
@@ -690,6 +689,10 @@
                     bool IsAtleastHonored() 
                     {
                         return (int)Me.GetReputationLevelWith(1859) >= 5;
+                    }
+                    bool IsAtleastRevered()
+                    {
+                        return (int)Me.GetReputationLevelWith(1859) >= 6;
                     }
                     int NightfallenRepAmt()
                     {
@@ -5372,9 +5375,7 @@
                 <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
             </If>
             <PickUp Nav="Fly" QuestName="The Arcway: Opening the Arcway" QuestId="42490" GiverName="First Arcanist Thalyssra" GiverId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
-            <!-- <TurnIn Nav="Fly" QuestName="The Arcway: Opening the Arcway" QuestId="42490" TurnInName="First Arcanist Thalyssra" TurnInId="97140" /> -->
             <PickUp Nav="Fly" QuestName="Court of Stars: Beware the Fury of a Patient Elf" QuestId="43314" GiverName="First Arcanist Thalyssra" GiverId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
-            <!-- <TurnIn Nav="Fly" QuestName="Court of Stars: Beware the Fury of a Patient Elf" QuestId="43314" TurnInName="First Arcanist Thalyssra" TurnInId="97140" /> -->
         </If>
         <!-- 560 -->
         <If Condition="NeedsQuest(42491)">
@@ -5388,12 +5389,53 @@
                 <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
                 <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
             </If>
-            <PickUp Nav="Fly" QuestName="The Arcway: Long Buried Knowledge" QuestId="42491" GiverName="Arcanist Valtrois" GiverId="103155" X="1737.737" Y="4603.282" Z="96.28349"  />
-<!-- <TurnIn Nav="Fly" QuestName="The Arcway: Long Buried Knowledge" QuestId="42491" TurnInName="Arcanist Valtrois" TurnInId="103155" /> -->
+            <PickUp Nav="Fly" QuestName="The Arcway: Long Buried Knowledge" QuestId="42491" GiverName="Arcanist Valtrois" GiverId="103155" X="1737.737" Y="4603.282" Z="96.28349" />
         </If>
-        <If Condition="DoQuest(42491)">
+        <!-- 561 -->
+        <If Condition="DoQuest(42491) || DoQuest(42490)">
+            <CustomBehavior File="RunCode" Code="PrintStep(561)" />
             <CustomBehavior File="UserDialog" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="5" ExpiryAction="InputEnabled_Continue" Text="The next step (561) requires you to complete the mythic only dungeon The Arcway." />
             <CustomBehavior File="Halt" />
+        </If>
+        <!-- 564 -->
+        <If Condition="HasQuest(42490)">
+            <CustomBehavior File="RunCode" Code="PrintStep(564)" />
+            <TurnIn Nav="Fly" QuestName="The Arcway: Opening the Arcway" QuestId="42490" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1737.737" Y="4603.282" Z="96.28349" />
+        </If>
+        <!-- 565 -->
+        <If Condition="HasQuest(42491)">
+            <CustomBehavior File="RunCode" Code="PrintStep(565)" />
+            <TurnIn Nav="Fly" QuestName="The Arcway: Long Buried Knowledge" QuestId="42491" TurnInName="Arcanist Valtrois" TurnInId="103155" X="1737.737" Y="4603.282" Z="96.28349" />
+        </If>
+        <!-- 566 -->
+        <If Condition="DoQuest(43314)">
+            <CustomBehavior File="RunCode" Code="PrintStep(566)" />
+            <CustomBehavior File="UserDialog" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="5" ExpiryAction="InputEnabled_Continue" Text="The next step (561) requires you to complete the mythic only dungeon Court of Stars" />
+            <CustomBehavior File="Halt" />
+        </If>
+        <!-- 568 -->
+        <If Condition="HasQuest(43314)">
+            <CustomBehavior File="RunCode" Code="PrintStep(568)" />
+            <TurnIn Nav="Fly" QuestName="Court of Stars: Beware the Fury of a Patient Elf" QuestId="43314" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
+        </If>
+        <!-- REVERED NOW REQUIRED -->
+        <!-- 569 -->
+        <If Condition="!IsAtleastRevered()">
+            <CustomBehavior File="RunCode" Code="PrintStep(569)" />
+            <CustomBehavior File="UserDialog" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="5" ExpiryAction="InputEnabled_Continue" Text="You must be atleast revered with The Nightfallen to continue." />
+            <CustomBehavior File="Halt" />
+        </If>
+        <!-- 570 -->
+        <If Condition="HasQuest(44562) || NeedsQuest(44563)">
+            <CustomBehavior File="RunCode" Code="PrintStep(570)" />
+            <TurnIn Nav="Fly" QuestName="Growing Strong" QuestId="44562" TurnInName="Valewalker Farodin" TurnInId="107126" X="1715.989" Y="4627.524" Z="123.9469" />
+            <PickUp Nav="Fly" QuestName="Redemption for the Fallen" QuestId="44563" GiverName="Valewalker Farodin" GiverId="107126" />
+<!-- <TurnIn Nav="Fly" QuestName="Redemption for the Fallen" QuestId="44563" TurnInName="Valewalker Farodin" TurnInId="107126" /> -->
+        </If>
+        <!-- 571 -->
+        <If Condition="NightfallenRepAmt() &lt; 28000">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: 7000 rep in revered required to continue, loading rep profile&quot;);" />
+            <CustomBehavior File="LoadProfile" ProfileName="reputation\[N] The Nightfallen Rep" RememberProfile="true" />
         </If>
     </QuestOrder>
 </HBProfile>

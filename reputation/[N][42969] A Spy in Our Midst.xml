@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<HBProfile>
+    <Name>[Zakrn] A Spy in Our Midst</Name>
+    <MinDurability>0.2</MinDurability>
+    <MinFreeBagSlots>1</MinFreeBagSlots>
+    <MinLevel>1</MinLevel>
+    <MaxLevel>1000</MaxLevel>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool IsQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
+            ]]>
+        </CustomBehavior>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+            	const uint SUBZONE_ID_SHAL_ARAN =           7928;
+                const uint SUBZONE_ID_STAR_CALLER_RETREAT = 8434;
+                const uint SUBZONE_ID_THE_WANING_CRESCENT = 8382;
+                const uint SUBZONE_ID_EVERMOON_TERRACE =    8487;
+                const uint SUBZONE_ID_EVERMOON_COMMONS =    7970;
+                const uint SUBZONE_ID_MOONLIT_LANDING =     8378;
+                const uint SUBZONE_ID_MIDNIGHT_COURT =      8380;
+
+                bool ShouldCastMask()
+                    {
+                        return !Me.IsCasting && Me.IsAlive && IsInCity() && (!Me.HasAura(202477) && !Me.HasAura(208824));
+                    }
+
+                    async Task CastMask()
+                    {
+                        if( HasItem(136600) )
+                        {
+                            var item = GetBagItem(136600);
+                            Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: using " + item.Name);
+                            item.Use();
+                            await Coroutine.Sleep(2200);
+                            await Coroutine.Wait(1600, () => !SpellManager.GlobalCooldown);
+                            await Coroutine.Wait(2500, () => !Me.IsCasting);
+                        }
+                        else
+                        {
+                            Lua.DoString("ExtraActionButton1:Click();");
+                        }
+                        await Coroutine.Yield();
+                    }
+
+                    WoWItem GetBagItem(uint itemId )
+                    {
+                        return StyxWoW.Me.BagItems.FirstOrDefault(x => x.Entry == itemId);
+                    }
+
+                    bool IsInCity()
+                    {
+                        return  Me.ZoneId == 7637 && //Suramar
+                                (Me.SubZoneId == 7963 || //The Grand Promenade
+                                Me.SubZoneId == 8021 || //Lunastre Estate
+                                Me.SubZoneId == SUBZONE_ID_STAR_CALLER_RETREAT || //Starcaller Retreat
+                                Me.SubZoneId == SUBZONE_ID_THE_WANING_CRESCENT || //The Waning Crescent
+                                Me.SubZoneId == 8383 || //Artisan's Gallery
+                                Me.SubZoneId == 8395 || //Astravar Harbor
+                                Me.SubZoneId == 8385 || //Evermoon Bazaar
+                                Me.SubZoneId == SUBZONE_ID_EVERMOON_COMMONS || //Evermoon Commons
+                                Me.SubZoneId == 8386 || //Shimmershade Garden
+                                Me.SubZoneId == 8398 || //Terrace of Order
+                                Me.MinimapZoneText == "Estate of the First Arcanist" ||
+                                Me.SubZoneId == 8149 || //Twilight Vineyards
+                                Me.SubZoneId == 8353 || //Concourse of Destiny
+                                Me.SubZoneId == 8397 || //Terrace of Enlightenment
+                                Me.SubZoneId == 8441 || //Moonbeam Causeway
+                                Me.SubZoneId == 8436 || //Sunset Park
+                                Me.SubZoneId == 8351 || //The Menagerie
+                                Me.SubZoneId == 8379 || //The Gilded Market
+                                Me.SubZoneId == SUBZONE_ID_MOONLIT_LANDING || //Moonlit Landing
+                                Me.SubZoneId == 8431 || //Sanctum of Order
+                                Me.SubZoneId == SUBZONE_ID_EVERMOON_TERRACE ||
+                                Me.SubZoneId == 8148);   //Suramar City
+                    }
+            ]]>
+        </CustomBehavior>
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" ActivityName="applyMask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <CustomBehavior File="RunCode" Code="await CastMask()" />
+        </CustomBehavior>
+        <If Condition="IsQuestAvailable(42969)">
+            <If Condition="Me.SubZoneId != 8382 &amp;&amp; 
+            	Me.SubZoneId != 8383 &amp;&amp; 
+            	Me.SubZoneId != 7970 &amp;&amp;
+            	Me.SubZoneId != 8434">
+                <!-- take the portal if it's unlocked -->
+                <If Condition="IsQuestCompleted(42487) &amp;&amp; !IsInCity()">
+                    <CustomBehavior File="InteractWith" MobId="254137" X="1787.23" Y="4630.941" Z="124.1549" />
+                </If>
+                <MoveTo X="411.5142" Y="4021.61" Z="1.38846" />
+            </If>
+        </If>
+        <While Condition="IsQuestAvailable(42969)">
+            <MoveTo X="667.896" Y="4094.786" Z="10.70675" />
+            <CustomBehavior File="WaitTimer" WaitTime="37000" />
+            <MoveTo X="649.205" Y="4088.614" Z="1.493389" />
+            <CustomBehavior File="WaitTimer" WaitTime="6000" />
+            <MoveTo X="641.3746" Y="4061.999" Z="7.689816" />
+            <CustomBehavior File="WaitTimer" WaitTime="5000" />
+            <MoveTo X="646.4634" Y="4036.534" Z="1.493346" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+            <MoveTo X="652.0674" Y="4011.781" Z="1.493101" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+            <MoveTo X="677.0464" Y="3986.125" Z="1.493168" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+            <MoveTo X="686.8289" Y="3961.295" Z="5.89691" />
+            <CustomBehavior File="WaitTimer" WaitTime="14000" />
+            <MoveTo X="665.9033" Y="3926.278" Z="5.685761" />
+            <CustomBehavior File="WaitTimer" WaitTime="22000" />
+            <MoveTo X="634.4858" Y="3921.272" Z="5.685555" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+            <MoveTo X="619.7516" Y="3919.799" Z="5.685349" />
+            <CustomBehavior File="WaitTimer" WaitTime="4000" />
+            <MoveTo X="607.0156" Y="3895.327" Z="5.685365" />
+            
+            <CustomBehavior File="WaitTimer" WaitTime="60000" />
+            <!-- <Vendor Name="Nightborne Spy" Entry="109388" Type="Repair" Nav="Fly" X="661.2934" Y="4090.553" Z="2.991355" /> -->
+        </While>
+        <!-- 
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If> -->
+        <!-- <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" /> -->
+    </QuestOrder>
+</HBProfile>

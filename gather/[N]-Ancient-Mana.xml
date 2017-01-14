@@ -23,14 +23,14 @@
         <Blackspot X="879.0854" Y="5259.045" Z="48.92279" Radius="2.93233" />
         <Blackspot X="1807.786" Y="5389.523" Z="-36.09461" Radius="7.532747" />
         <Blackspot X="1507.854" Y="5399.925" Z="76.86271" Radius="30.0" />
-        <Blackspot X="1175.61" Y="5278.585" Z="75.51192" Radius="30.0"/>
+        <Blackspot X="1175.61" Y="5278.585" Z="75.51192" Radius="30.0" />
     </Blackspots>
     <Vendors>
     </Vendors>
     <QuestOrder>
         <UseMount Value="true" />
         <CustomBehavior File="RunCode" Type="Definition">
-        <![CDATA[
+            <![CDATA[
                 public class Settings : Styx.Helpers.Settings
                 {
                     public static readonly string _settingsPath = Path.Combine(CharacterSettingsDirectory, "Profiles", "ZakrnSuramarSettings.xml");
@@ -75,7 +75,7 @@
                     return Settings.Instance.ReturnProfile;
                 }
         ]]>
-        </CustomBehavior> 
+        </CustomBehavior>
         <CustomBehavior File="RunCode" Type="Definition">
             <![CDATA[
                     bool HasAncientMana( int amount )
@@ -127,18 +127,13 @@
                     }
                 ]]>
         </CustomBehavior>
-        
         <!-- <CustomBehavior File="UserSettings" HarvestHerbs="false" HarvestMinerals="false" /> -->
-
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Harvesting &quot; + GetManaTarget() + &quot; Ancient Mana&quot; );" />
-
         <CustomBehavior File="Hooks\Avoid" AvoidName="elfbane" ObjectId="99792" Radius="40" />
-
-        <CustomBehavior File="Hooks\DoWhen" UseWhen="HasManaItems()" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true" >
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="HasManaItems()" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
             <CustomBehavior File="RunCode" Code="await UseManaItems();" />
         </CustomBehavior>
-
-        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" PreInteractMountStrategy="Dismount" TerminateWhen="HasAncientMana( GetManaTarget() )" >
+        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" PreInteractMountStrategy="Dismount" TerminateWhen="HasAncientMana( GetManaTarget() )">
             <HuntingGrounds>
                 <Hotspot X="1611.525" Y="4302.211" Z="135.5855" />
                 <Hotspot X="1758.481" Y="4791.606" Z="147.6049" />
@@ -203,10 +198,18 @@
                 <Hotspot X="1924.345" Y="5565.773" Z="60.70303" />
                 <Hotspot X="1619.317" Y="4887.14" Z="162.7641" />
                 <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
+                <!-- east side -->
+                <Hotspot X="1991.079" Y="3089.278" Z="239.7455" />
+                <Hotspot X="1525.205" Y="3102.945" Z="116.9301" />
+                <Hotspot X="1547.956" Y="2973.81" Z="77.15396" />
+                <Hotspot X="1390.176" Y="2949.172" Z="111.6269" />
+                <Hotspot X="1272.667" Y="2829" Z="90.76936" />
+                <Hotspot X="1194.339" Y="2867.194" Z="89.39727" />
+                <Hotspot X="1090.351" Y="2746.775" Z="59.75992" />
             </HuntingGrounds>
             <Blackspots>
-                <Blackspot X="1478.984" Y="5442.051" Z="75.68926" Radius="20.0"/>
-                <Blackspot X="1071.589" Y="5265.232" Z="106.5904" Radius="40.0"/>
+                <Blackspot X="1478.984" Y="5442.051" Z="75.68926" Radius="20.0" />
+                <Blackspot X="1071.589" Y="5265.232" Z="106.5904" Radius="40.0" />
                 <Blackspot X="1628.706" Y="5424.287" Z="65.01992" Radius="20.0" />
                 <Blackspot X="1638.807" Y="5458.747" Z="61.90379" Radius="20.0" />
                 <Blackspot X="1577.444" Y="5412.718" Z="64.95435" Radius="20.0" />
@@ -218,20 +221,17 @@
                 <Blackspot X="1988.597" Y="5394.301" Z="-37.26923" Radius="20.0" />
                 <Blackspot X="922.3163" Y="5324.399" Z="69.51901" Radius="20.0" />
                 <Blackspot X="882.5545" Y="5280.472" Z="41.01726" Radius="20.0" />
+                <Blackspot X="905.1858" Y="5269.045" Z="83.03226" Radius="20.0" />
             </Blackspots>
         </CustomBehavior>
         <CustomBehavior File="Hooks\DoWhen" ActivityName="use_mana_item" Command="Remove" />
-
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Ancient Mana Harvest Complete.&quot;);" />
-
         <CustomBehavior File="RunCode" Code="SetManaTarget(0)" />
-
-        <If Condition="GetReturnProfile().Equals(&quot;REP&quot;)" >
+        <If Condition="GetReturnProfile().Equals(&quot;REP&quot;)">
             <CustomBehavior File="LoadProfile" ProfileName="../reputation/[N] The Nightfallen Rep" RememberProfile="true" />
         </If>
         <If Condition="GetReturnProfile().Equals(&quot;MAIN&quot;)">
             <CustomBehavior File="LoadProfile" ProfileName="../[H] Zygor - Suramar" RememberProfile="true" />
         </If>
-
     </QuestOrder>
 </HBProfile>

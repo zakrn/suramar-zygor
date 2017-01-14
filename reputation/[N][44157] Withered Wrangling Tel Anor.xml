@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<HBProfile>
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>[Nuok] Withered Wrangling: Tel'anor - WQ ($Rev: 1175 $)</Name>
+    <MinDurability>0.2</MinDurability>
+    <MinFreeBagSlots>1</MinFreeBagSlots>
+    <MinLevel>1</MinLevel>
+    <MaxLevel>1000</MaxLevel>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 44157 then
+            return true;
+            end
+    end
+end
+return false;", 0);
+
+     public bool Withered => Me.CurrentTarget != null && (Me.CurrentTarget.Entry == 98979 || Me.CurrentTarget.Entry == 113572);
+     
+     public bool CombatEnabled = true;
+      
+     public async Task DoQuest()
+     {
+          var getMe = ObjectManager.GetObjectsOfType<WoWUnit>().OrderBy(u => u.Distance).FirstOrDefault(u => u.IsValid && (u.Entry == 98979 || u.Entry == 113572) && u.IsAlive);
+      while (getMe != null)
+      {
+        getMe.Target();
+        while (Me.Location.Distance(getMe.Location) >= 28)
+        {
+          await CommonCoroutines.MoveTo(getMe.Location);
+          await Coroutine.Yield();
+        }
+        while (!getMe.InLineOfSight)
+        {
+          await CommonCoroutines.MoveTo(getMe.Location);
+          await Coroutine.Yield();
+        }
+        await CommonCoroutines.StopMoving();
+        Lua.DoString("ExtraActionButton1:Click();");
+        await Coroutine.Sleep(1500);
+        await Coroutine.Yield();
+        }     
+     }
+]]>
+        </CustomBehavior>
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="Withered &amp;&amp; CombatEnabled" LogExecution="true" ActivityName="DisableCombat" AllowUseDuringCombat="true" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <DisableBehavior Name="All" />
+            <CustomBehavior File="RunCode" Code="CombatEnabled = false;" />
+        </CustomBehavior>
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="!Withered &amp;&amp; !CombatEnabled" LogExecution="true" ActivityName="EnableCombat" AllowUseDuringCombat="true" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <EnableBehavior Name="All" />
+            <CustomBehavior File="RunCode" Code="CombatEnabled = true;" />
+        </CustomBehavior>
+        <While Condition="OnQuest">
+            <If Condition="!HasQuest(44157)">
+                <RunTo X="1948.845" Y="4060.376" Z="263.9446" />
+            </If>
+            <If Condition="HasQuest(44157)">
+                <DisableBehavior Name="All" />
+                <RunTo X="1948.845" Y="4060.376" Z="263.9446" />
+                <CustomBehavior File="RunCode" Code="await DoQuest();" />
+                <RunTo X="2008.571" Y="3849.337" Z="265.7263" />
+                <CustomBehavior File="RunCode" Code="await DoQuest();" />
+            </If>
+        </While>
+        <EnableBehavior Name="All" />
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>
