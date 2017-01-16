@@ -1,0 +1,49 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- Original contribution by EchoTiger -->
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>[A-Quest] WorldQuest WANTED: Mal'Dreth the Corruptor Zinner</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool IsQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
+            ]]>
+        </CustomBehavior>
+        <If Condition="IsQuestAvailable(44015)">
+            <MoveTo X="1236.415" Y="4725.908" Z="146.9274" />
+            <CustomBehavior File="KillUntilComplete" MobIds="110024" QuestId="44015">
+                <HuntingGrounds>
+                    <Hotspot X="1198.842" Y="4750.742" Z="157.5894" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

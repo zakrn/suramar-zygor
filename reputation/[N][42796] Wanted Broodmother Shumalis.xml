@@ -2,7 +2,7 @@
     <!-- Original contribution by EchoTiger -->
     <!-- credit to the amazing world quest team on this one -->
     <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
-    <Name>42209-[N]-[QUEST]-Wq-Freeing the Taken-Zinner.xml</Name>
+    <Name>[42796] WANTED: Broodmother Shu'malis - WiN</Name>
     <MinDurability>0.3</MinDurability>
     <MinFreeBagSlots>3</MinFreeBagSlots>
     <SellGrey>true</SellGrey>
@@ -20,43 +20,55 @@
         <CustomBehavior File="RunCode" Type="Definition">
             <![CDATA[
             
+
     public class WorldQuestData
     {
         public int ID;
         public string Name;
         public DateTime ExpireTime;
     }
+
+
     public static class WorldQuestInfo
     {
         static List<WorldQuestData> _cache = new List<WorldQuestData>();
         static internal bool _dirty = true;
         static internal bool _setup = false;
+
         static WorldQuestInfo()
         {
             Setup();
         }
+
         public static void Setup()
         {
             if (_setup)
                 return;
+
             Lua.Events.AttachEvent("WORLD_MAP_UPDATE", WorldQuestMarkDirty);
             Lua.Events.AttachEvent("SUPER_TRACKED_QUEST_CHANGED", WorldQuestMarkDirty);
             Lua.Events.AttachEvent("WORLD_QUEST_COMPLETED_BY_SPELL", WorldQuestMarkDirty);
+
             UpdateWorldQuests();
             _setup = true;
         }
+
         public static void WorldQuestMarkDirty(object sender, LuaEventArgs args)
         {
             _dirty = true;
         }
+
         public static bool HasWorldQuest(int questid)
         {
             UpdateWorldQuests();
+
             var quest = _cache.Where(q => q.ID == questid).FirstOrDefault();
+
             if (quest == null || quest.ExpireTime <= DateTime.UtcNow)
                 return false;
             return true;
         }
+
         public static void UpdateWorldQuests()
         {
             if (!_dirty)
@@ -65,22 +77,29 @@
             
             var player = StyxWoW.Me;
             int BrokenIslesMapArea = 1007;
+
             var ret = Lua.GetReturnValues(string.Format("return C_MapCanvas.GetNumZones({0});", BrokenIslesMapArea));
             
             var NumZones = int.Parse(ret[0]);
-            for (int i = 1; i < NumZones; ++i)
+
+            for (int i = 1; i <= NumZones; ++i)
             {
                 ret = Lua.GetReturnValues(string.Format("return C_MapCanvas.GetZoneInfo({0}, {1});", BrokenIslesMapArea, i));
+
                 var ZoneID = int.Parse(ret[0]);
                 var ZoneName = ret[1];
                 var ZoneDepth = int.Parse(ret[2]);
+
                 if (ZoneDepth > 1) //Do not look at subzones
                 {
                     Logging.WriteDiagnostic(string.Format("Ignoring {0} ({1}) as ZoneDepth > 1 ({2})", ZoneID, ZoneName, ZoneDepth));
                     continue;
                 }
+
                 string ToRun = string.Format(@"     local questids = {{}};
+
                                                     local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID({0}, {1});
+
                                                     if taskInfo then
                                                                     for i, info in ipairs(taskInfo) do
                                                                         if HaveQuestData(info.questId) then
@@ -92,14 +111,19 @@
                                                                     end
                                                    return unpack(questids);
                                                 ", ZoneID, BrokenIslesMapArea);
+
                 ret = Lua.GetReturnValues(ToRun);
+
                 foreach (var q in ret)
                 {
                     int questid = int.Parse(q);
+
                     //TimeLeft is in minutes
                     var TimeLeft = Lua.GetReturnVal<int>(string.Format("return C_TaskQuest.GetQuestTimeLeftMinutes({0});", questid), 0);
                     var QuestInfo = Lua.GetReturnValues(string.Format("return C_TaskQuest.GetQuestInfoByQuestID({0});", questid));
+
                     Logging.WriteDiagnostic("WorldQuest {0} ({2}) active ({1}m left)", QuestInfo[0], TimeLeft, questid);
+
                     var data = new WorldQuestData();
                     data.ID = questid;
                     data.Name = QuestInfo[0];
@@ -107,80 +131,40 @@
                     _cache.Add(data);
                 }
             }
+
             _dirty = false;
         }
+
         public static bool IsWorldQuest(int questid)
         {
             string lua = string.Format("tagID, tagName, worldQuestType, rarity, isElite, tradeskillLineIndex = GetQuestTagInfo({0});", questid);
+
             var ret = Lua.GetReturnValues(lua);
+
             if (ret[3] == null)
                 return false;
             return true;
         }
     }
-    bool ShouldCastMask() 
-                     { 
-                         return Me.IsAlive && IsInCity() && !Me.HasAura(202477); 
-                     } 
-  
-                     void CastMask() 
-                     { 
-                         Lua.DoString("ExtraActionButton1:Click();"); 
-                     } 
-  
-                     bool IsInCity() 
-                     { 
-                        return  Me.MinimapZoneText == "The Grand Promenade" ||  
-                                Me.MinimapZoneText == "Starcaller Retreat"  || 
-                                 Me.MinimapZoneText == "The Waning Crescent" || 
-                                 Me.MinimapZoneText == "Artisan's Gallery" || 
-                                Me.MinimapZoneText == "Astravar Harbor" || 
-                                 Me.MinimapZoneText == "Evermoon Bazaar" || 
-                                 Me.MinimapZoneText == "Shimmershade Garden" || 
-                                 Me.MinimapZoneText == "Terrace of Order" || 
-                                 Me.MinimapZoneText == "Suramar City"; 
-                     } 
+
 
                 ]]>
         </CustomBehavior>
-        <While Condition="WorldQuestInfo.HasWorldQuest(42209)">
-            <!-- Get in range of quest to activate -->
-            <RunTo X="942.3553" Y="4135.425" Z="1.423023" />
-            <PickUp Nav="Fly" QuestName="Forces of Oppression" QuestId="43932" GiverName="" GiverId="" />
-            <Objective QuestName="Forces of Oppression" QuestId="43932" Type="KillMob" Nav="Fly" MobId="111910" KillCount="17" />
-            <Objective QuestName="Forces of Oppression" QuestId="43932" Type="KillMob" Nav="Fly" MobId="111911" KillCount="10" />
-            <TurnIn Nav="Fly" QuestName="Forces of Oppression" QuestId="43932" TurnInName="" TurnInId="" />
-        </While>
-        <!-- 
-<Vendor Name="Fathnyr" Entry="91803" Type="Repair" Nav="Fly" X="1922.743" Y="2315.998" Z="507.618" />
--->
-        <While Condition="WorldQuestInfo.HasWorldQuest(42209)">
-            <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" LogExecution="true" ActivityName="apply_mask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
-                <CustomBehavior File="RunCode" Code="CastMask()" />
-                <CustomBehavior File="WaitTimer" WaitTime="4000" />
-            </CustomBehavior>
-            <RunTo X="942.3553" Y="4135.425" Z="1.423023" />
-            <CustomBehavior File="KillUntilComplete" MobIds="108096" TerminateWhen="HasItem(138301) &amp;&amp; GetItemCount(138301) &gt;= 4">
+        <While Condition="WorldQuestInfo.HasWorldQuest(42796)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;Loading Profile [42796] WANTED: Broodmother Shu'malis - WiN!&quot;);" />
+            <RunTo X="1822.745" Y="5280.416" Z="-57.26265" />
+            <CustomBehavior File="KillUntilComplete" QuestId="42796" TerminateWhen="!WorldQuestInfo.HasWorldQuest(42796)">
                 <HuntingGrounds>
-                    <Hotspot X="921.1705" Y="4040.392" Z="1.35467" />
-                    <Hotspot X="912.6882" Y="3963.212" Z="1.353993" />
-                    <Hotspot X="950.3488" Y="4124.124" Z="1.422557" />
+                    <Hotspot X="1811.118" Y="5256.582" Z="-57.26074" />
                 </HuntingGrounds>
-            </CustomBehavior>
-            <CustomBehavior File="InteractWith" MobId="251190" NumOfTimes="5">
-                <HuntingGrounds>
-                    <Hotspot X="940.7101" Y="4163.858" Z="1.715016" />
-                    <Hotspot X="938.5868" Y="4155.661" Z="1.715016" />
-                    <Hotspot X="948.3906" Y="4173.932" Z="1.587733" />
-                    <Hotspot X="956.691" Y="4175.617" Z="1.587733" />
-                    <Hotspot X="967.4114" Y="4150.809" Z="1.714567" />
-                    <Hotspot X="963.5643" Y="4143.266" Z="1.714567" />
-                </HuntingGrounds>
+                <PursuitList>
+                    <PursueUnit Id="105632" Priority="1" PursueWhen="!IsObjectiveComplete(1, 42796) &amp;&amp; (UNIT.IsAlive)" />
+                </PursuitList>
             </CustomBehavior>
             <CustomBehavior File="Misc\RunLua" WaitTime="1500" Lua="WorldMapFrame:Show()" />
             <CustomBehavior File="Misc\RunLua" Lua="WorldMapFrame:Hide()" />
         </While>
-        <RunTo X="932.8533" Y="4142.878" Z="2.818509" />
+        <RunTo X="1834.259" Y="5463.502" Z="25.51882" />
         <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
             <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
         </If>

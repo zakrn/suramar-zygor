@@ -75,12 +75,20 @@
             <CustomBehavior File="LoadProfile" ProfileName="./[N][42209] Freeing the Taken" RememberProfile="false" />
         </If>
 
+        <If Condition="IsQuestAvailable(42796)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][42796] Wanted Broodmother Shumalis" RememberProfile="false" />
+        </If>
+
         <If Condition="IsQuestAvailable(42830)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][42830] Pest Management" RememberProfile="false" />
         </If>
 
         <If Condition="IsQuestAvailable(42859)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][42859] A Draught of Hope" RememberProfile="false" />
+        </If>
+
+        <If Condition="IsQuestAvailable(42880)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][42880] Meeting Their Quota" RememberProfile="false" />
         </If>
 
         <!-- <If Condition="IsQuestAvailable(42969)">
@@ -111,6 +119,10 @@
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44002] Undersea Survey" RememberProfile="false" />
         </If>
 
+        <If Condition="IsQuestAvailable(44015)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][44015] Wanted Maldreth the Corruptor" RememberProfile="false" />
+        </If>
+
         <If Condition="IsQuestAvailable(44016)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44016] Wanted Cadreus" RememberProfile="false" />
         </If>
@@ -131,6 +143,10 @@
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44744] Lifelines" RememberProfile="false" />
         </If>
 
+        <If Condition="IsQuestAvailable(44799)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][44799] Safe Keeping" RememberProfile="false" />
+        </If>
+
         <If Condition="IsQuestAvailable(44802)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44802] Ancient Guidance" RememberProfile="false" />
         </If>
@@ -143,10 +159,13 @@
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44812] Running on Empty" RememberProfile="false" />
         </If>
 
-        <!-- TODO -->
-        <!-- <If Condition="IsQuestAvailable(44816)">
+        <If Condition="IsQuestAvailable(44816)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44816] Continued Exposure" RememberProfile="false" />
-        </If> -->
+        </If>
+
+        <If Condition="IsQuestAvailable(44856)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][44856] Cut the Cattitude" RememberProfile="false" />
+        </If>
 
         <If Condition="IsQuestAvailable(44857)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44857] Not There Not Then Not Forever" RememberProfile="false" />

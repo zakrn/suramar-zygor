@@ -1,0 +1,76 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[Zakrn] Cut the Cattitude</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <!--These aren't used often, only if there are navigation issues with the profile or areas you want the character to avoid-->
+    <Blackspots>
+    </Blackspots>
+    <!--These are the vendors you want the bot to go to when doing a repair or vendor run-->
+    <Vendors>
+    </Vendors>
+    <!--These are the locations of the available mailboxes that you want your character to use-->
+    <Mailboxes>
+    </Mailboxes>
+    <!--Setting these would make sure the character stays away from and does not attack these mobs-->
+    <AvoidMobs>
+    </AvoidMobs>
+    <!--Here is where the meat of the profile will take place-->
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool IsQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
+            ]]>
+        </CustomBehavior>
+        <If Condition="IsQuestAvailable(44856)">
+            <MoveTo X="2335.079" Y="5460.761" Z="121.0257" />
+            <!-- Credit: ksmaze -->
+            <CustomBehavior File="RunCode">
+                <![CDATA[
+                    var home = new Vector3(2322.228f, 5470.458f, 118.7071f);
+                    
+                    while (!IsQuestCompleted(44856))
+                    {
+                      var kitty = Unit(116675);
+                      kitty.Target();
+
+                      while(kitty != null && kitty.IsValid)
+                      {
+                          Logging.Write(System.Windows.Media.Colors.Yellow, "Chasing Kitty");
+                          float inverse = WoWMathHelper.CalculateNeededFacing(home, kitty.Location);
+                          var nLoc = kitty.Location.RayCast(inverse, 2);
+                          Navigator.MoveTo(nLoc);
+                          await Coroutine.Sleep(3000);
+                      }
+                    }
+                ]]>
+            </CustomBehavior>
+        </If>
+        <!-- use whistle -->
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

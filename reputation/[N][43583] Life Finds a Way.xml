@@ -104,18 +104,18 @@
             <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1462.756, 3808.687, 30.95982), false);" />
             <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1371.434, 3766.487, 36.21667), false);" />
             <While Condition="IsQuestAvailable(43583)">
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1316.977 ,3699.123 ,16.73279));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1307.137 ,3628.186 ,35.45126));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1315.36 ,3575.188 ,35.45126));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1350.289 ,3552.876 ,35.45126));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1347.34 ,3525.178 ,35.45152));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1330.137 ,3509.279 ,35.45152));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1298.463 ,3515.715 ,35.45152));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1280.873 ,3545.425 ,35.45152));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1297.699 ,3570.633 ,35.45152));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1290.436 ,3618.851 ,35.45152));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1287.745 ,3674.432 ,26.96629));" TerminateWhen="IsQuestAvailable(43583)" />
-                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1302.36 ,3708.625 ,16.73022));" TerminateWhen="IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1316.977 ,3699.123 ,16.73279));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1307.137 ,3628.186 ,35.45126));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1315.36 ,3575.188 ,35.45126));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1350.289 ,3552.876 ,35.45126));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1347.34 ,3525.178 ,35.45152));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1330.137 ,3509.279 ,35.45152));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1298.463 ,3515.715 ,35.45152));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1280.873 ,3545.425 ,35.45152));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1297.699 ,3570.633 ,35.45152));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1290.436 ,3618.851 ,35.45152));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1287.745 ,3674.432 ,26.96629));" TerminateWhen="!IsQuestAvailable(43583)" />
+                <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1302.36 ,3708.625 ,16.73022));" TerminateWhen="!IsQuestAvailable(43583)" />
             </While>
             <EnableBehavior Name="Combat" />
         </If>
