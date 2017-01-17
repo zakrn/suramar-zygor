@@ -5430,12 +5430,100 @@
             <CustomBehavior File="RunCode" Code="PrintStep(570)" />
             <TurnIn Nav="Fly" QuestName="Growing Strong" QuestId="44562" TurnInName="Valewalker Farodin" TurnInId="107126" X="1715.989" Y="4627.524" Z="123.9469" />
             <PickUp Nav="Fly" QuestName="Redemption for the Fallen" QuestId="44563" GiverName="Valewalker Farodin" GiverId="107126" />
-<!-- <TurnIn Nav="Fly" QuestName="Redemption for the Fallen" QuestId="44563" TurnInName="Valewalker Farodin" TurnInId="107126" /> -->
+            <!-- <TurnIn Nav="Fly" QuestName="Redemption for the Fallen" QuestId="44563" TurnInName="Valewalker Farodin" TurnInId="107126" /> -->
         </If>
         <!-- 571 -->
         <If Condition="NightfallenRepAmt() &lt; 28000">
+            <CustomBehavior File="RunCode" Code="PrintStep(571)" />
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: 7000 rep in revered required to continue, loading rep profile&quot;);" />
             <CustomBehavior File="LoadProfile" ProfileName="reputation\[N] The Nightfallen Rep" RememberProfile="true" />
+        </If>
+        <!-- 572 -->
+        <If Condition="NeedsQuest(44152)">
+            <CustomBehavior File="RunCode" Code="PrintStep(572)" />
+            <PickUp Nav="Fly" QuestName="A Growing Crisis" QuestId="44152" GiverName="Valewalker Farodin" GiverId="107126" X="1714.355" Y="4633.261" Z="124.0064" />
+        </If>
+        <!-- 573 - 574 -->
+        <If Condition="HasQuest(44152) || NeedsQuest(43361,43360)">
+            <CustomBehavior File="RunCode" Code="PrintStep(573,574)" />
+            <CustomBehavior File="InteractWith" MobId="254133" X="1760.368" Y="4661.349" Z="123.993" />
+            <TurnIn Nav="Fly" QuestName="A Growing Crisis" QuestId="44152" TurnInName="Valewalker Farodin" TurnInId="112967" X="2363.79" Y="5439.44" Z="16.06" />
+            <PickUp Nav="Fly" QuestName="Fragments of Disaster" QuestId="43361" GiverName="Valewalker Farodin" GiverId="112967" X="2363.79" Y="5439.44" Z="16.06" />
+            <PickUp Nav="Fly" QuestName="The Shardmaidens" QuestId="43360" GiverName="Valewalker Farodin" GiverId="112967" X="2363.79" Y="5439.44" Z="16.06" />
+        </If>
+        <!-- 575 -->
+        <If Condition="DoQuest(43361)">
+            <CustomBehavior File="RunCode" Code="PrintStep(575)" />
+            <CustomBehavior File="InteractWith" MobId="252010" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(1, 43361)">
+                <HuntingGrounds>
+                    <Hotspot X="2252.155" Y="5454.917" Z="3.617991" />
+                    <Hotspot X="2199.503" Y="5448.917" Z="1.65228" />
+                    <Hotspot X="2164.963" Y="5490.646" Z="1.652236" />
+                    <Hotspot X="2210.54" Y="5504.208" Z="1.652255" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+        <!-- 576 -->
+        <If Condition="DoQuest(43360)">
+            <CustomBehavior File="RunCode" Code="PrintStep(576)" />
+            <CustomBehavior File="KillUntilComplete" MobIds="105554" QuestId="43360" QuestObjectiveIndex="1">
+                <HuntingGrounds>
+                    <Hotspot X="2252.155" Y="5454.917" Z="3.617991" />
+                    <Hotspot X="2199.503" Y="5448.917" Z="1.65228" />
+                    <Hotspot X="2164.963" Y="5490.646" Z="1.652236" />
+                    <Hotspot X="2210.54" Y="5504.208" Z="1.652255" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+        <!-- 577 -->
+        <If Condition="DoQuest(43361)">
+            <CustomBehavior File="RunCode" Code="PrintStep(577)" />
+            <MoveTo X="2362.608" Y="5437.295" Z="15.84388" />
+        </If>
+        <!-- 578 -->
+        <If Condition="HasQuest(43361) || HasQuest(43360) || NeedsQuest(44156)">
+            <CustomBehavior File="RunCode" Code="PrintStep(578)" />
+            <TurnIn Nav="Fly" QuestName="Fragments of Disaster" QuestId="43361" TurnInName="Valewalker Farodin" TurnInId="112967" X="2362.608" Y="5437.295" Z="15.84388" />
+            <TurnIn Nav="Fly" QuestName="The Shardmaidens" QuestId="43360" TurnInName="Valewalker Farodin" TurnInId="112967" X="2362.608" Y="5437.295" Z="15.84388" />
+            <PickUp Nav="Fly" QuestName="Another Arcan'dor Closes..." QuestId="44156" GiverName="Valewalker Farodin" GiverId="112967" X="2362.608" Y="5437.295" Z="15.84388" />
+        </If>
+        <!-- 579 -->
+        <If Condition="HasQuest(44156) &amp;&amp; Me.SubZoneId == 8163">
+            <CustomBehavior File="RunCode" Code="PrintStep(579)" />
+            <CustomBehavior File="InteractWith" MobId="260251" X="2362.608" Y="5437.295" Z="15.84388" />
+        </If>
+        <!-- 580 -->
+        <If Condition="HasQuest(44156) || NeedsQuest(43362)">
+            <CustomBehavior File="RunCode" Code="PrintStep(580)" />
+            <TurnIn Nav="Fly" QuestName="Another Arcan'dor Closes..." QuestId="44156" TurnInName="Valewalker Farodin" TurnInId="107126" X="1713.57" Y="4632.306" Z="124.0053" />
+            <PickUp Nav="Fly" QuestName="The Emerald Nightmare: The Stuff of Dreams" QuestId="43362" GiverName="Valewalker Farodin" GiverId="107126" X="1713.57" Y="4632.306" Z="124.0053" />
+            <!-- <TurnIn Nav="Fly" QuestName="The Emerald Nightmare: The Stuff of Dreams" QuestId="43362" TurnInName="Valewalker Farodin" TurnInId="107126" /> -->
+        </If>
+        <!-- 581 -->
+        <If Condition="NeedsQuest(40125)">
+            <CustomBehavior File="RunCode" Code="PrintStep(581)" />
+            <If Condition="IsThalyssraThirsty()">
+                <If Condition="!HasAncientMana(50)">
+                    <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;&quot;, 50)" />
+                    <CustomBehavior File="LoadProfile" ProfileName="gather/[N]-Ancient-Mana" RememberProfile="true" />
+                </If>
+                <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
+                <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+            </If>
+            <PickUp Nav="Fly" QuestName="Branch of the Arcan'dor" QuestId="40125" GiverName="First Arcanist Thalyssra" GiverId="97140" X="1713.57" Y="4632.306" Z="124.0053" />
+        </If>
+        <!-- 582 -->
+        <If Condition="HasQuest(40125)">
+            <CustomBehavior File="RunCode" Code="PrintStep(582)" />
+            <TurnIn Nav="Fly" QuestName="Branch of the Arcan'dor" QuestId="40125" TurnInName="First Arcanist Thalyssra" TurnInId="97140" X="1713.57" Y="4632.306" Z="124.0053" />
+        </If>
+        <!-- 583 -->
+        <If Condition="DoQuest(43362)">
+            <CustomBehavior File="RunCode" Code="PrintStep(583)" />
+            <CustomBehavior File="UserDialog" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="5" ExpiryAction="InputEnabled_Continue" Text="The next steps require you to run the Emerald Nightmare raid. Beyond the scope of this script." />
+            <CustomBehavior File="Halt" />
         </If>
     </QuestOrder>
 </HBProfile>

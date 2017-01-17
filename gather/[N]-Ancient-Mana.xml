@@ -24,6 +24,10 @@
         <Blackspot X="1807.786" Y="5389.523" Z="-36.09461" Radius="7.532747" />
         <Blackspot X="1507.854" Y="5399.925" Z="76.86271" Radius="30.0" />
         <Blackspot X="1175.61" Y="5278.585" Z="75.51192" Radius="30.0" />
+        <Blackspot X="1177.958" Y="5175.629" Z="57.51365" Radius="30.0" />
+        <Blackspot X="922.523" Y="5334.743" Z="64.9015" Radius="30.0" />
+        <Blackspot X="1574.392" Y="5484.938" Z="-8.260089" Radius="40.0" />
+
     </Blackspots>
     <Vendors>
     </Vendors>
