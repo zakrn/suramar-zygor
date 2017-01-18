@@ -5497,7 +5497,6 @@
             <CustomBehavior File="RunCode" Code="PrintStep(580)" />
             <TurnIn Nav="Fly" QuestName="Another Arcan'dor Closes..." QuestId="44156" TurnInName="Valewalker Farodin" TurnInId="107126" X="1713.57" Y="4632.306" Z="124.0053" />
             <PickUp Nav="Fly" QuestName="The Emerald Nightmare: The Stuff of Dreams" QuestId="43362" GiverName="Valewalker Farodin" GiverId="107126" X="1713.57" Y="4632.306" Z="124.0053" />
-            <!-- <TurnIn Nav="Fly" QuestName="The Emerald Nightmare: The Stuff of Dreams" QuestId="43362" TurnInName="Valewalker Farodin" TurnInId="107126" /> -->
         </If>
         <!-- 581 -->
         <If Condition="NeedsQuest(40125)">
@@ -5524,6 +5523,11 @@
             <CustomBehavior File="RunCode" Code="PrintStep(583)" />
             <CustomBehavior File="UserDialog" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="5" ExpiryAction="InputEnabled_Continue" Text="The next steps require you to run the Emerald Nightmare raid. Beyond the scope of this script." />
             <CustomBehavior File="Halt" />
+        </If>
+        <!-- 587 -->
+        <If Condition="HasQuest(43362)">
+            <CustomBehavior File="RunCode" Code="PrintStep(587)" />
+            <TurnIn Nav="Fly" QuestName="The Emerald Nightmare: The Stuff of Dreams" QuestId="43362" TurnInName="Valewalker Farodin" TurnInId="107126" X="1713.57" Y="4632.306" Z="124.0053" />
         </If>
     </QuestOrder>
 </HBProfile>
