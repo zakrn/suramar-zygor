@@ -5529,5 +5529,11 @@
             <CustomBehavior File="RunCode" Code="PrintStep(587)" />
             <TurnIn Nav="Fly" QuestName="The Emerald Nightmare: The Stuff of Dreams" QuestId="43362" TurnInName="Valewalker Farodin" TurnInId="107126" X="1713.57" Y="4632.306" Z="124.0053" />
         </If>
+        <!-- 588 -->
+        <!-- Needs 8000 in honored to continue -->
+        <If Condition="NightfallenRepAmt() &lt; 41000">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: 20,000 rep in revered required to continue, loading rep profile&quot;);" />
+            <CustomBehavior File="LoadProfile" ProfileName="reputation\[N] The Nightfallen Rep" RememberProfile="true" />
+        </If>
     </QuestOrder>
 </HBProfile>
