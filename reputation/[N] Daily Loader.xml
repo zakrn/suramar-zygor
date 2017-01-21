@@ -47,6 +47,13 @@
             ]]>
         </CustomBehavior>
 
+        <If Condition="HasQuest(42421) &amp;&amp; IsQuestCompleted(42421)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: handing in emessary&quot;);" />
+            <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
+            <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton3" />
+            <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+        </If>
+
         <If Condition="IsQuestAvailable(42071)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][42071] Honoring the Past" RememberProfile="false" />
         </If>
@@ -131,6 +138,10 @@
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44021] Wanted Hertha Grimdottir" RememberProfile="false" />
         </If>
 
+        <If Condition="IsQuestAvailable(44025)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][44025] Oreth the Vile" RememberProfile="false" />
+        </If>
+
         <If Condition="IsQuestAvailable(44157)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44157] Withered Wrangling Tel Anor" RememberProfile="false" />
         </If>
@@ -171,9 +182,9 @@
             <CustomBehavior File="LoadProfile" ProfileName="./[N][44857] Not There Not Then Not Forever" RememberProfile="false" />
         </If>
 
-        <If Condition="IsQuestAvailable(45032)">
+        <!-- <If Condition="IsQuestAvailable(45032)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][45032] Like the Wind" RememberProfile="false" />
-        </If>
+        </If> -->
 
         <If Condition="IsQuestAvailable(45068)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][45068] Barrels o Fun" RememberProfile="false" />

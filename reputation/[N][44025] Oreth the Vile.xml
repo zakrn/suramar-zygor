@@ -1,0 +1,55 @@
+<HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>[Zakrn] Rare: Oreth the vile</Name>
+    <MinDurability>0.3</MinDurability>
+    <MinFreeBagSlots>3</MinFreeBagSlots>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <TargetElites>true</TargetElites>
+    <Blackspots>
+        <Blackspot X="559.2726" Y="3837.224" Z="7.514427" Radius="30.0" />
+    </Blackspots>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool IsQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
+            ]]>
+        </CustomBehavior>
+        <If Condition="IsQuestAvailable(44025) == true">
+            <CustomBehavior File="KillUntilComplete" TerminateWhen="IsQuestAvailable(44025) == false">
+                <Hotspots>
+                    <Hotspot X="1707.063" Y="5312.306" Z="67.65882" />
+                </Hotspots>
+                <PursuitList>
+                    <PursueUnit Id="107801" Priority="600" />
+                    <PursueUnit Id="110577" Priority="1" />
+                </PursuitList>
+            </CustomBehavior>
+        </If>
+        <If Condition="IsQuestAvailable(44799) == false">
+            <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+        </If>
+        
+    </QuestOrder>
+</HBProfile>

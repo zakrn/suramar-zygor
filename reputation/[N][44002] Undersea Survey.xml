@@ -1,8 +1,5 @@
 <HBProfile xsi:noNamespaceSchemaLocation="../Schemas/EchoSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <!-- Original contribution by EchoTiger -->
-    <!-- All credit to the amazing world quest team on this one -->
-    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
-    <Name>[N-Quest] Undersea Survey - Codex</Name>
+    <Name>[Zakrn] Undersea Survey</Name>
     <MinDurability>0.3</MinDurability>
     <MinFreeBagSlots>3</MinFreeBagSlots>
     <SellGrey>true</SellGrey>
@@ -19,175 +16,64 @@
     <QuestOrder>
         <CustomBehavior File="RunCode" Type="Definition">
             <![CDATA[
-			public class WorldQuestData
-			{
-			public int ID;
-			public string Name;
-			public DateTime ExpireTime;
-			}
-			public static class WorldQuestInfo
-			{
-			static List<WorldQuestData> _cache = new List<WorldQuestData>();
-				static internal bool _dirty = true;
-				static internal bool _setup = false;
-				static WorldQuestInfo()
-				{
-				Setup();
-				}
-				public static void Setup()
-				{
-				if (_setup)
-				return;
-				Lua.Events.AttachEvent("WORLD_MAP_UPDATE", WorldQuestMarkDirty);
-				Lua.Events.AttachEvent("SUPER_TRACKED_QUEST_CHANGED", WorldQuestMarkDirty);
-				Lua.Events.AttachEvent("WORLD_QUEST_COMPLETED_BY_SPELL", WorldQuestMarkDirty);
-				UpdateWorldQuests();
-				_setup = true;
-				}
-				public static void WorldQuestMarkDirty(object sender, LuaEventArgs args)
-				{
-				_dirty = true;
-				}
-				public static bool HasWorldQuest(int questid)
-				{
-				UpdateWorldQuests();
-				var quest = _cache.Where(q => q.ID == questid).FirstOrDefault();
-				if (quest == null || quest.ExpireTime <= DateTime.UtcNow)
-					return false;
-					return true;
-					}
-					public static void UpdateWorldQuests()
-					{
-					if (!_dirty)
-					return;
-					_cache = new List<WorldQuestData>();
-						var player = StyxWoW.Me;
-						int BrokenIslesMapArea = 1007;
-						var ret = Lua.GetReturnValues(string.Format("return C_MapCanvas.GetNumZones({0});", BrokenIslesMapArea));
-						var NumZones = int.Parse(ret[0]);
-						for (int i = 1; i <= NumZones; ++i)
-							{
-							ret = Lua.GetReturnValues(string.Format("return C_MapCanvas.GetZoneInfo({0}, {1});", BrokenIslesMapArea, i));
-							var ZoneID = int.Parse(ret[0]);
-							var ZoneName = ret[1];
-							var ZoneDepth = int.Parse(ret[2]);
-							if (ZoneDepth > 1) //Do not look at subzones
-							{
-							Logging.WriteDiagnostic(string.Format("Ignoring {0} ({1}) as ZoneDepth > 1 ({2})", ZoneID, ZoneName, ZoneDepth));
-							continue;
-							}
-							string ToRun = string.Format(@"     local questids = {{}};
-							local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID({0}, {1});
-							if taskInfo then
-							for i, info in ipairs(taskInfo) do
-							if HaveQuestData(info.questId) then
-							if QuestUtils_IsQuestWorldQuest(info.questId) then
-							table.insert(questids, info.questId);
-							end
-							end
-							end
-							end
-							return unpack(questids);
-							", ZoneID, BrokenIslesMapArea);
-							ret = Lua.GetReturnValues(ToRun);
-							foreach (var q in ret)
-							{
-							int questid = int.Parse(q);
-							//TimeLeft is in minutes
-							var TimeLeft = Lua.GetReturnVal<int>(string.Format("return C_TaskQuest.GetQuestTimeLeftMinutes({0});", questid), 0);
-								var QuestInfo = Lua.GetReturnValues(string.Format("return C_TaskQuest.GetQuestInfoByQuestID({0});", questid));
-								Logging.WriteDiagnostic("WorldQuest {0} ({2}) active ({1}m left)", QuestInfo[0], TimeLeft, questid);
-								var data = new WorldQuestData();
-								data.ID = questid;
-								data.Name = QuestInfo[0];
-								data.ExpireTime = DateTime.UtcNow.AddMinutes(TimeLeft);
-								_cache.Add(data);
-								}
-								}
-								_dirty = false;
-								}
-								public static bool IsWorldQuest(int questid)
-								{
-								string lua = string.Format("tagID, tagName, worldQuestType, rarity, isElite, tradeskillLineIndex = GetQuestTagInfo({0});", questid);
-								var ret = Lua.GetReturnValues(lua);
-								if (ret[3] == null)
-								return false;
-								return true;
-								}
-								}
-								]]>
+                bool IsQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
+            ]]>
         </CustomBehavior>
-        <!--
-
-
-
-you can use this to enable anti drown:
-
-<CustomBehavior File="EnablePlugin" Names="Anti Drown" />
-
-dont forget to disable afterwards
-
--->
-        <While Condition="WorldQuestInfo.HasWorldQuest(44002)">
-            <!-- Get in range of quest to activate -->
-            <RunTo X="1508.285" Y="2557.279" Z="0.0005713291" />
-            <PickUp Nav="Fly" QuestName="Undersea Survey" QuestId="44002" GiverName="" GiverId="" />
-            <Objective QuestName="Undersea Survey" QuestId="44002" Type="UseObject" Nav="Fly" ObjectId="253085" UseCount="1" />
-            <Objective QuestName="Undersea Survey" QuestId="44002" Type="UseObject" Nav="Fly" ObjectId="253087" UseCount="1" />
-            <Objective QuestName="Undersea Survey" QuestId="44002" Type="UseObject" Nav="Fly" ObjectId="253086" UseCount="1" />
-            <Objective QuestName="Undersea Survey" QuestId="44002" Type="UseObject" Nav="Fly" ObjectId="253088" UseCount="1" />
-            <TurnIn Nav="Fly" QuestName="Undersea Survey" QuestId="44002" TurnInName="" TurnInId="" />
-        </While>
-        <!--
-<GameObject Name="Western Surveying Pylon" Entry="253087" X="1347.764" Y="2525.345" Z="-110.9162" /> Order 2
-<GameObject Name="Southern Surveying Pylon" Entry="253088" X="834.7726" Y="2196.745" Z="-103.917" /> Order 4 
-<GameObject Name="Eastern Surveying Pylon" Entry="253086" X="1108.936" Y="2241.962" Z="-139.4977" /> Order 3
-<GameObject Name="Northern Surveying Pylon" Entry="253085" X="1373.427" Y="2293.677" Z="-90.15388" /> Order 1
--->
-        <While Condition="WorldQuestInfo.HasWorldQuest(44002)">
+        <If Condition="IsQuestAvailable(44002)">
+            <If Condition="Me.SubZoneId != 7917">
+            	<CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Go to area&quot;);" />
+                <MoveTo X="1477.145" Y="2624.817" Z="0.1299706" />
+            </If>
+            <CustomBehavior File="ForcedDismount" />
             <!--Western:-->
-            <RunTo X="1360.352" Y="2522.41" Z="0.0" />
-            <CustomBehavior File="InteractWith" MobId="253087" QuestId="44002" NumOfTimes="1" Nav="CTM" PreInteractMountStrategy="Dismount" QuestObjectiveIndex="2" TerminateWhen="IsObjectiveComplete(2, 44002)">
-                <HuntingGrounds>
-                    <Hotspot X="1348.55" Y="2525.341" Z="-109.1792" />
-                </HuntingGrounds>
-            </CustomBehavior>
+            <If Condition="IsObjectiveComplete(2, 44002) == false">
+            	<CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: West&quot;);" />
+                <CustomBehavior File="MyCTM" X="1379.309" Y="2549.863" Z="-1.755457" />
+                <CustomBehavior File="MyCTM" X="1348.55" Y="2525.341" Z="-109.1792" />
+                <CustomBehavior File="InteractWith" MobId="253087" NumOfTimes="1" X="1348.55" Y="2525.341" Z="-109.1792"/>
+                <CustomBehavior File="MyCTM" X="1379.309" Y="2549.863" Z="-1.755457" />
+            </If>
             <!--North:-->
-            <CustomBehavior File="InteractWith" MobId="253085" QuestId="44002" NumOfTimes="1" Nav="CTM" PreInteractMountStrategy="Dismount" QuestObjectiveIndex="1" TerminateWhen="IsObjectiveComplete(1, 44002)">
-                <RunTo X="1361.124" Y="2307.328" Z="0.0" />
-                <HuntingGrounds>
-                    <Hotspot X="1373.427" Y="2293.677" Z="-90.15388" />
-                    <!--Go up to the surface again after its looted:-->
-                    <Hotspot X="1361.124" Y="2307.328" Z="0.0" />
-                </HuntingGrounds>
-            </CustomBehavior>
+            <If Condition="IsObjectiveComplete(1, 44002) == false">
+            	<CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: North&quot;);" />
+                <CustomBehavior File="MyCTM" X="1373.969" Y="2326.387" Z="-1.559006"  />
+                <CustomBehavior File="MyCTM" X="1373.427" Y="2293.677" Z="-90.15388" />
+                <CustomBehavior File="InteractWith" MobId="253085" NumOfTimes="1" X="1373.427" Y="2293.677" Z="-90.15388" />
+                <CustomBehavior File="MyCTM" X="1373.969" Y="2326.387" Z="-1.559006"  />
+            </If>
             <!--Eastern:-->
-            <CustomBehavior File="InteractWith" MobId="253086" QuestId="44002" NumOfTimes="1" Nav="CTM" PreInteractMountStrategy="Dismount" QuestObjectiveIndex="3" TerminateWhen="IsObjectiveComplete(3, 44002)">
-                <RunTo X="1098.354" Y="2255.347" Z="0.0" />
-                <HuntingGrounds>
-                    <Hotspot X="1108.936" Y="2241.962" Z="-139.4977" />
-                    <!--Go up to the surface again after its looted:-->
-                    <Hotspot X="1108.936" Y="2241.962" Z="0.0" />
-                </HuntingGrounds>
-            </CustomBehavior>
+            <If Condition="IsObjectiveComplete(3, 44002) == false">
+            	<CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: East&quot;);" />
+                <CustomBehavior File="MyCTM" X="1122.292" Y="2258.042" Z="-1.647742" />
+                <CustomBehavior File="MyCTM" X="1108.936" Y="2241.962" Z="-139.4977" />
+                <CustomBehavior File="InteractWith" MobId="253086" NumOfTimes="1" X="1108.936" Y="2241.962" Z="-139.4977" />
+                <CustomBehavior File="MyCTM" X="1122.292" Y="2258.042" Z="-1.647742" />
+            </If>
             <!--Southern:-->
-            <CustomBehavior File="InteractWith" MobId="253088" QuestId="44002" NumOfTimes="1" Nav="CTM" PreInteractMountStrategy="Dismount" QuestObjectiveIndex="4" TerminateWhen="IsObjectiveComplete(4, 44002)">
-                <RunTo X="828.4925" Y="2196.729" Z="0.0" />
-                <HuntingGrounds>
-                    <Hotspot X="834.7726" Y="2196.745" Z="-103.917" />
-                    <!--Go up to the surface again after its looted:-->
-                    <Hotspot X="828.4925" Y="2196.729" Z="0.0" />
-                </HuntingGrounds>
-            </CustomBehavior>
-            <!--
-<CustomBehavior File="Misc\RunLua" WaitTime="1500" Lua="WorldMapFrame:Show()" />
-<CustomBehavior File="Misc\RunLua" Lua="WorldMapFrame:Hide()" />
--->
-        </While>
-        <!--Bird get into the water and pick u up :D -->
-        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
-            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+            <If Condition="IsObjectiveComplete(4, 44002) == false">
+            	<CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: South&quot;);" />
+                <CustomBehavior File="MyCTM" X="840.4106" Y="2200.306" Z="-1.58778" />
+                <CustomBehavior File="MyCTM" X="834.7726" Y="2196.745" Z="-103.917" />
+                <CustomBehavior File="InteractWith" MobId="253088" NumOfTimes="1" X="834.7726" Y="2196.745" Z="-103.917" />
+                <CustomBehavior File="MyCTM" X="840.4106" Y="2200.306" Z="-1.58778" />
+            </If>
         </If>
-        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+        <If Condition="IsQuestAvailable(44002) == false">
+            <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+                <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+            </If>
+            <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+        </If>
     </QuestOrder>
 </HBProfile>

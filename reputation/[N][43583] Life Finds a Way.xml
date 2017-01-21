@@ -93,7 +93,7 @@
                 <MoveTo X="1502.694" Y="4012.854" Z="-13.92283" />
             </If>
             <If Condition="!Me.InVehicle">
-                <CustomBehavior File="InteractWith" MobId="111062" X="1481.71" Y="4049.166" Z="-14.48639" TerminateWhen="Me.InVehicle" />
+                <CustomBehavior File="InteractWith" MobId="111062" X="1502.694" Y="4012.854" Z="-13.92283" TerminateWhen="Me.InVehicle" />
             </If>
             <DisableBehavior Name="Combat" />
             <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1516.029, 3961.502, 5.249563), false);" />
@@ -103,6 +103,7 @@
             <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1485.412, 3825.464, 30.87040), false);" />
             <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1462.756, 3808.687, 30.95982), false);" />
             <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1371.434, 3766.487, 36.21667), false);" />
+            <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1313.356, 3733.531, 16.73072), false);" />
             <While Condition="IsQuestAvailable(43583)">
                 <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1316.977 ,3699.123 ,16.73279));" TerminateWhen="!IsQuestAvailable(43583)" />
                 <CustomBehavior File="RunCode" Code="await VehicleMove(new WoWPoint(1307.137 ,3628.186 ,35.45126));" TerminateWhen="!IsQuestAvailable(43583)" />

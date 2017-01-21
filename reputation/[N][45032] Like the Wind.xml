@@ -16,6 +16,22 @@
     <SellPurple>false</SellPurple>
     <TargetElites>true</TargetElites>
     <QuestOrder>
+      <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool IsQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
+            ]]>
+        </CustomBehavior>
         <CustomBehavior File="RunCode" Type="Definition">
             <![CDATA[
                 WoWUnit GetNearestField()
@@ -86,6 +102,10 @@
                 }
                 async Task FaceNext()
                 {
+                  if(Me.HasAura(230441) ){
+                    await Coroutine.Yield();
+                    return;
+                  }
                   var field = GetNextField();
                   field.Face();
                   await Coroutine.Yield();
@@ -93,14 +113,22 @@
 
                 async Task FaceNearest()
                 {
+                  if(Me.HasAura(230441) ){
+                    await Coroutine.Yield();
+                    return;
+                  }
                   var field = GetNearestField();
                   Logging.Write(System.Windows.Media.Colors.Yellow, "FaceNearest: " + field.Guid);
                   field.Face();
-                  await Coroutine.Yield();
+                  await Coroutine.Sleep(500);
                 }
 
                 async Task GoForward( int wait = 2000)
                 {
+                  if(Me.HasAura(230441) ){
+                    await Coroutine.Yield();
+                    return;
+                  }
                   Styx.Helpers.KeyboardManager.KeyUpDown((char)System.Windows.Forms.Keys.D1);
                   await Coroutine.Sleep(wait);
                 }
@@ -143,22 +171,26 @@
                 }
             ]]>
         </CustomBehavior>
-        <While Condition="!IsQuestCompleted(45032)">
+        <If Condition="IsQuestAvailable(45032)">
+          <MoveTo X="2655.491" Y="4371.078" Z="413.1349" />
+        </If>
+        <DisableBehavior Name="Combat" />
+        <While Condition="IsQuestAvailable(45032)">
             <!-- <CustomBehavior File="RunCode" Code="CalcAll()" /> -->
             <If Condition="!IsOnCheckpoint()">
                 <MoveTo X="2654.576" Y="4386.836" Z="413.972" />
                 <CustomBehavior File="ForcedDismount" />
                 <CustomBehavior File="WaitTimer" WaitTime="500" />
-                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C3000072B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await FaceNearest()" />
                 <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStart();" WaitTime="150" />
-                <!-- <CustomBehavior File="Misc\RunLua" Lua="JumpOrAscendStart();" WaitTime="150" /> -->
+                <CustomBehavior File="Misc\RunLua" Lua="JumpOrAscendStart();" WaitTime="150" />
                 <CustomBehavior File="Misc\RunLua" Lua="MoveForwardStop();" WaitTime="150" />
                 <CustomBehavior File="RunCode" Code="await GoForward() " />
-                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C30000F2B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await FaceNext()" />
                 <CustomBehavior File="RunCode" Code="await GoForward() " />
-                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C30005F2B094&quot;)" />
-                <CustomBehavior File="RunCode" Code="await GoForward() " />
-                <CustomBehavior File="RunCode" Code="await FaceGuid(&quot;203CAC98807127000064C3000172B094&quot;)" />
+                <CustomBehavior File="RunCode" Code="await FaceIndex(1)" />
+                <CustomBehavior File="RunCode" Code="await GoForward(700) " />
+                <CustomBehavior File="RunCode" Code="await FaceNext()" />
                 <CustomBehavior File="RunCode" Code="await GoForward(700) " />
                 <CustomBehavior File="RunCode" Code="Me.SetFacing(new Vector3(2550.091f, 4416.622f, 364.6238f))" />
                 <CustomBehavior File="RunCode" Code="await GoForward() " />
@@ -191,6 +223,7 @@
             </If>
             <CustomBehavior File="WaitTimer" WaitTime="10000" />
         </While>
+        <EnableBehavior Name="Combat" />
         <!-- use whistle -->
         <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
             <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />

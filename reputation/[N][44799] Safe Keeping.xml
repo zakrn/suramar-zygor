@@ -13,6 +13,9 @@
     <MailBlue>true</MailBlue>
     <MailPurple>true</MailPurple>
     <TargetElites>true</TargetElites>
+    <Blackspots>
+        <Blackspot X="559.2726" Y="3837.224" Z="7.514427" Radius="30.0" />
+    </Blackspots>
     <QuestOrder>
         <CustomBehavior File="RunCode" Type="Definition">
             <![CDATA[
@@ -101,11 +104,14 @@
             <CustomBehavior File="RunCode" Code="await CastMask()" />
         </CustomBehavior>
         <If Condition="IsQuestAvailable(44799)">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;1&quot;);" />
+
             <!-- if we're not in the area, go to it -->
             <If Condition="Me.SubZoneId != 7970 &amp;&amp; Me.SubZoneId != 8487 &amp;&amp; Me.SubZoneId != 8384" >
                 <MoveTo X="467.7494" Y="3922.507" Z="1.493891" />
             </If>
-            <CustomBehavior File="InteractWith" MobIds="115630, 115702, 115696" NumOfTimes="500" TerminateWhen="NumFollowers() &gt;= 5" ObjectType="Npc" WaitForNpcs="false" QuestId="44799">
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;2&quot;);" />
+            <CustomBehavior File="InteractWith" MobIds="115630, 115702, 115696" NumOfTimes="500" TerminateWhen="NumFollowers() &gt;= 5" WaitForNpcs="false" >
                 <HuntingGrounds>
                     <Hotspot X="714.8148" Y="4097.852" Z="1.509782" />
                     <Hotspot X="653.011" Y="4113.287" Z="1.49332" />
@@ -119,7 +125,12 @@
                     <Hotspot X="292.8518" Y="3843.743" Z="5.895251" />
                     <Hotspot X="205.0521" Y="3841.332" Z="1.372223" />
                 </HuntingGrounds>
+                <Blackspots>
+                    <Blackspot X="559.2726" Y="3837.224" Z="7.514427" Radius="30.0" />
+                </Blackspots>
             </CustomBehavior>
+            <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;3&quot;);" />
+
             <MoveTo X="559.7966" Y="3834.615" Z="7.731372" />
         </If>
         <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
