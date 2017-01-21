@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<HBProfile>
+    <Name>[Zakrn] Rare: Stirring the Swarm</Name>
+    <MinDurability>0.2</MinDurability>
+    <MinFreeBagSlots>1</MinFreeBagSlots>
+    <MinLevel>1</MinLevel>
+    <MaxLevel>1000</MaxLevel>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool IsQuestAvailable( int questId ){
+                    return  Lua.GetReturnVal<bool>("SetMapByID(1033); " +
+                       " local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033) " +
+                       " if (taskInfo) then " +
+                            "for i, info  in ipairs(taskInfo) do " +
+                               " if info.questId ==   " + questId + " then " +
+                                    "return true; " +
+                                   " end " +
+                           " end " +
+                       " end " +
+                        "return false;", 0);
+                }
+            ]]>
+        </CustomBehavior>
+        <If Condition="IsQuestAvailable(44817) == true">
+            <If Condition="Me.SubZoneId != 8087">
+                <MoveTo X="1485.421" Y="3179.378" Z="138.2445" />
+            </If>
+            <If Condition="IsObjectiveComplete(1,44817) == false">
+                <CustomBehavior File="InteractWith" MobIds="116529" NumOfTimes="1" X="1485.421" Y="3179.378" Z="138.2445" />
+            </If>
+            <If Condition="IsObjectiveComplete(2,44817) == false">
+                <CustomBehavior File="InteractWith" MobIds="116531" NumOfTimes="1" X="1550.193" Y="3257.086" Z="146.6566" />
+            </If>
+            <If Condition="IsObjectiveComplete(3,44817) == false">
+                <CustomBehavior File="KillUntilComplete" MobIds="116555, 116554" TerminateWhen="IsObjectiveComplete(3,44817) == true">
+                    <HuntingGrounds>
+                        <Hotspot X="1538.278" Y="3300.817" Z="147.2655" />
+                        <Hotspot X="1485.624" Y="3194.329" Z="138.685" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+        </If>
+        <If Condition="IsQuestAvailable(44817) == false">
+            <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+                <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+            </If>
+            <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+        </If>
+    </QuestOrder>
+</HBProfile>
