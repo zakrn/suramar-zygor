@@ -77,6 +77,7 @@ Latency to Buddy service: 25 ms
       <RunTo TerminateWhen="!OnQuest" X="699.5777" Y="4822.617" Z="-186.2048" />
       <CustomBehavior File="RunCode" Code="await DoQuest();" TerminateWhen="!OnQuest"/>
     </While>
+    <CustomBehavior File="ForcedDismount" />
     <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
       <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
     </If>

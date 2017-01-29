@@ -236,26 +236,26 @@
         </If>
 
         <!-- do the daily 50 mana rep boosts -->
-        <If Condition="(IsThalyssraThirsty() || IsValtroisThirsty() || IsOculethThirsty()) &amp;&amp; !HasAncientMana(150)">
+        <If Condition="IsQuestCompleted(43568) == false &amp;&amp;(IsThalyssraThirsty() || IsValtroisThirsty() || IsOculethThirsty()) &amp;&amp; !HasAncientMana(150)">
             <CustomBehavior File="RunCode" Code="PrepManaFarm(150)" />
             <CustomBehavior File="LoadProfile" ProfileName="..\gather\[N]-Ancient-Mana" RememberProfile="true" />
         </If>
 
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Checking Thalyssra&quot;);" />
-        <If Condition="IsThalyssraThirsty()">
+        <If Condition="IsQuestCompleted(43568) == false &amp;&amp; IsThalyssraThirsty()">
             <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
             <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
         </If>
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Checking Valtrois&quot;);" />
-        <If Condition="IsValtroisThirsty()">
+        <If Condition="IsQuestCompleted(43568) == false &amp;&amp; IsValtroisThirsty()">
             <CustomBehavior File="InteractWith" MobId="103155" X="1731.536" Y="4606.796" Z="123.8035" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
         </If>
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Checking Oculeth&quot;);" />
-        <If Condition="IsOculethThirsty()">
+        <If Condition="IsQuestCompleted(43568) == false &amp;&amp; IsOculethThirsty()">
             <CustomBehavior File="InteractWith" MobId="98548" X="1773.629" Y="4626.259" Z="123.9869" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
             <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
@@ -284,41 +284,43 @@
         <!-- <CustomBehavior File="Halt" /> -->
 
             <!-- talk to her -->
-            <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
+            <If Condition="IsQuestCompleted(44636) == false">
+                <CustomBehavior File="InteractWith" MobId="97140" X="1724.658" Y="4614.287" Z="123.7945" />
+            </If>
+            <If Condition="IsQuestCompleted(44636) == true">
+                <CustomBehavior File="InteractWith" MobId="115736" X="1712.973" Y="4634.219" Z="124.0062" />
+            </If>
             <If Condition="MaxAncientMana() &gt;= 2000">
                 <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 2000 mana&quot;);" />
-                <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(1);" WaitTime="500" />
-                <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(5);" WaitTime="500" />
+                <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(1);" WaitTime="1000" />
+                <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(5);" WaitTime="1000" />
                 <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
                 <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
                 <ElseIf Condition="MaxAncientMana() &gt;= 1300">
                     <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 1300 mana&quot;);" />
-                    <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(1);" WaitTime="500" />
-                    <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(4);" WaitTime="500" />
+                    <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(1);" WaitTime="1000" />
+                    <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(4);" WaitTime="1000" />
                     <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
-                    <!-- <CustomBehavior File="Misc\RunLua" Lua="SelectGossipOption(5);" WaitTime="500" />
-                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton4" />
-                    <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
-                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" /> -->
+                    <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
                 </ElseIf>
                 <ElseIf Condition="MaxAncientMana() &gt;= 900">
                     <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 900 mana&quot;);" />
-                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
-                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton3" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" WaitTime="1000" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton3" WaitTime="1000" />
                     <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
                     <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
                 </ElseIf>
                 <ElseIf Condition="MaxAncientMana() &gt;= 650">
                     <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 650 mana&quot;);" />
-                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
-                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton2" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" WaitTime="1000" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton2" WaitTime="1000" />
                     <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
                     <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
                 </ElseIf>
                 <ElseIf Condition="MaxAncientMana() &gt;= 400">
                     <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Green, &quot;[Zak]: Spending 400 mana&quot;);" />
-                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
-                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" WaitTime="1000" />
+                    <CustomBehavior File="RunMacro" Macro="/click GossipTitleButton1" WaitTime="1000" />
                     <CustomBehavior File="RunMacro" Macro="/click StaticPopup1Button1" />
                     <CustomBehavior File="LoadProfile" ProfileName="[N] Building an Army" RememberProfile="true" />
                 </ElseIf>

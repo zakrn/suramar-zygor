@@ -45,7 +45,7 @@
                     private static Settings _instance;
                     public static Settings Instance => _instance ?? (_instance = new Settings());
                     public Settings() : base(_settingsPath) {}
-                    
+
                     [Setting]
                     [Styx.Helpers.DefaultValue(100)]
                     public int ManaTarget { get; set; }
@@ -76,7 +76,7 @@
                     s.ReturnProfile = "MAIN";
                     s.Save();
                 }
-                int GetManaTarget() 
+                int GetManaTarget()
                 {
                     return Settings.Instance.ManaTarget;
                 }
@@ -129,9 +129,9 @@
                 public static class UiWindow {
                     public static System.Windows.Window GetWindow() {
                         var window = new System.Windows.Window {
-                            Title = "Zak: Suramar Settings", 
-                            SizeToContent = System.Windows.SizeToContent.WidthAndHeight, 
-                            ResizeMode = System.Windows.ResizeMode.NoResize, 
+                            Title = "Zak: Suramar Settings",
+                            SizeToContent = System.Windows.SizeToContent.WidthAndHeight,
+                            ResizeMode = System.Windows.ResizeMode.NoResize,
                             DataContext = Settings.Instance
                         };
                         var grid = new System.Windows.Controls.StackPanel {
@@ -139,7 +139,7 @@
                         window.Content = grid;
 
                         var nameLabel = new System.Windows.Controls.Label {
-                            HorizontalAlignment = System.Windows.HorizontalAlignment.Center, 
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
                             Margin = new System.Windows.Thickness(0.0),
                             Padding = new System.Windows.Thickness(0.0),
                             FontWeight = System.Windows.FontWeights.Bold,
@@ -147,7 +147,7 @@
                             Content = "Zakrn"
                         };
                         var subjectLbl = new System.Windows.Controls.Label {
-                            HorizontalAlignment = System.Windows.HorizontalAlignment.Center, 
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
                             Margin = new System.Windows.Thickness(0.0),
                             Padding = new System.Windows.Thickness(0.0),
                             FontSize = 20.0,
@@ -157,8 +157,8 @@
                         grid.Children.Add(subjectLbl);
 
                         var useAPItemCheckBox = new System.Windows.Controls.CheckBox {
-                            HorizontalAlignment = System.Windows.HorizontalAlignment.Left, 
-                            Margin = new System.Windows.Thickness(12, 12, 12, 12), 
+                            HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                            Margin = new System.Windows.Thickness(12, 12, 12, 12),
                             Content = "Use Artifact Power Items"
                         };
                         grid.Children.Add(useAPItemCheckBox);
@@ -168,10 +168,10 @@
                         return window;
                     }
                 }
-                
+
 
                 bool ReadyToEmpowerArtifact()
-                {   
+                {
                     if( Me.IsCasting ) return false;
                     if( !Me.IsAlive ) return false;
                     if (!Settings.Instance.UseArtifactPowerItems) return false;
@@ -219,7 +219,7 @@
                             {
                                 await CombatAwareness();
                             }
-                            
+
                             await Coroutine.Yield();
                         }
                     }
@@ -305,7 +305,7 @@
                 }
 
                 async Task AddNightLily()
-                {   
+                {
                     Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: AddNightLily");
                     //this spell name doesnt match Silver Jasmine object
                     await LeaveGrapes();
@@ -316,7 +316,7 @@
                     await Coroutine.Yield();
                 }
 
-                async Task AddPurifiedWater() 
+                async Task AddPurifiedWater()
                 {
                     Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: AddPurifiedWater");
                     await LeaveGrapes();
@@ -343,7 +343,7 @@
                 async Task LeaveGrapes() {
                     WoWPoint grapeGoto = new WoWPoint(1354.776,3297.472,132.8778);
                     while (Me.Location.Distance(grapeGoto) > 1)
-                    {   
+                    {
                         WoWMovement.ClickToMove(grapeGoto);
                         await Coroutine.Yield();
                     }
@@ -373,6 +373,12 @@
                     const uint SUBZONE_ID_EVERMOON_COMMONS =    7970;
                     const uint SUBZONE_ID_MOONLIT_LANDING =     8378;
                     const uint SUBZONE_ID_MIDNIGHT_COURT =      8380;
+
+                    int StageNumber() {
+                        if( Bots.DungeonBuddy.Helpers.ScenarioInfo.Current == null )
+                            return 0;
+                        return Bots.DungeonBuddy.Helpers.ScenarioInfo.Current.CurrentStageNumber;
+                    }
 
                     long GetUnixTime()
                     {
@@ -451,7 +457,7 @@
                         List<string> values = Lua.GetReturnValues("return GetFriendshipReputation(" + friendId +")");
 
                         if( values.Count == 0 )
-                        {   
+                        {
                             Logging.Write(System.Windows.Media.Colors.Red, "[Zak]: Failed to get arcane thirst");
                             return false;
                         }
@@ -511,7 +517,7 @@
                         return GetNearestWarp().Equals(loc);
                     }
 
-                    
+
 
                     Vector2 GetNearestWarp()
                     {
@@ -661,8 +667,8 @@
                     {
                         WoWItem item = StyxWoW.Me.BagItems.FirstOrDefault(x => x.Entry == 131760);
                         return item.CooldownTimeLeft == TimeSpan.Zero &&
-                               Me.CurrentTarget.Entry == 99859 && 
-                               Me.CurrentTarget.IsHostile && 
+                               Me.CurrentTarget.Entry == 99859 &&
+                               Me.CurrentTarget.IsHostile &&
                                Me.CurrentTarget.HealthPercent <= 45.0;
                     }
                     bool UseInertCrystal()
@@ -686,7 +692,7 @@
                         }
                         return false;
                     }
-                    bool IsAtleastHonored() 
+                    bool IsAtleastHonored()
                     {
                         return (int)Me.GetReputationLevelWith(1859) >= 5;
                     }
@@ -1736,7 +1742,7 @@
                         if( right )
                         {
                             nLoc = new WoWPoint( kLoc.X + (diff/9.0), kLoc.Y - 1.5, kLoc.Z );
-                        } 
+                        }
                         else
                         {
                             nLoc = new WoWPoint( kLoc.X - (diff/9.0), kLoc.Y - 1.5, kLoc.Z );
@@ -1765,7 +1771,7 @@
             <CustomBehavior File="RunCode">
                 <![CDATA[
                     var home = new Vector3(2322.228f, 5470.458f, 118.7071f);
-                    
+
                     while (!IsQuestCompleted(41197))
                     {
                       var kitty = Unit(103511);
@@ -5159,13 +5165,13 @@
         <If Condition="HasQuest(43312) || HasQuest(43313)">
             <CustomBehavior File="UserDialog" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="5" ExpiryAction="InputEnabled_Continue" Text="The next quest is a group quest, you might have a hard time solo. It can be done solo manually fairly easily, its hard to script staying at a certain range of the detectors." />
         </If>
-        <If Condition="DoQuest(43312) &amp;&amp; 
-            Me.ZoneId == 7637 &amp;&amp; 
-            Me.SubZoneId != SUBZONE_ID_SHAL_ARAN &amp;&amp; 
-            Me.IsOutdoors &amp;&amp; 
-            Me.SubZoneId != SUBZONE_ID_STAR_CALLER_RETREAT &amp;&amp; 
-            Me.SubZoneId != SUBZONE_ID_THE_WANING_CRESCENT &amp;&amp; 
-            Me.SubZoneId != SUBZONE_ID_EVERMOON_TERRACE &amp;&amp; 
+        <If Condition="DoQuest(43312) &amp;&amp;
+            Me.ZoneId == 7637 &amp;&amp;
+            Me.SubZoneId != SUBZONE_ID_SHAL_ARAN &amp;&amp;
+            Me.IsOutdoors &amp;&amp;
+            Me.SubZoneId != SUBZONE_ID_STAR_CALLER_RETREAT &amp;&amp;
+            Me.SubZoneId != SUBZONE_ID_THE_WANING_CRESCENT &amp;&amp;
+            Me.SubZoneId != SUBZONE_ID_EVERMOON_TERRACE &amp;&amp;
             Me.SubZoneId != SUBZONE_ID_MOONLIT_LANDING &amp;&amp;
             Me.SubZoneId != SUBZONE_ID_EVERMOON_COMMONS">
             <!-- leave the city to use the portal -->
@@ -5430,7 +5436,6 @@
             <CustomBehavior File="RunCode" Code="PrintStep(570)" />
             <TurnIn Nav="Fly" QuestName="Growing Strong" QuestId="44562" TurnInName="Valewalker Farodin" TurnInId="107126" X="1715.989" Y="4627.524" Z="123.9469" />
             <PickUp Nav="Fly" QuestName="Redemption for the Fallen" QuestId="44563" GiverName="Valewalker Farodin" GiverId="107126" />
-            <!-- <TurnIn Nav="Fly" QuestName="Redemption for the Fallen" QuestId="44563" TurnInName="Valewalker Farodin" TurnInId="107126" /> -->
         </If>
         <!-- 571 -->
         <If Condition="NightfallenRepAmt() &lt; 28000">
@@ -5532,8 +5537,709 @@
         <!-- 588 -->
         <!-- Needs 8000 in honored to continue -->
         <If Condition="NightfallenRepAmt() &lt; 41000">
+            <CustomBehavior File="RunCode" Code="PrintStep(588)" />
             <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: 20,000 rep in revered required to continue, loading rep profile&quot;);" />
             <CustomBehavior File="LoadProfile" ProfileName="reputation\[N] The Nightfallen Rep" RememberProfile="true" />
+        </If>
+        <!-- 589 -->
+        <If Condition="NeedsQuest(43502)">
+            <CustomBehavior File="RunCode" Code="PrintStep(589)" />
+            <PickUp Nav="Fly" QuestName="A Change of Seasons" QuestId="43502" GiverName="Valewalker Farodin" GiverId="107126" X="1722.464" Y="4615.493" Z="123.8015" />
+        </If>
+        <!-- 590 -->
+        <If Condition="HasQuest(43502) || NeedsQuest(43562)">
+            <CustomBehavior File="RunCode" Code="PrintStep(590)" />
+            <If Condition="IsValtroisThirsty()">
+                <If Condition="!HasAncientMana(50)">
+                    <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;../[N]Zakrn_Zygor_Suramar&quot;, 50)" />
+                    <CustomBehavior File="LoadProfile" ProfileName="gather/[N]-Ancient-Mana" RememberProfile="true" />
+                </If>
+                <CustomBehavior File="InteractWith" MobId="103155" X="1731.536" Y="4606.796" Z="123.8035" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+            </If>
+            <TurnIn Nav="Fly" QuestName="A Change of Seasons" QuestId="43502" TurnInName="Arcanist Valtrois" TurnInId="103155" X="1737.695" Y="4603.249" Z="96.28294" />
+            <PickUp Nav="Fly" QuestName="Giving It All We've Got" QuestId="43562" GiverName="Arcanist Valtrois" GiverId="103155" X="1737.695" Y="4603.249" Z="96.28294" />
+        </If>
+        <!-- 591-597 -->
+        <!-- these were already done earlier in the guide -->
+        <!-- 598 -->
+        <If Condition="DoQuest(43562)">
+            <CustomBehavior File="RunCode" Code="PrintStep(598)" />
+            <!-- feed -->
+            <If Condition="IsValtroisThirsty()">
+                <If Condition="!HasAncientMana(50)">
+                    <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;../[N]Zakrn_Zygor_Suramar&quot;, 50)" />
+                    <CustomBehavior File="LoadProfile" ProfileName="gather/[N]-Ancient-Mana" RememberProfile="true" />
+                </If>
+                <CustomBehavior File="InteractWith" MobId="103155" X="1731.536" Y="4606.796" Z="123.8035" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+            </If>
+            <!-- quest -->
+            <CustomBehavior File="InteractWith" MobId="103155" InteractByGossipOptions="1" X="1737.695" Y="4603.249" Z="96.28294" />
+        </If>
+        <!-- 599 -->
+        <If Condition="HasQuest(43562) || NeedsQuest(43563,43564)">
+            <CustomBehavior File="RunCode" Code="PrintStep(599)" />
+            <TurnIn Nav="Fly" QuestName="Giving It All We've Got" QuestId="43562" TurnInName="Arcanist Valtrois" TurnInId="103155" X="1737.695" Y="4603.249" Z="96.28294" />
+            <PickUp Nav="Fly" QuestName="Ephemeral Manastorm Projector" QuestId="43563" GiverName="Arcanist Valtrois" GiverId="103155" X="1737.695" Y="4603.249" Z="96.28294" />
+            <PickUp Nav="Fly" QuestName="Flow Control" QuestId="43564" GiverName="Arcanist Valtrois" GiverId="103155" X="1737.695" Y="4603.249" Z="96.28294" />
+        </If>
+        <!-- 600 -->
+        <If Condition="NeedsQuest(43565)">
+            <CustomBehavior File="RunCode" Code="PrintStep(600)" />
+            <!-- feed -->
+            <If Condition="IsOculethThirsty()">
+                <If Condition="!HasAncientMana(50)">
+                    <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;../[N]Zakrn_Zygor_Suramar&quot;, 50)" />
+                    <CustomBehavior File="LoadProfile" ProfileName="gather/[N]-Ancient-Mana" RememberProfile="true" />
+                </If>
+                <CustomBehavior File="InteractWith" MobId="98548" X="1773.629" Y="4626.259" Z="123.9869" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+            </If>
+            <!-- quest -->
+            <PickUp Nav="Fly" QuestName="Bring Home the Beacon" QuestId="43565" GiverName="Chief Telemancer Oculeth" GiverId="98548" X="1737.695" Y="4603.249" Z="96.28294" />
+        </If>
+        <!-- 601 - 603 -->
+        <If Condition="DoQuest(43565)">
+            <!-- take the portal -->
+            <If Condition="Me.SubZoneId == 7928">
+                <CustomBehavior File="InteractWith" MobId="254137" X="1784.063" Y="4630.213" Z="123.9923" />
+            </If>
+            <If Condition="!IsObjectiveComplete(1,43565)">
+                <CustomBehavior File="RunCode" Code="PrintStep(601)" />
+                <MoveTo X="659.0435" Y="3924.568" Z="5.685922" />
+            </If>
+            <While Condition="!IsObjectiveComplete(1,43565)">
+                <CustomBehavior File="UseItem" ItemId="140257" />
+            </While>
+            <If Condition="!IsObjectiveComplete(2,43565)">
+                <CustomBehavior File="RunCode" Code="PrintStep(602)" />
+                <MoveTo X="624.675" Y="3917.662" Z="5.685746" />
+            </If>
+            <While Condition="!IsObjectiveComplete(2,43565)">
+                <CustomBehavior File="UseItem" ItemId="140257" />
+            </While>
+            <If Condition="!IsObjectiveComplete(3,43565)">
+                <CustomBehavior File="RunCode" Code="PrintStep(603)" />
+                <MoveTo X="357.1834" Y="3835.144" Z="1.493718" />
+            </If>
+            <While Condition="!IsObjectiveComplete(3,43565)">
+                <CustomBehavior File="UseItem" ItemId="140257" />
+            </While>
+        </If>
+        <!-- 604 - 605 -->
+        <If Condition="DoQuest(43564) &amp;&amp; !IsObjectiveComplete(1,43564) &amp;&amp; !IsObjectiveComplete(2,43564)">
+            <If Condition="!IsObjectiveComplete(1,43564)">
+                <CustomBehavior File="RunCode" Code="PrintStep(604)" />
+                <CustomBehavior File="InteractWith" MobId="252776" X="626.1741" Y="4118.832" Z="1.493733" />
+            </If>
+            <If Condition="!IsObjectiveComplete(2,43564)">
+                <CustomBehavior File="RunCode" Code="PrintStep(605)" />
+                <CustomBehavior File="InteractWith" MobId="252779" X="1125.279" Y="3893.982" Z="1.305297" />
+            </If>
+        </If>
+        <!-- 606 -->
+        <If Condition="DoQuest(43563)">
+            <CustomBehavior File="UserDialog" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="5" ExpiryAction="InputEnabled_Continue" Text="The next step requires you to kill elite mobs. If you're not pretty well geared you may need help." />
+            <CustomBehavior File="Hooks\DoWhen" ActivityName="apply_mask" Command="Remove" />
+            <CustomBehavior File="RunCode" Code="PrintStep(606)" />
+            <MoveTo X="1153.572" Y="3725.675" Z="-1.524498" />
+            <CustomBehavior File="RunCode" Code="Me.GetAuraById(202477).TryCancelAura()" />
+            <UseMount Value="false" />
+            <CustomBehavior File="KillUntilComplete" MobIds="109670" QuestId="43563" QuestObjectiveIndex="1">
+                <HuntingGrounds>
+                    <Hotspot X="1163.101" Y="3676.35" Z="0.8867201" />
+                    <Hotspot X="1095.154" Y="3661.217" Z="0.7877431" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            <UseMount Value="true" />
+            <CustomBehavior File="Hooks\DoWhen" LogExecution="true" AllowExecutionWhileNotAlive="false" ActivityName="apply_mask" UseWhen="ShouldCastMask()" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+                <CustomBehavior File="RunCode" Code="await CastMask()" />
+            </CustomBehavior>
+            <MoveTo X="1031.707" Y="3711.045" Z="-2.586127" />
+        </If>
+        <!-- 607 -->
+        <If Condition="DoQuest(43564)">
+            <CustomBehavior File="RunCode" Code="PrintStep(607)" />
+            <CustomBehavior File="UserDialog" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="5" ExpiryAction="InputEnabled_Continue" Text="The next step requires you to run through a bunch of elite mobs, you might die." />
+            <If Condition="!IsObjectiveComplete(3,43564)">
+                <CustomBehavior File="RunCode" Code="PrintStep(607)" />
+                <CustomBehavior File="InteractWith" MobId="252783" IgnoreCombat="true" X="1248.596" Y="3331.287" Z="20.1206" />
+            </If>
+            <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+                <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+            </If>
+        </If>
+        <!-- 608 -->
+        <If Condition="HasQuest(43563) || HasQuest(43564)">
+            <CustomBehavior File="RunCode" Code="PrintStep(608)" />
+            <!-- feed -->
+            <If Condition="IsValtroisThirsty()">
+                <If Condition="!HasAncientMana(50)">
+                    <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;../[N]Zakrn_Zygor_Suramar&quot;, 50)" />
+                    <CustomBehavior File="LoadProfile" ProfileName="gather/[N]-Ancient-Mana" RememberProfile="true" />
+                </If>
+                <CustomBehavior File="InteractWith" MobId="103155" X="1731.536" Y="4606.796" Z="123.8035" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+            </If>
+            <!-- quest -->
+            <TurnIn Nav="Fly" QuestName="Ephemeral Manastorm Projector" QuestId="43563" TurnInName="Arcanist Valtrois" TurnInId="103155" X="1737.695" Y="4603.249" Z="96.28294" />
+            <TurnIn Nav="Fly" QuestName="Flow Control" QuestId="43564" TurnInName="Arcanist Valtrois" TurnInId="103155" X="1737.695" Y="4603.249" Z="96.28294" />
+        </If>
+        <!-- 609 -->
+        <If Condition="HasQuest(43565)">
+            <CustomBehavior File="RunCode" Code="PrintStep(609)" />
+            <!-- feed -->
+            <If Condition="IsOculethThirsty()">
+                <If Condition="!HasAncientMana(50)">
+                    <CustomBehavior File="RunCode" Code="PrepManaFarm(&quot;../[N]Zakrn_Zygor_Suramar&quot;, 50)" />
+                    <CustomBehavior File="LoadProfile" ProfileName="gather/[N]-Ancient-Mana" RememberProfile="true" />
+                </If>
+                <CustomBehavior File="InteractWith" MobId="98548" X="1773.629" Y="4626.259" Z="123.9869" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteButton" />
+                <CustomBehavior File="RunMacro" Macro="/click QuestFrameCompleteQuestButton" />
+            </If>
+            <!-- quest -->
+            <TurnIn Nav="Fly" QuestName="Bring Home the Beacon" QuestId="43565" TurnInName="Chief Telemancer Oculeth" TurnInId="98548" X="1737.695" Y="4603.249" Z="96.28294" />
+        </If>
+        <!-- 610 -->
+        <If Condition="((int)Me.GetReputationLevelWith(1859)) &lt; 7">
+            <CustomBehavior File="RunCode" Code="PrintStep(610)" />
+            <CustomBehavior File="UserDialog" AllowBotStop="True" SoundCue="Exclamation" SoundCueInterval="5" ExpiryAction="InputEnabled_Continue" Text="You must be exalted with The Nightfallen to continue." />
+            <CustomBehavior File="Halt" />
+        </If>
+        <!-- 611 -->
+        <If Condition="HasQuest(44563)">
+            <CustomBehavior File="RunCode" Code="PrintStep(611)" />
+            <TurnIn Nav="Fly" QuestName="Redemption for the Fallen" QuestId="44563" TurnInName="Valewalker Farodin" TurnInId="107126" X="1731.433" Y="4600.34" Z="123.9466" />
+        </If>
+        <!-- 612 -->
+        <If Condition="NeedsQuest(43567)">
+            <CustomBehavior File="RunCode" Code="PrintStep(612)" />
+            <PickUp Nav="Fly" QuestName="All In" QuestId="43567" GiverName="First Arcanist Thalyssra" GiverId="97140" X="1731.433" Y="4600.34" Z="123.9466" />
+            <CustomBehavior File="WaitTimer" WaitTime="55000" />
+        </If>
+        <!-- 613 - 614 -->
+        <If Condition="DoQuest(43567)">
+            <!-- SCENARIO -->
+            <If Condition="StageNumber() == 1">
+                <CustomBehavior File="KillUntilComplete" MobIds="113191" TerminateWhen="StageNumber() != 1">
+                    <HuntingGrounds>
+                        <Hotspot X="3168.986" Y="5074.731" Z="623.2028" />
+                        <Hotspot X="3199.137" Y="4980.621" Z="624.0922" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+            <While Condition="StageNumber() == 2 || StageNumber() == 3">
+                <MoveTo X="3213.082" Y="4920.253" Z="619.2164" />
+                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+            </While>
+            <If Condition="StageNumber() == 4">
+                <CustomBehavior File="InteractWith" MobId="113426" X="3122.951" Y="4899.215" Z="617.7654" />
+            </If>
+            <While Condition="StageNumber() == 5">
+                <MoveTo X="3144.727" Y="4884.331" Z="617.7654" />
+                <CustomBehavior File="WaitTimer" WaitTime="2000" />
+            </While>
+            <CustomBehavior File="WaitTimer" WaitTime="10000" />
+            <CustomBehavior File="InteractWith" MobId="113062" X="1665" Y="4734.806" Z="138.9329" />
+            <MoveTo X="1717.735" Y="4623.107" Z="123.9469" />
+        </If>
+        <!-- 623 -->
+        <If Condition="HasQuest(43567) || NeedsQuest(43568)">
+            <CustomBehavior File="RunCode" Code="PrintStep(623)" />
+            <TurnIn Nav="Fly" QuestName="All In" QuestId="43567" TurnInName="Valewalker Farodin" TurnInId="107126" X="1717.735" Y="4623.107" Z="123.9469" />
+            <PickUp Nav="Fly" QuestName="Arcan'dor, Gift of the Ancient Magi" QuestId="43568" GiverName="Valewalker Farodin" GiverId="107126" X="1717.735" Y="4623.107" Z="123.9469" />
+        </If>
+        <!-- 624 - 626 -->
+        <While Condition="DoQuest(43568)">
+            <If Condition="!IsObjectiveComplete(1,43568)">
+                <CustomBehavior File="RunCode" Code="PrintStep(624)" />
+                <CustomBehavior File="InteractWith" MobId="253081" X="1714.926" Y="4631.274" Z="124.0065" />
+                <CustomBehavior File="InteractWith" MobId="112147" InteractByGossipOptions="1" X="1714.926" Y="4631.274" Z="124.0065" WaitTime="20000" />
+            </If>
+            <If Condition="!IsObjectiveComplete(2,43568)">
+                <CustomBehavior File="RunCode" Code="PrintStep(625)" />
+                <CustomBehavior File="InteractWith" MobId="253081" X="1714.926" Y="4631.274" Z="124.0065" />
+                <CustomBehavior File="InteractWith" MobId="112145" InteractByGossipOptions="1" X="1714.926" Y="4631.274" Z="124.0065" WaitTime="20000" />
+            </If>
+            <If Condition="!IsObjectiveComplete(3,43568)">
+                <CustomBehavior File="RunCode" Code="PrintStep(626)" />
+                <CustomBehavior File="InteractWith" MobId="253081" X="1714.926" Y="4631.274" Z="124.0065" />
+                <CustomBehavior File="InteractWith" MobId="112146" InteractByGossipOptions="1" X="1714.926" Y="4631.274" Z="124.0065" WaitTime="20000" />
+            </If>
+        </While>
+        <!-- 627 -->
+        <!-- this will give you 11/11 -->
+        <If Condition="HasQuest(43568)">
+            <CustomBehavior File="RunCode" Code="PrintStep(627)" />
+            <TurnIn Nav="Fly" QuestName="Arcan'dor, Gift of the Ancient Magi" QuestId="43568" TurnInName="First Arcanist Thalyssra" TurnInId="112146" X="1717.735" Y="4623.107" Z="123.9469" />
+        </If>
+        <!-- 628 -->
+        <If Condition="NeedsQuest(43569)">
+            <CustomBehavior File="RunCode" Code="PrintStep(628)" />
+            <PickUp Nav="Fly" QuestName="Arluin's Request" QuestId="43569" GiverName="Vanthir" GiverId="107598" X="1717.735" Y="4623.107" Z="123.9469" />
+        </If>
+        <!-- 629 - 630 -->
+        <While Condition="DoQuest(43569)">
+            <CustomBehavior File="RunCode" Code="PrintStep(629)" />
+            <If Condition="IsInCity() == false">
+                <CustomBehavior File="InteractWith" MobId="254143" X="1784.888" Y="4622.173" Z="123.9933" />
+            </If>
+            <MoveTo X="972.9822" Y="3981.734" Z="1.709785" />
+            <CustomBehavior File="InteractWith" MobId="110698" InteractByGossipOptions="1" X="972.9822" Y="3981.734" Z="1.709785" TerminateWhen="DoQuest(43569) == false" />
+        </While>
+        <!-- 631 -->
+        <If Condition="HasQuest(43569)">
+            <CustomBehavior File="RunCode" Code="PrintStep(631)" />
+            <TurnIn Nav="Fly" QuestName="Arluin's Request" QuestId="43569" TurnInName="Arluelle" TurnInId="110698" X="972.9822" Y="3981.734" Z="1.709785" />
+        </If>
+        <!-- 632 -->
+        <If Condition="NeedsQuest(45260)">
+            <CustomBehavior File="RunCode" Code="PrintStep(632)" />
+            <PickUp Nav="Fly" QuestName="One Day at a Time" QuestId="45260" GiverName="First Arcanist Thalyssra" GiverId="115736" X="1714.032" Y="4634.08" Z="124.0054" />
+        </If>
+        <!-- 633 -->
+        <If Condition="DoQuest(45260)">
+            <CustomBehavior File="RunCode" Code="PrintStep(633)" />
+            <MoveTo X="1687.115" Y="4578.417" Z="123.9948" />
+            <CustomBehavior File="RunCode" Code="Unit(111902).Target()" />
+            <CustomBehavior File="UseItem" ItemId="143597" NumOfTimes="1" />
+        </If>
+        <!-- 634 -->
+        <If Condition="HasQuest(45260) || NeedsQuest(38649)">
+            <CustomBehavior File="RunCode" Code="PrintStep(634)" />
+            <TurnIn Nav="Fly" QuestName="One Day at a Time" QuestId="45260" TurnInName="First Arcanist Thalyssra" TurnInId="115736" X="1714.032" Y="4634.08" Z="124.0054" />
+            <PickUp Nav="Fly" QuestName="Silence in the City" QuestId="38649" GiverName="First Arcanist Thalyssra" GiverId="115736" X="1714.032" Y="4634.08" Z="124.0054" />
+        </If>
+        <!-- 635 -->
+        <If Condition="HasQuest(38649) || NeedsQuest(38695)">
+            <CustomBehavior File="RunCode" Code="PrintStep(635)" />
+            <TurnIn Nav="Fly" QuestName="Silence in the City" QuestId="38649" TurnInName="Chief Telemancer Oculeth" TurnInId="115710" X="1714.032" Y="4634.08" Z="124.0054" />
+            <PickUp Nav="Fly" QuestName="Crackdown" QuestId="38695" GiverName="Chief Telemancer Oculeth" GiverId="115710" X="1714.032" Y="4634.08" Z="124.0054" />
+            <CustomBehavior File="WaitTimer" WaitTime="10000" />
+        </If>
+        <!-- 636 - 638 -->
+        <If Condition="DoQuest(38695)">
+            <If Condition="IsObjectiveComplete(1,38695) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(636)" />
+                <MoveTo X="1789.177" Y="4632.076" Z="124.0141" />
+                <CustomBehavior File="WaitTimer" WaitTime="35000" />
+            </If>
+            <If Condition="IsObjectiveComplete(2,38695) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(637)" />
+                <CustomBehavior File="InteractWith" MobId="265509" X="433.2028" Y="4011.973" Z="1.38826" />
+            </If>
+            <If Condition="IsObjectiveComplete(3,38695) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(638)" />
+                <MoveTo X="348.516" Y="3970.926" Z="1.38876" />
+            </If>
+        </If>
+        <!-- 639 -->
+        <If Condition="HasQuest(38695) || NeedsQuest(38692,38720)">
+            <CustomBehavior File="RunCode" Code="PrintStep(639)" />
+            <TurnIn Nav="Fly" QuestName="Crackdown" QuestId="38695" TurnInName="Silgryn" TurnInId="114948" X="375.5817" Y="3998.902" Z="3.232193" />
+            <PickUp Nav="Fly" QuestName="Answering Aggression" QuestId="38692" GiverName="Silgryn" GiverId="114948" X="375.5817" Y="3998.902" Z="3.232193" />
+            <PickUp Nav="Fly" QuestName="No Reason to Stay" QuestId="38720" GiverName="Silgryn" GiverId="114948" X="375.5817" Y="3998.902" Z="3.232193" />
+        </If>
+        <!-- 640 - 645 -->
+        <If Condition="DoQuest(38720)">
+            <While Condition="IsObjectiveComplete(1,38720) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(642)" />
+                <CustomBehavior File="InteractWith" MobId="116001" InteractByGossipOptions="1" X="340.8402" Y="3931.683" Z="3.234187" />
+                <MoveTo X="341.9679" Y="3924.277" Z="3.234401" />
+                <!-- up the stairs -->
+                <CustomBehavior File="MyCTM" X="338.9492" Y="3919.172" Z="4.377082" />
+                <CustomBehavior File="MyCTM" X="327.9108" Y="3925.581" Z="10.94958" />
+                <CustomBehavior File="MyCTM" X="330.9513" Y="3931.691" Z="10.94958" />
+                <CustomBehavior File="MyCTM" X="341.5406" Y="3925.402" Z="10.94958" />
+                <CustomBehavior File="MyCTM" X="342.6498" Y="3927.269" Z="10.94956" />
+                <CustomBehavior File="MyCTM" X="343.4247" Y="3930.744" Z="11.51179" />
+                <!-- kid 1 -->
+                <CustomBehavior File="InteractWith" MobId="115992" InteractByGossipOptions="1" X="343.4543" Y="3929.84" Z="10.94967" WaitTime="5000" />
+                <!-- across hall -->
+                <CustomBehavior File="MyCTM" X="342.6498" Y="3927.269" Z="10.94956" />
+                <CustomBehavior File="MyCTM" X="340.603" Y="3921.406" Z="10.94938" />
+                <!-- kid2 -->
+                <CustomBehavior File="InteractWith" MobId="115991" InteractByGossipOptions="1" X="341.0261" Y="3921.573" Z="10.94957" WaitTime="5000" />
+                <!-- down the stairs -->
+                <CustomBehavior File="MyCTM" X="342.6498" Y="3927.269" Z="10.94956" />
+                <CustomBehavior File="MyCTM" X="341.5406" Y="3925.402" Z="10.94958" />
+                <CustomBehavior File="MyCTM" X="330.9513" Y="3931.691" Z="10.94958" />
+                <CustomBehavior File="MyCTM" X="327.9108" Y="3925.581" Z="10.94958" />
+                <CustomBehavior File="MyCTM" X="338.9492" Y="3919.172" Z="4.377082" />
+                <CustomBehavior File="MyCTM" X="341.9679" Y="3924.277" Z="3.234401" />
+                <!-- complete -->
+                <CustomBehavior File="InteractWith" MobId="116001" InteractByGossipOptions="1" X="340.8402" Y="3931.683" Z="3.234187" />
+            </While>
+            <If Condition="IsObjectiveComplete(4,38720) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(643)" />
+                <MoveTo X="293.7339" Y="3862.741" Z="7.624475" />
+                <CustomBehavior File="InteractWith" MobId="114978" X="293.7339" Y="3862.741" Z="7.624475" />
+                <CustomBehavior File="InteractWith" MobId="265520" X="297.8645" Y="3854.651" Z="7.737633" />
+            </If>
+            <If Condition="IsObjectiveComplete(2,38720) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(644)" />
+                <CustomBehavior File="InteractWith" MobId="114983" InteractByGossipOptions="1" X="419.3998" Y="3939.655" Z="3.109889" />
+                <CustomBehavior File="KillUntilComplete" MobIds="116013" TerminateWhen="IsObjectiveComplete(2,38720)" X="419.3998" Y="3939.655" Z="3.109889" />
+            </If>
+            <If Condition="IsObjectiveComplete(3,38720) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(645)" />
+                <CustomBehavior File="InteractWith" MobId="114985" InteractByGossipOptions="1" X="473.7697" Y="3995.93" Z="3.233711" />
+            </If>
+        </If>
+        <!-- 646 -->
+        <If Condition="DoQuest(38692)">
+            <CustomBehavior File="RunCode" Code="PrintStep(646)" />
+            <CustomBehavior File="KillUntilComplete" MobIds="114874, 115806, 114876, 114868" TerminateWhen="IsQuestCompleted(38692)">
+                <HuntingGrounds>
+                    <Hotspot X="458.8527" Y="4002.265" Z="1.388249" />
+                    <Hotspot X="344.9833" Y="3952.337" Z="1.388322" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+        <!-- 647 -->
+        <If Condition="HasQuest(38692) || HasQuest(38720) || NeedsQuest(38694)">
+            <CustomBehavior File="RunCode" Code="PrintStep(647)" />
+            <TurnIn Nav="Fly" QuestName="Answering Aggression" QuestId="38692" TurnInName="Silgryn" TurnInId="115018" X="282.6802" Y="3896.759" Z="7.325881" />
+            <TurnIn Nav="Fly" QuestName="No Reason to Stay" QuestId="38720" TurnInName="Silgryn" TurnInId="115018" X="282.6802" Y="3896.759" Z="7.325881" />
+            <PickUp Nav="Fly" QuestName="Regroup" QuestId="38694" GiverName="Silgryn" GiverId="115018" X="282.6802" Y="3896.759" Z="7.325881" />
+            <!-- <TurnIn Nav="Fly" QuestName="Regroup" QuestId="38694" TurnInName="Silgryn" TurnInId="114948" /> -->
+        </If>
+        <!-- 648 -->
+        <If Condition="DoQuest(38694)">
+            <If Condition="IsObjectiveComplete(1,38694) == false || IsObjectiveComplete(2,38694) == false">
+                <MoveTo X="222.1186" Y="3825.128" Z="1.133825" />
+                <CustomBehavior File="ForcedDismount" />
+                <CustomBehavior File="InteractWith" MobId="114970" X="222.5806" Y="3826.729" Z="1.615786" WaitTime="60000" />
+            </If>
+            <If Condition="IsObjectiveComplete(3,38694) == false">
+                <MoveTo X="522.5868" Y="3796.102" Z="1.493056" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+        </If>
+        <If Condition="HasQuest(38694)">
+            <If Condition="Me.Location.Z &lt; 30">
+                <MoveTo X="522.5868" Y="3796.102" Z="1.493056" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+            <TurnIn Nav="Fly" QuestName="Regroup" QuestId="38694" TurnInName="Silgryn" TurnInId="114948" X="518.32" Y="3774.72" Z="33.02" />
+        </If>
+        <If Condition="NeedsQuest(42889)">
+            <If Condition="Me.Location.Z &lt; 30">
+                <MoveTo X="522.5868" Y="3796.102" Z="1.493056" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+            <PickUp Nav="Fly" QuestName="The Way Back Home" QuestId="42889" GiverName="Telemancy Beacon" GiverId="265532" X="518.32" Y="3774.72" Z="33.02" />
+            <!-- <TurnIn Nav="Fly" QuestName="The Way Back Home" QuestId="42889" TurnInName="First Arcanist Thalyssra" TurnInId="115736" /> -->
+        </If>
+        <If Condition="DoQuest(42889)">
+            <If Condition="Me.Location.Z &lt; 30">
+                <MoveTo X="522.5868" Y="3796.102" Z="1.493056" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+            <CustomBehavior File="InteractWith" MobId="265528" X="518.32" Y="3774.72" Z="33.02" WaitTime="3000" />
+            <CustomBehavior File="InteractWith" MobId="265529" X="518.32" Y="3774.72" Z="33.02" WaitTime="3000" />
+        </If>
+        <!-- 655 -->
+        <If Condition="HasQuest(42889) || NeedsQuest(44955)">
+            <CustomBehavior File="RunCode" Code="PrintStep(655)" />
+            <TurnIn Nav="Fly" QuestName="The Way Back Home" QuestId="42889" TurnInName="First Arcanist Thalyssra" TurnInId="115736" X="1719.485" Y="4633.416" Z="124.0064" />
+            <PickUp Nav="Fly" QuestName="Visitor in Shal'Aran" QuestId="44955" GiverName="First Arcanist Thalyssra" GiverId="115736" X="1719.485" Y="4633.416" Z="124.0064" />
+        </If>
+        <!-- 656 - 657 -->
+        <If Condition="DoQuest(44955)">
+            <If Condition="IsObjectiveComplete(1,44955) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(656)" />
+                <CustomBehavior File="InteractWith" MobId="116085" X="1668.512" Y="4738.312" Z="138.5849" WaitTime="35000" />
+            </If>
+            <If Condition="IsObjectiveComplete(2,44955) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(657)" />
+                <CustomBehavior File="InteractWith" MobId="116085" InteractByGossipOptions="1" X="1668.512" Y="4738.312" Z="138.5849" WaitTime="2000" />
+                <MoveTo X="1714.339" Y="4635.479" Z="124.0237" />
+            </If>
+        </If>
+        <!-- 659 -->
+        <If Condition="HasQuest(44955)">
+            <CustomBehavior File="RunCode" Code="PrintStep(659)" />
+            <TurnIn Nav="Fly" QuestName="Visitor in Shal'Aran" QuestId="44955" TurnInName="First Arcanist Thalyssra" TurnInId="115736" X="1719.485" Y="4633.416" Z="124.0064" />
+        </If>
+        <!-- 660 -->
+        <If Condition="NeedsQuest(45261)">
+            <CustomBehavior File="RunCode" Code="PrintStep(660)" />
+            <PickUp Nav="Fly" QuestName="Continuing the Cure" QuestId="45261" GiverName="First Arcanist Thalyssra" GiverId="115736" X="1719.485" Y="4633.416" Z="124.0064" />
+        </If>
+        <!-- 661 -->
+        <If Condition="DoQuest(45261)">
+            <CustomBehavior File="RunCode" Code="PrintStep(661)" />
+            <MoveTo X="1687.115" Y="4578.417" Z="123.9948" />
+            <CustomBehavior File="RunCode" Code="Unit(111902).Target()" />
+            <CustomBehavior File="UseItem" ItemId="143597" NumOfTimes="1" />
+        </If>
+        <!-- 662 -->
+        <If Condition="HasQuest(45261) || NeedsQuest(44722)">
+            <CustomBehavior File="RunCode" Code="PrintStep(662)" />
+            <TurnIn Nav="Fly" QuestName="Continuing the Cure" QuestId="45261" TurnInName="First Arcanist Thalyssra" TurnInId="115736" X="1719.485" Y="4633.416" Z="124.0064" />
+            <PickUp Nav="Fly" QuestName="Disillusioned Defector" QuestId="44722" GiverName="First Arcanist Thalyssra" GiverId="115736" X="1719.485" Y="4633.416" Z="124.0064" />
+        </If>
+        <!-- 663 - 664 -->
+        <If Condition="HasQuest(44722) || NeedsQuest(44724,44723)">
+            <CustomBehavior File="RunCode" Code="PrintStep(663,664)" />
+            <If Condition="Me.SubZoneId != 8487 &amp;&amp; Me.Location.Z &lt; 30">
+                <CustomBehavior File="InteractWith" MobId="265956" X="1783.652" Y="4630.499" Z="123.9903" WaitTime="3000" />
+            </If>
+            <TurnIn Nav="Fly" QuestName="Disillusioned Defector" QuestId="44722" TurnInName="Silgryn" TurnInId="114948" X="519.3181" Y="3766.764" Z="33.01528" />
+            <PickUp Nav="Fly" QuestName="Missing Persons" QuestId="44724" GiverName="Silgryn" GiverId="114948" X="519.3181" Y="3766.764" Z="33.01528" />
+            <PickUp Nav="Fly" QuestName="More Like Me" QuestId="44723" GiverName="Victoire" GiverId="114956" X="519.3181" Y="3766.764" Z="33.01528" />
+        </If>
+        <!-- 665 -->
+        <If Condition="DoQuest(44724)">
+            <CustomBehavior File="RunCode" Code="PrintStep(665)" />
+            <If Condition="Me.SubZoneId == 8487 &amp;&amp; Me.Location.Z &gt;= 30">
+                <CustomBehavior File="InteractWith" MobId="116317" X="529.6411" Y="3759.976" Z="33.02479" WaitTime="10000" />
+            </If>
+            <CustomBehavior File="KillUntilComplete" MobIds="114904, 114959" TerminateWhen="IsObjectiveComplete(1,44724)">
+                <HuntingGrounds>
+                    <Hotspot X="784.6664" Y="3697.919" Z="0.6556427" />
+                    <Hotspot X="771.5995" Y="3632.73" Z="8.044536" />
+                    <Hotspot X="832.5453" Y="3615.149" Z="6.158259" />
+                    <Hotspot X="846.4885" Y="3540.818" Z="2.849932" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+        <!-- 666 -->
+        <If Condition="DoQuest(44723)">
+            <CustomBehavior File="RunCode" Code="PrintStep(666)" />
+            <CustomBehavior File="InteractWith" MobId="114958" NumOfTimes="500" TerminateWhen="IsQuestCompleted(44723)" InteractByUsingItemId="142065">
+                <HuntingGrounds>
+                    <Hotspot X="784.6664" Y="3697.919" Z="0.6556427" />
+                    <Hotspot X="771.5995" Y="3632.73" Z="8.044536" />
+                    <Hotspot X="832.5453" Y="3615.149" Z="6.158259" />
+                    <Hotspot X="846.4885" Y="3540.818" Z="2.849932" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+        <!-- 667 -->
+        <If Condition="HasQuest(44724) || HasQuest(44723)">
+            <CustomBehavior File="RunCode" Code="PrintStep(667)" />
+            <!-- warp up -->
+            <If Condition="Me.SubZoneId != 8487 || Me.Location.Z &lt; 30">
+                <MoveTo X="522.5868" Y="3796.102" Z="1.493056" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+            <TurnIn Nav="Fly" QuestName="Missing Persons" QuestId="44724" TurnInName="Silgryn" TurnInId="114948" X="519.3181" Y="3766.764" Z="33.01528" />
+            <TurnIn Nav="Fly" QuestName="More Like Me" QuestId="44723" TurnInName="Victoire" TurnInId="114956" X="519.3181" Y="3766.764" Z="33.01528" />
+        </If>
+        <!-- 669 -->
+        <If Condition="NeedsQuest(44725)">
+            <CustomBehavior File="RunCode" Code="PrintStep(669)" />
+            <!-- warp up -->
+            <If Condition="Me.SubZoneId != 8487 || Me.Location.Z &lt; 30">
+                <MoveTo X="522.5868" Y="3796.102" Z="1.493056" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+            <PickUp Nav="Fly" QuestName="Hostage Situation" QuestId="44725" GiverName="Silgryn" GiverId="114948" X="519.3181" Y="3766.764" Z="33.01528" />
+            <!-- <TurnIn Nav="Fly" QuestName="Hostage Situation" QuestId="44725" TurnInName="Silgryn" TurnInId="115067" /> -->
+        </If>
+        <!-- 670 -->
+        <If Condition="DoQuest(44725)">
+            <CustomBehavior File="RunCode" Code="PrintStep(670)" />
+            <If Condition="Me.SubZoneId == 8487 &amp;&amp; Me.Location.Z &gt;= 30">
+                <CustomBehavior File="InteractWith" MobId="116317" X="529.6411" Y="3759.976" Z="33.02479" WaitTime="10000" />
+            </If>
+            <CustomBehavior File="InteractWith" MobId="115066" X="686.9238" Y="3736.415" Z="2.849463" WaitTime="60000" />
+        </If>
+        <!-- 672 -->
+        <While Condition="HasQuest(44725) || NeedsQuest(44726)">
+            <CustomBehavior File="RunCode" Code="PrintStep(672)" />
+            <TurnIn Nav="Fly" QuestName="Hostage Situation" QuestId="44725" TurnInName="Silgryn" TurnInId="115067" X="154.64" Y="5276.77" Z="1.2" />
+            <PickUp Nav="Fly" QuestName="In the Business of Souls" QuestId="44726" GiverName="Silgryn" GiverId="115067" X="154.64" Y="5276.77" Z="1.2" />
+        </While>
+        <!-- 673 -->
+        <While Condition="NeedsQuest(44727)">
+            <CustomBehavior File="RunCode" Code="PrintStep(673)" />
+            <PickUp Nav="Fly" QuestName="Smuggled!" QuestId="44727" GiverName="Maribeth" GiverId="115002" X="167.6388" Y="5228.784" Z="8.697306" />
+        </While>
+        <!-- 674 -->
+        <While Condition="DoQuest(44727)">
+            <If Condition="IsObjectiveComplete(1,44727) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(674)" />
+                <CustomBehavior File="InteractWith" MobIds="266029" X="167.6388" Y="5228.784" Z="8.697306" WaitTime="1500" />
+            </If>
+            <If Condition="IsObjectiveComplete(2,44727) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(675)" />
+                <CustomBehavior File="InteractWith" MobIds="265521" NumOfTimes="500" TerminateWhen="IsObjectiveComplete(2,44727)">
+                    <HuntingGrounds>
+                        <Hotspot X="212.426" Y="5244.615" Z="4.359321" />
+                        <Hotspot X="141.2855" Y="5181.962" Z="35.825" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+        </While>
+        <!-- 680 -->
+        <If Condition="DoQuest(44726)">
+            <CustomBehavior File="RunCode" Code="PrintStep(680)" />
+            <CustomBehavior File="KillUntilComplete" MobIds="114998" TerminateWhen="IsObjectiveComplete(1,44726)">
+                <HuntingGrounds>
+                    <Hotspot X="141.2855" Y="5181.962" Z="35.825" />
+                </HuntingGrounds>
+            </CustomBehavior>
+        </If>
+        <!-- 681 -->
+        <If Condition="HasQuest(44727)">
+            <CustomBehavior File="RunCode" Code="PrintStep(681)" />
+            <TurnIn Nav="Fly" QuestName="Smuggled!" QuestId="44727" TurnInName="Maribeth" TurnInId="115376" X="154.64" Y="5276.77" Z="1.2" />
+        </If>
+        <!-- 682 -->
+        <If Condition="HasQuest(44726) || NeedsQuest(44814)">
+            <CustomBehavior File="RunCode" Code="PrintStep(682)" />
+            <TurnIn Nav="Fly" QuestName="In the Business of Souls" QuestId="44726" TurnInName="Silgryn" TurnInId="115067" X="154.64" Y="5276.77" Z="1.2" />
+            <PickUp Nav="Fly" QuestName="Waning Refuge" QuestId="44814" GiverName="Silgryn" GiverId="115067" X="154.64" Y="5276.77" Z="1.2" />
+        </If>
+        <!-- 683 -->
+        <If Condition="DoQuest(44814)">
+            <CustomBehavior File="RunCode" Code="PrintStep(683)" />
+            <CustomBehavior File="InteractWith" MobIds="115080" X="154.64" Y="5276.77" Z="1.2" WaitTime="1500" />
+        </If>
+        <!-- 684 -->
+        <If Condition="HasQuest(44814)">
+            <TurnIn Nav="Fly" QuestName="Waning Refuge" QuestId="44814" TurnInName="Silgryn" TurnInId="114948" X="476.29" Y="3745.05" Z="1.23" />
+        </If>
+        <!-- NOW 2/9 -->
+        <!-- 685 -->
+        <If Condition="NeedsQuest(45262)">
+            <PickUp Nav="Fly" QuestName="A Message From Ly'leth" QuestId="45262" GiverName="First Arcanist Thalyssra" GiverId="115736" X="1716.417" Y="4634.912" Z="124.0077" />
+        </If>
+        <!-- 686 -->
+        <If Condition="DoQuest(45262)">
+            <CustomBehavior File="RunCode" Code="PrintStep(686)" />
+            <CustomBehavior File="InteractWith" MobIds="111901,111902" NumOfTimes="500" TerminateWhen="IsQuestCompleted(45262)" InteractByUsingItemId="143597" X="1687.115" Y="4578.417" Z="123.9948" />
+        </If>
+        <!-- 687 -->
+        <If Condition="HasQuest(45262) || NeedsQuest(44742)">
+            <CustomBehavior File="RunCode" Code="PrintStep(687)" />
+            <TurnIn Nav="Fly" QuestName="A Message From Ly'leth" QuestId="45262" TurnInName="First Arcanist Thalyssra" TurnInId="115736" X="1716.417" Y="4634.912" Z="124.0077" />
+            <PickUp Nav="Fly" QuestName="Tavernkeeper's Fate" QuestId="44742" GiverName="First Arcanist Thalyssra" GiverId="115736" X="1716.417" Y="4634.912" Z="124.0077" />
+        </If>
+        <!-- 688 -->
+        <If Condition="DoQuest(44742)">
+            <CustomBehavior File="RunCode" Code="PrintStep(688)" />
+            <If Condition="IsInCity() == false">
+                <CustomBehavior File="InteractWith" MobIds="254134" X="1774.218" Y="4647.567" Z="123.9914" WaitTime="1500" />
+            </If>
+        </If>
+        <!-- 690 -->
+        <If Condition="HasQuest(44742)">
+            <CustomBehavior File="RunCode" Code="PrintStep(690)" />
+            <TurnIn Nav="Fly" QuestName="Tavernkeeper's Fate" QuestId="44742" TurnInName="Ly'leth Lunastre" TurnInId="115247" X="517.31" Y="4237.33" Z="134.396" />
+        </If>
+        <!-- 691 -->
+        <If Condition="NeedsQuest(44752)">
+            <CustomBehavior File="RunCode" Code="PrintStep(691)" />
+            <PickUp Nav="Fly" QuestName="Essence Triangulation" QuestId="44752" GiverName="First Arcanist Thalyssra" GiverId="115248" X="527.4207" Y="4250.756" Z="132.9012" />
+        </If>
+        <!-- 692 -->
+        <While Condition="DoQuest(44752)">
+            <If Condition="IsObjectiveComplete(1,44752) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(692)" />
+                <CustomBehavior File="InteractWith" MobIds="115258" X="863.5993" Y="4338.11" Z="115.9694" WaitTime="12000" />
+            </If>
+            <If Condition="IsObjectiveComplete(2,44752) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(694)" />
+                <CustomBehavior File="InteractWith" MobIds="115259" X="779.0227" Y="4131.393" Z="1.537641" WaitTime="12000" />
+            </If>
+            <If Condition="IsObjectiveComplete(3,44752) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(695)" />
+                <CustomBehavior File="InteractWith" MobIds="115260" X="517.0723" Y="3835.895" Z="7.482187" WaitTime="12000" />
+            </If>
+        </While>
+        <!-- 696 -->
+        <If Condition="HasQuest(44752) || NeedsQuest(44753)">
+            <CustomBehavior File="RunCode" Code="PrintStep(696)" />
+            <!-- warp up -->
+            <If Condition="Me.SubZoneId != 8487 || Me.Location.Z &lt; 30">
+                <MoveTo X="522.5868" Y="3796.102" Z="1.493056" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+            <TurnIn Nav="Fly" QuestName="Essence Triangulation" QuestId="44752" TurnInName="First Arcanist Thalyssra" TurnInId="115248" X="517.8467" Y="3770.155" Z="33.01554" />
+            <PickUp Nav="Fly" QuestName="On Public Display" QuestId="44753" GiverName="First Arcanist Thalyssra" GiverId="115248" X="517.8467" Y="3770.155" Z="33.01554" />
+        </If>
+        <!-- 697 -->
+        <If Condition="DoQuest(44753)">
+            <!-- warp up -->
+            <If Condition="Me.SubZoneId != 8487 || Me.Location.Z &lt; 30">
+                <MoveTo X="522.5868" Y="3796.102" Z="1.493056" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+            <While Condition="IsObjectiveComplete(1,44753) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(697)" />
+                <CustomBehavior File="InteractWith" MobIds="115557" X="521.4846" Y="3761.192" Z="33.01525" InteractByGossipOptions="1" WaitTime="10000" />
+            </While>
+            <While Condition="IsObjectiveComplete(2,44753) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(698)" />
+                <CustomBehavior File="InteractWith" MobIds="115581,115569,115584,115570,115687,115590,115571" NumOfTimes="500" X="521.9249" Y="3756.958" Z="33.01565" WaitTime="1000" TerminateWhen="IsObjectiveComplete(2,44753)" />
+            </While>
+        </If>
+        <!-- 699 -->
+        <If Condition="HasQuest(44753) || NeedsQuest(44754)">
+            <CustomBehavior File="RunCode" Code="PrintStep(699)" />
+            <!-- warp up -->
+            <If Condition="Me.SubZoneId != 8487 || Me.Location.Z &lt; 30">
+                <MoveTo X="522.5868" Y="3796.102" Z="1.493056" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+            <TurnIn Nav="Fly" QuestName="On Public Display" QuestId="44753" TurnInName="First Arcanist Thalyssra" TurnInId="115557" X="517.8467" Y="3770.155" Z="33.01554" />
+            <PickUp Nav="Fly" QuestName="Waxing Crescent" QuestId="44754" GiverName="First Arcanist Thalyssra" GiverId="115557" X="517.8467" Y="3770.155" Z="33.01554" />
+        </If>
+        <!-- 701 -->
+        <If Condition="DoQuest(44754)">
+            <!-- warp down -->
+            <If Condition="Me.SubZoneId == 8487 &amp;&amp; Me.Location.Z &gt;= 30">
+                <MoveTo X="519.1198" Y="3779.8" Z="33.184" />
+                <CustomBehavior File="WaitTimer" WaitTime="3000" />
+            </If>
+            <If Condition="IsObjectiveComplete(1,44754) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(701)" />
+                <CustomBehavior File="KillUntilComplete" MobIds="115607" TerminateWhen="IsObjectiveComplete(1,44754)">
+                    <HuntingGrounds>
+                        <Hotspot X="1009.405" Y="4027.695" Z="16.83652" />
+                    </HuntingGrounds>
+                </CustomBehavior>
+            </If>
+            <While Condition="IsObjectiveComplete(2,44754) == false">
+                <CustomBehavior File="RunCode" Code="PrintStep(702)" />
+                <CustomBehavior File="InteractWith" MobIds="266138" X="964.3206" Y="3951.181" Z="17.36041" WaitTime="10000" />
+            </While>
+        </If>
+        <!-- 703 -->
+        <If Condition="HasQuest(44754)">
+            <CustomBehavior File="RunCode" Code="PrintStep(703)" />
+            <TurnIn Nav="Fly" QuestName="Waxing Crescent" QuestId="44754" TurnInName="Vanthir" TurnInId="115604" X="962.2499" Y="3945.834" Z="18.12475" />
+        </If>
+        <!-- 704 -->
+        <If Condition="NeedsQuest(44756)">
+            <PickUp Nav="Fly" QuestName="Sign of the Dusk Lily" QuestId="44756" GiverName="Vanthir" GiverId="115604" X="962.2499" Y="3945.834" Z="18.12475" />
+        </If>
+        <!-- 705 -->
+        <If Condition="DoQuest(44756)">
+            <CustomBehavior File="RunCode" Code="PrintStep(705)" />
+            <CustomBehavior File="InteractWith" MobIds="115720" X="962.2499" Y="3945.834" Z="18.12475" WaitTime="10000" />
+        </If>
+        <!-- 706 -->
+        <If Condition="HasQuest(44756) || NeedsQuest(45316)">
+            <CustomBehavior File="RunCode" Code="PrintStep(706)" />
+            <TurnIn Nav="Fly" QuestName="Sign of the Dusk Lily" QuestId="44756" TurnInName="First Arcanist Thalyssra" TurnInId="115736" X="1716.417" Y="4634.912" Z="124.0077" />
+            <PickUp Nav="Fly" QuestName="Stabilizing Suramar" QuestId="45316" GiverName="First Arcanist Thalyssra" GiverId="115736" />
+            <!-- <TurnIn Nav="Fly" QuestName="Stabilizing Suramar" QuestId="45316" TurnInName="First Arcanist Thalyssra" TurnInId="115736" /> -->
+        </If>
+        <!-- 3/9 -->
+        <!-- 707 -->
+        <If Condition="DoQuest(45316)">
+            <CustomBehavior File="LoadProfile" ProfileName="reputation/[N] The Nightfallen Rep" RememberProfile="true" />
         </If>
     </QuestOrder>
 </HBProfile>

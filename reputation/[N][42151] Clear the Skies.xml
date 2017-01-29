@@ -57,7 +57,7 @@
                 </CustomBehavior>
             </If>
             <If Condition="Me.InVehicle">
-                <CustomBehavior File="Vehicles\CannonControl" MobId="101900" Buttons="1" MinAngle="-0.2" MaxAngle="0.89" Gravity="0.01" Velocity="45" TerminateWhen="IsQuestCompleted(42151) || !Me.InVehicle" />
+                <CustomBehavior File="Vehicles\CannonControl" MobId="101900" Buttons="1" MinAngle="-0.083" MaxAngle="0.413" Gravity="0.01" Velocity="45" TerminateWhen="IsQuestCompleted(42151) || !Me.InVehicle" />
             </If>
         </If>
         <!-- use whistle -->

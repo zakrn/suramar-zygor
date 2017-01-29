@@ -31,9 +31,11 @@
             ]]>
         </CustomBehavior>
         <If Condition="IsQuestAvailable(44002)">
-            <If Condition="Me.SubZoneId != 7917">
+            <If Condition="Me.SubZoneId != 7917 || !HasQuest(44002)">
             	<CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.Yellow, &quot;[Zak]: Go to area&quot;);" />
                 <MoveTo X="1477.145" Y="2624.817" Z="0.1299706" />
+                <CustomBehavior File="ForcedDismount" />
+                <CustomBehavior File="MyCTM" X="1379.309" Y="2549.863" Z="-1.755457" />
             </If>
             <CustomBehavior File="ForcedDismount" />
             <!--Western:-->

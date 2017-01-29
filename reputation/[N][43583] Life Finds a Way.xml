@@ -33,6 +33,63 @@
                 }
             ]]>
         </CustomBehavior>
+        <!-- mask usage code -->
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool ShouldCastMask()
+                    {
+                        return !Me.IsCasting && Me.IsAlive && IsInCity() && (!Me.HasAura(202477) && !Me.HasAura(208824));
+                    }
+
+                    async Task CastMask()
+                    {
+                        if( HasItem(136600) )
+                        {
+                            var item = StyxWoW.Me.BagItems.FirstOrDefault(x => x.Entry == 136600);
+                            Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: using " + item.Name);
+                            item.Use();
+                            await Coroutine.Sleep(2200);
+                            await Coroutine.Wait(1600, () => !SpellManager.GlobalCooldown);
+                            await Coroutine.Wait(2500, () => !Me.IsCasting);
+                        }
+                        else
+                        {
+                            Lua.DoString("ExtraActionButton1:Click();");
+                        }
+                        await Coroutine.Yield();
+                    }
+
+                    bool IsInCity()
+                    {
+                        return  Me.ZoneId == 7637 && //Suramar
+                                (Me.SubZoneId == 7963 || //The Grand Promenade
+                                Me.SubZoneId == 8021 || //Lunastre Estate
+                                Me.SubZoneId == 8434 || //Starcaller Retreat
+                                Me.SubZoneId == 8382 || //The Waning Crescent
+                                Me.SubZoneId == 8383 || //Artisan's Gallery
+                                Me.SubZoneId == 8395 || //Astravar Harbor
+                                Me.SubZoneId == 8385 || //Evermoon Bazaar
+                                Me.SubZoneId == 7970 || //Evermoon Commons
+                                Me.SubZoneId == 8487 || //Evermoon Terrace
+                                Me.SubZoneId == 8386 || //Shimmershade Garden
+                                Me.SubZoneId == 8398 || //Terrace of Order
+                                Me.SubZoneId == 8345 || //Estate of the First Arcanist
+                                Me.SubZoneId == 8149 || //Twilight Vineyards
+                                Me.SubZoneId == 8353 || //Concourse of Destiny
+                                Me.SubZoneId == 8397 || //Terrace of Enlightenment
+                                Me.SubZoneId == 8441 || //Moonbeam Causeway
+                                Me.SubZoneId == 8436 || //Sunset Park
+                                Me.SubZoneId == 8351 || //The Menagerie
+                                Me.SubZoneId == 8379 || //The Gilded Market
+                                Me.SubZoneId == 8378 || //Moonlit Landing
+                                Me.SubZoneId == 8431 || //Sanctum of Order
+                                Me.SubZoneId == 8380 || //Midnight Court
+                                Me.SubZoneId == 8384 || //Siren's Vigil
+                                Me.SubZoneId == 8487 ||
+                                Me.SubZoneId == 8148);   //Suramar City
+                    }
+            ]]>
+        </CustomBehavior>
         <CustomBehavior File="RunCode" Type="Definition">
             <![CDATA[
 
@@ -89,6 +146,9 @@
                 ]]>
         </CustomBehavior>
         <If Condition="IsQuestAvailable(43583)">
+            <CustomBehavior File="Hooks\DoWhen" UseWhen="!Me.InVehicle &amp;&amp; ShouldCastMask()" ActivityName="applyMask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+                <CustomBehavior File="RunCode" Code="await CastMask()" />
+            </CustomBehavior>
             <If Condition="Me.SubZoneId != 8352">
                 <MoveTo X="1502.694" Y="4012.854" Z="-13.92283" />
             </If>

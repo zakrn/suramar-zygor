@@ -29,10 +29,19 @@ if (taskInfo) then
     end
 end
 return false;", 0);]]></CustomBehavior>
+  <CustomBehavior File="UserSettings" HarvestHerbs="false" HarvestMinerals="false" />
     <While Condition="OnQuest">
-      <If Condition="!HasQuest(44802)">
-        <RunTo X="2787.88" Y="4378.993" Z="418.8143" />
+      <!-- check if the portal to the area is unlock, makes this way safer -->
+      <If Condition="IsQuestCompleted(43808) &amp;&amp; Me.SubZoneId != 8334 &amp;&amp; Me.SubZoneId != 7842">
+        <CustomBehavior File="InteractWith" MobId="254135" WaitForNpcs="false" X="1769.007" Y="4653.732" Z="123.9933" />
       </If>
+      <DisableBehavior Name="Combat" />
+      <DisableBehavior Name="Pull" />
+      <If Condition="!HasQuest(44802)">
+        <MoveTo X="2787.88" Y="4378.993" Z="418.8143" />
+      </If>
+      <EnableBehavior Name="Combat" />
+      <EnableBehavior Name="Pull" />
       <If Condition="HasQuest(44802)">
         <!-- X="2787.88" Y="4378.993" Z="418.8143" /> -->
         <!--<Vendor Name="Kir'altius" Entry="103055" Type="Repair" Nav="Fly" X="2716.62" Y="4322.81" Z="438.241" />-->

@@ -52,7 +52,8 @@
                   if( HasExtraActionBar )
                   {
                     Lua.DoString("ExtraActionButton1:Click();");
-                    await Coroutine.Sleep(3200);
+                    SpellManager.ClickRemoteLocation(Me.CurrentTarget.Location);
+                    await Coroutine.Sleep(2700);
                     LastCast = DateTimeOffset.Now.ToUnixTimeSeconds();
                   }
                   await Coroutine.Yield();

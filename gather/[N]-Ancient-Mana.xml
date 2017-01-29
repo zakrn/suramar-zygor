@@ -27,7 +27,6 @@
         <Blackspot X="1177.958" Y="5175.629" Z="57.51365" Radius="30.0" />
         <Blackspot X="922.523" Y="5334.743" Z="64.9015" Radius="30.0" />
         <Blackspot X="1574.392" Y="5484.938" Z="-8.260089" Radius="40.0" />
-
     </Blackspots>
     <Vendors>
     </Vendors>
@@ -131,103 +130,185 @@
                     }
                 ]]>
         </CustomBehavior>
+        <!-- mask usage code -->
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[
+                bool ShouldCastMask()
+                    {
+                        return !Me.IsCasting && Me.IsAlive && IsInCity() && (!Me.HasAura(202477) && !Me.HasAura(208824));
+                    }
+
+                    async Task CastMask()
+                    {
+                        if( HasItem(136600) )
+                        {
+                            var item = StyxWoW.Me.BagItems.FirstOrDefault(x => x.Entry == 136600);
+                            Logging.Write(System.Windows.Media.Colors.Yellow, "[Zak]: using " + item.Name);
+                            item.Use();
+                            await Coroutine.Sleep(2200);
+                            await Coroutine.Wait(1600, () => !SpellManager.GlobalCooldown);
+                            await Coroutine.Wait(2500, () => !Me.IsCasting);
+                        }
+                        else
+                        {
+                            Lua.DoString("ExtraActionButton1:Click();");
+                        }
+                        await Coroutine.Yield();
+                    }
+
+                    bool IsInCity()
+                    {
+                        return  Me.ZoneId == 7637 && //Suramar
+                                (Me.SubZoneId == 7963 || //The Grand Promenade
+                                Me.SubZoneId == 8021 || //Lunastre Estate
+                                Me.SubZoneId == 8434 || //Starcaller Retreat
+                                Me.SubZoneId == 8382 || //The Waning Crescent
+                                Me.SubZoneId == 8383 || //Artisan's Gallery
+                                Me.SubZoneId == 8395 || //Astravar Harbor
+                                Me.SubZoneId == 8385 || //Evermoon Bazaar
+                                Me.SubZoneId == 7970 || //Evermoon Commons
+                                Me.SubZoneId == 8487 || //Evermoon Terrace
+                                Me.SubZoneId == 8386 || //Shimmershade Garden
+                                Me.SubZoneId == 8398 || //Terrace of Order
+                                Me.SubZoneId == 8345 || //Estate of the First Arcanist
+                                Me.SubZoneId == 8149 || //Twilight Vineyards
+                                Me.SubZoneId == 8353 || //Concourse of Destiny
+                                Me.SubZoneId == 8397 || //Terrace of Enlightenment
+                                Me.SubZoneId == 8441 || //Moonbeam Causeway
+                                Me.SubZoneId == 8436 || //Sunset Park
+                                Me.SubZoneId == 8351 || //The Menagerie
+                                Me.SubZoneId == 8379 || //The Gilded Market
+                                Me.SubZoneId == 8378 || //Moonlit Landing
+                                Me.SubZoneId == 8431 || //Sanctum of Order
+                                Me.SubZoneId == 8380 || //Midnight Court
+                                Me.SubZoneId == 8384 || //Siren's Vigil
+                                Me.SubZoneId == 8487 ||
+                                Me.SubZoneId == 8148);   //Suramar City
+                    }
+            ]]>
+        </CustomBehavior>
+        <CustomBehavior File="Hooks\DoWhen" UseWhen="ShouldCastMask()" ActivityName="applyMask" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
+            <CustomBehavior File="RunCode" Code="await CastMask()" />
+        </CustomBehavior>
         <!-- <CustomBehavior File="UserSettings" HarvestHerbs="false" HarvestMinerals="false" /> -->
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Harvesting &quot; + GetManaTarget() + &quot; Ancient Mana&quot; );" />
         <CustomBehavior File="Hooks\Avoid" AvoidName="elfbane" ObjectId="99792" Radius="40" />
         <CustomBehavior File="Hooks\DoWhen" UseWhen="HasManaItems()" ActivityName="use_mana_item" StopMovingToConductActivity="true" AllowUseWhileMounted="true">
             <CustomBehavior File="RunCode" Code="await UseManaItems();" />
         </CustomBehavior>
-        <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" PreInteractMountStrategy="Dismount" TerminateWhen="HasAncientMana( GetManaTarget() )">
-            <HuntingGrounds>
-                <Hotspot X="1611.525" Y="4302.211" Z="135.5855" />
-                <Hotspot X="1758.481" Y="4791.606" Z="147.6049" />
-                <Hotspot X="1737.297" Y="4714.273" Z="170.1424" />
-                <Hotspot X="1305.939" Y="4830.756" Z="172.1508" />
-                <Hotspot X="1386.644" Y="4670.978" Z="128.5061" />
-                <Hotspot X="1331.427" Y="4492.01" Z="122.9617" />
-                <Hotspot X="1507.027" Y="4382.561" Z="115.4927" />
-                <Hotspot X="1703.431" Y="4317.868" Z="162.0318" />
-                <Hotspot X="1633.026" Y="4297.357" Z="138.98" />
-                <Hotspot X="1724.04" Y="4089.502" Z="166.0663" />
-                <Hotspot X="1415.358" Y="4424.396" Z="121.7797" />
-                <Hotspot X="1485.619" Y="4954.147" Z="187.0151" />
-                <Hotspot X="1565.029" Y="4973.608" Z="164.4833" />
-                <Hotspot X="1549.117" Y="5020.103" Z="124.2606" />
-                <Hotspot X="1522.021" Y="5000.249" Z="120.891" />
-                <Hotspot X="1459.936" Y="4998.865" Z="120.4602" />
-                <Hotspot X="1451.035" Y="5047.813" Z="174.2053" />
-                <Hotspot X="974.6285" Y="5288.748" Z="106.7754" />
-                <Hotspot X="953.0189" Y="5328.632" Z="90.89679" />
-                <Hotspot X="913.7977" Y="5294.123" Z="94.69218" />
-                <Hotspot X="1145.838" Y="5571.61" Z="1.450079" />
-                <Hotspot X="1180.608" Y="5628.356" Z="6.87799" />
-                <Hotspot X="1312.984" Y="5664.373" Z="2.771824" />
-                <Hotspot X="1571.934" Y="5553.792" Z="13.56783" />
-                <Hotspot X="1558.282" Y="5467.915" Z="-7.36157" />
-                <Hotspot X="1543.184" Y="5478.198" Z="-7.76466" />
-                <Hotspot X="1590.861" Y="5487.653" Z="-7.360172" />
-                <Hotspot X="1588.765" Y="5611.566" Z="11.91419" />
-                <Hotspot X="1490.427" Y="5668.693" Z="16.13418" />
-                <Hotspot X="1811.907" Y="5701.867" Z="40.31356" />
-                <Hotspot X="1924.345" Y="5565.773" Z="60.70303" />
-                <Hotspot X="1619.317" Y="4887.14" Z="162.7641" />
-                <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
-                <Hotspot X="1386.644" Y="4670.978" Z="128.5061" />
-                <Hotspot X="1331.427" Y="4492.01" Z="122.9617" />
-                <Hotspot X="1507.027" Y="4382.561" Z="115.4927" />
-                <Hotspot X="1703.431" Y="4317.868" Z="162.0318" />
-                <Hotspot X="1633.026" Y="4297.357" Z="138.98" />
-                <Hotspot X="1724.04" Y="4089.502" Z="166.0663" />
-                <Hotspot X="1415.358" Y="4424.396" Z="121.7797" />
-                <Hotspot X="1485.619" Y="4954.147" Z="187.0151" />
-                <Hotspot X="1565.029" Y="4973.608" Z="164.4833" />
-                <Hotspot X="1549.117" Y="5020.103" Z="124.2606" />
-                <Hotspot X="1522.021" Y="5000.249" Z="120.891" />
-                <Hotspot X="1459.936" Y="4998.865" Z="120.4602" />
-                <Hotspot X="1451.035" Y="5047.813" Z="174.2053" />
-                <Hotspot X="974.6285" Y="5288.748" Z="106.7754" />
-                <Hotspot X="953.0189" Y="5328.632" Z="90.89679" />
-                <Hotspot X="1451.373" Y="4894.687" Z="185.5585" />
-                <Hotspot X="913.7977" Y="5294.123" Z="94.69218" />
-                <Hotspot X="1145.838" Y="5571.61" Z="1.450079" />
-                <Hotspot X="1180.608" Y="5628.356" Z="6.87799" />
-                <Hotspot X="1312.984" Y="5664.373" Z="2.771824" />
-                <Hotspot X="1571.934" Y="5553.792" Z="13.56783" />
-                <Hotspot X="1558.282" Y="5467.915" Z="-7.36157" />
-                <Hotspot X="1543.184" Y="5478.198" Z="-7.76466" />
-                <Hotspot X="1590.861" Y="5487.653" Z="-7.360172" />
-                <Hotspot X="1588.765" Y="5611.566" Z="11.91419" />
-                <Hotspot X="1490.427" Y="5668.693" Z="16.13418" />
-                <Hotspot X="1811.907" Y="5701.867" Z="40.31356" />
-                <Hotspot X="1924.345" Y="5565.773" Z="60.70303" />
-                <Hotspot X="1619.317" Y="4887.14" Z="162.7641" />
-                <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
-                <!-- east side -->
-                <Hotspot X="1991.079" Y="3089.278" Z="239.7455" />
-                <Hotspot X="1525.205" Y="3102.945" Z="116.9301" />
-                <Hotspot X="1547.956" Y="2973.81" Z="77.15396" />
-                <Hotspot X="1390.176" Y="2949.172" Z="111.6269" />
-                <Hotspot X="1272.667" Y="2829" Z="90.76936" />
-                <Hotspot X="1194.339" Y="2867.194" Z="89.39727" />
-                <Hotspot X="1090.351" Y="2746.775" Z="59.75992" />
-            </HuntingGrounds>
-            <Blackspots>
-                <Blackspot X="1478.984" Y="5442.051" Z="75.68926" Radius="20.0" />
-                <Blackspot X="1071.589" Y="5265.232" Z="106.5904" Radius="40.0" />
-                <Blackspot X="1628.706" Y="5424.287" Z="65.01992" Radius="20.0" />
-                <Blackspot X="1638.807" Y="5458.747" Z="61.90379" Radius="20.0" />
-                <Blackspot X="1577.444" Y="5412.718" Z="64.95435" Radius="20.0" />
-                <Blackspot X="1262.418" Y="5258.036" Z="94.50412" Radius="20.0" />
-                <Blackspot X="880.9355" Y="5261.9" Z="50.20648" Radius="20.0" />
-                <Blackspot X="1912.03" Y="5459.361" Z="-8.040374" Radius="20.0" />
-                <Blackspot X="1920.892" Y="5466.942" Z="-31.94954" Radius="20.0" />
-                <Blackspot X="1939.038" Y="5390.631" Z="-32.52055" Radius="20.0" />
-                <Blackspot X="1988.597" Y="5394.301" Z="-37.26923" Radius="20.0" />
-                <Blackspot X="922.3163" Y="5324.399" Z="69.51901" Radius="20.0" />
-                <Blackspot X="882.5545" Y="5280.472" Z="41.01726" Radius="20.0" />
-                <Blackspot X="905.1858" Y="5269.045" Z="83.03226" Radius="20.0" />
-            </Blackspots>
-        </CustomBehavior>
+        <!-- if we have the vineyards unlocked, farm there its much faster -->
+        <If Condition="IsQuestCompleted(44084) == true">
+            <!-- if we're in shal'aran use the portal -->
+            <If Condition="Me.SubZoneId == 7928">
+                <CustomBehavior File="InteractWith" MobIds="254139" NumOfTimes="1" X="1781.165" Y="4613.289" Z="124.0019" />
+            </If>
+            <CustomBehavior File="InteractWith" MobIds="260495, 260498, 260494, 260492, 252408, 252772, 252774, 260248, 260249" NumOfTimes="999" PreInteractMountStrategy="Dismount" TerminateWhen="HasAncientMana( GetManaTarget() )">
+                <HuntingGrounds WaypointVisitStrategy="InOrder">
+                    <Hotspot X="1233.43" Y="3098.469" Z="132.8995" />
+                    <Hotspot X="1315.449" Y="3196.157" Z="132.878" />
+                    <Hotspot X="1408.079" Y="3306.502" Z="132.6651" />
+                    <Hotspot X="1473.269" Y="3424.817" Z="132.8173" />
+                    <Hotspot X="1520.407" Y="3551.934" Z="136.5533" />
+                    <Hotspot X="1460.808" Y="3653.376" Z="134.0804" />
+                    <Hotspot X="1403.083" Y="3490.309" Z="133.6588" />
+                </HuntingGrounds>
+            </CustomBehavior>
+            <!-- leave vinyards to shal'aran -->
+            <If Condition="Me.SubZoneId == 8149">
+                <CustomBehavior File="InteractWith" MobIds="260268" NumOfTimes="1" X="1194.9" Y="3099.76" Z="133.1459" />
+            </If>
+        </If>
+        <!-- farm the slow way -->
+        <If Condition="IsQuestCompleted(44084) == false">
+            <CustomBehavior File="InteractWith" MobIds="252408, 252772, 252774, 260248, 260249" NumOfTimes="999" PreInteractMountStrategy="Dismount" TerminateWhen="HasAncientMana( GetManaTarget() )">
+                <HuntingGrounds>
+                    <Hotspot X="1611.525" Y="4302.211" Z="135.5855" />
+                    <Hotspot X="1758.481" Y="4791.606" Z="147.6049" />
+                    <Hotspot X="1737.297" Y="4714.273" Z="170.1424" />
+                    <Hotspot X="1305.939" Y="4830.756" Z="172.1508" />
+                    <Hotspot X="1386.644" Y="4670.978" Z="128.5061" />
+                    <Hotspot X="1331.427" Y="4492.01" Z="122.9617" />
+                    <Hotspot X="1507.027" Y="4382.561" Z="115.4927" />
+                    <Hotspot X="1703.431" Y="4317.868" Z="162.0318" />
+                    <Hotspot X="1633.026" Y="4297.357" Z="138.98" />
+                    <Hotspot X="1724.04" Y="4089.502" Z="166.0663" />
+                    <Hotspot X="1415.358" Y="4424.396" Z="121.7797" />
+                    <Hotspot X="1485.619" Y="4954.147" Z="187.0151" />
+                    <Hotspot X="1565.029" Y="4973.608" Z="164.4833" />
+                    <Hotspot X="1549.117" Y="5020.103" Z="124.2606" />
+                    <Hotspot X="1522.021" Y="5000.249" Z="120.891" />
+                    <Hotspot X="1459.936" Y="4998.865" Z="120.4602" />
+                    <Hotspot X="1451.035" Y="5047.813" Z="174.2053" />
+                    <Hotspot X="974.6285" Y="5288.748" Z="106.7754" />
+                    <Hotspot X="953.0189" Y="5328.632" Z="90.89679" />
+                    <Hotspot X="913.7977" Y="5294.123" Z="94.69218" />
+                    <Hotspot X="1145.838" Y="5571.61" Z="1.450079" />
+                    <Hotspot X="1180.608" Y="5628.356" Z="6.87799" />
+                    <Hotspot X="1312.984" Y="5664.373" Z="2.771824" />
+                    <Hotspot X="1571.934" Y="5553.792" Z="13.56783" />
+                    <Hotspot X="1558.282" Y="5467.915" Z="-7.36157" />
+                    <Hotspot X="1543.184" Y="5478.198" Z="-7.76466" />
+                    <Hotspot X="1590.861" Y="5487.653" Z="-7.360172" />
+                    <Hotspot X="1588.765" Y="5611.566" Z="11.91419" />
+                    <Hotspot X="1490.427" Y="5668.693" Z="16.13418" />
+                    <Hotspot X="1811.907" Y="5701.867" Z="40.31356" />
+                    <Hotspot X="1924.345" Y="5565.773" Z="60.70303" />
+                    <Hotspot X="1619.317" Y="4887.14" Z="162.7641" />
+                    <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
+                    <Hotspot X="1386.644" Y="4670.978" Z="128.5061" />
+                    <Hotspot X="1331.427" Y="4492.01" Z="122.9617" />
+                    <Hotspot X="1507.027" Y="4382.561" Z="115.4927" />
+                    <Hotspot X="1703.431" Y="4317.868" Z="162.0318" />
+                    <Hotspot X="1633.026" Y="4297.357" Z="138.98" />
+                    <Hotspot X="1724.04" Y="4089.502" Z="166.0663" />
+                    <Hotspot X="1415.358" Y="4424.396" Z="121.7797" />
+                    <Hotspot X="1485.619" Y="4954.147" Z="187.0151" />
+                    <Hotspot X="1565.029" Y="4973.608" Z="164.4833" />
+                    <Hotspot X="1549.117" Y="5020.103" Z="124.2606" />
+                    <Hotspot X="1522.021" Y="5000.249" Z="120.891" />
+                    <Hotspot X="1459.936" Y="4998.865" Z="120.4602" />
+                    <Hotspot X="1451.035" Y="5047.813" Z="174.2053" />
+                    <Hotspot X="974.6285" Y="5288.748" Z="106.7754" />
+                    <Hotspot X="953.0189" Y="5328.632" Z="90.89679" />
+                    <Hotspot X="1451.373" Y="4894.687" Z="185.5585" />
+                    <Hotspot X="913.7977" Y="5294.123" Z="94.69218" />
+                    <Hotspot X="1145.838" Y="5571.61" Z="1.450079" />
+                    <Hotspot X="1180.608" Y="5628.356" Z="6.87799" />
+                    <Hotspot X="1312.984" Y="5664.373" Z="2.771824" />
+                    <Hotspot X="1571.934" Y="5553.792" Z="13.56783" />
+                    <Hotspot X="1558.282" Y="5467.915" Z="-7.36157" />
+                    <Hotspot X="1543.184" Y="5478.198" Z="-7.76466" />
+                    <Hotspot X="1590.861" Y="5487.653" Z="-7.360172" />
+                    <Hotspot X="1588.765" Y="5611.566" Z="11.91419" />
+                    <Hotspot X="1490.427" Y="5668.693" Z="16.13418" />
+                    <Hotspot X="1811.907" Y="5701.867" Z="40.31356" />
+                    <Hotspot X="1924.345" Y="5565.773" Z="60.70303" />
+                    <Hotspot X="1619.317" Y="4887.14" Z="162.7641" />
+                    <Hotspot X="1726.316" Y="4596.616" Z="166.6429" />
+                </HuntingGrounds>
+                <Blackspots>
+                    <Blackspot X="1478.984" Y="5442.051" Z="75.68926" Radius="20.0" />
+                    <Blackspot X="1071.589" Y="5265.232" Z="106.5904" Radius="40.0" />
+                    <Blackspot X="1628.706" Y="5424.287" Z="65.01992" Radius="20.0" />
+                    <Blackspot X="1638.807" Y="5458.747" Z="61.90379" Radius="20.0" />
+                    <Blackspot X="1577.444" Y="5412.718" Z="64.95435" Radius="20.0" />
+                    <Blackspot X="1262.418" Y="5258.036" Z="94.50412" Radius="20.0" />
+                    <Blackspot X="880.9355" Y="5261.9" Z="50.20648" Radius="20.0" />
+                    <Blackspot X="1912.03" Y="5459.361" Z="-8.040374" Radius="20.0" />
+                    <Blackspot X="1920.892" Y="5466.942" Z="-31.94954" Radius="20.0" />
+                    <Blackspot X="1939.038" Y="5390.631" Z="-32.52055" Radius="20.0" />
+                    <Blackspot X="1988.597" Y="5394.301" Z="-37.26923" Radius="20.0" />
+                    <Blackspot X="922.3163" Y="5324.399" Z="69.51901" Radius="20.0" />
+                    <Blackspot X="882.5545" Y="5280.472" Z="41.01726" Radius="20.0" />
+                    <Blackspot X="905.1858" Y="5269.045" Z="83.03226" Radius="20.0" />
+                    <Blackspot X="1333.107" Y="5015.869" Z="92.3406" Radius="40.0" />
+                </Blackspots>
+            </CustomBehavior>
+            <!-- use our whistle if we have it -->
+            <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+                <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+            </If>
+        </If>
         <CustomBehavior File="Hooks\DoWhen" ActivityName="use_mana_item" Command="Remove" />
         <CustomBehavior File="RunCode" Code="Logging.Write(System.Windows.Media.Colors.BlueViolet, &quot;[Zak]: Ancient Mana Harvest Complete.&quot;);" />
         <CustomBehavior File="RunCode" Code="SetManaTarget(0)" />
