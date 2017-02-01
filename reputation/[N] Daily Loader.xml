@@ -118,6 +118,10 @@
             <CustomBehavior File="LoadProfile" ProfileName="./[N][43774] Ley Race" RememberProfile="false" />
         </If>
 
+        <If Condition="IsQuestAvailable(43777)">
+            <CustomBehavior File="LoadProfile" ProfileName="./[N][43777] The Magic of Flight" RememberProfile="false" />
+        </If>
+
         <If Condition="IsQuestAvailable(43807)">
             <CustomBehavior File="LoadProfile" ProfileName="./[N][43807] Withered Wrangling Ambervale" RememberProfile="false" />
         </If>

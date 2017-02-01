@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<HBProfile>
+    <!-- All credit to the amazing world quest team on this one -->
+    <!-- https://www.thebuddyforum.com/honorbuddy-forum/honorbuddy-profiles/269163-progress-world-quests.html -->
+    <Name>[Nuok] The Magic of Flight ($Rev: 1007 $)</Name>
+    <MinDurability>0.2</MinDurability>
+    <MinFreeBagSlots>1</MinFreeBagSlots>
+    <MinLevel>1</MinLevel>
+    <MaxLevel>1000</MaxLevel>
+    <MailGrey>false</MailGrey>
+    <MailWhite>true</MailWhite>
+    <MailGreen>true</MailGreen>
+    <MailBlue>true</MailBlue>
+    <MailPurple>true</MailPurple>
+    <SellGrey>true</SellGrey>
+    <SellWhite>false</SellWhite>
+    <SellGreen>false</SellGreen>
+    <SellBlue>false</SellBlue>
+    <SellPurple>false</SellPurple>
+    <TargetElites>true</TargetElites>
+    <QuestOrder>
+        <CustomBehavior File="RunCode" Type="Definition">
+            <![CDATA[public bool OnQuest => Lua.GetReturnVal<bool>(@"SetMapByID(1033);
+local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(1033)
+if (taskInfo) then
+    for i, info  in ipairs(taskInfo) do
+        if info.questId == 43777 then
+            return true;
+            end
+    end
+end
+return false;", 0);
+
+        public WoWUnit FlightBubble => ObjectManager.GetObjectsOfType<WoWUnit>().
+            Where(u => u.IsValid && u.Entry == 110657 && u.IsMoving && u.Distance < 10).
+            OrderBy(u => u.DistanceSqr).FirstOrDefault();
+            
+       public WoWUnit StartBubble => ObjectManager.GetObjectsOfType<WoWUnit>().
+            Where(u => u.IsValid && u.Entry == 110657 && !u.IsMoving && u.Z < 230f).
+            OrderBy(u => u.DistanceSqr).FirstOrDefault();
+
+        public WoWUnit ArcaneArtifact => ObjectManager.GetObjectsOfType<WoWUnit>().
+            Where(u => u.IsValid && u.Entry == 110664 && u.DistanceSqr < 20).
+            OrderBy(u => u.DistanceSqr).FirstOrDefault();
+
+        public async Task MoveInBubble()
+        {
+            ObjectManager.Update();
+            var bubble = FlightBubble;
+            var artifact = ArcaneArtifact;
+
+            if (artifact != null)
+            {
+                Logging.Write($"Interacting with {artifact}");
+                artifact.Interact();
+                await CommonCoroutines.SleepForRandomReactionTime();
+            }
+
+            if (bubble == null)
+            {
+                Logging.Write("Waiting for a bubble");
+                await CommonCoroutines.SleepForRandomReactionTime();
+                return;
+            }
+
+            Logging.Write($"Moving in {bubble}");
+            Navigator.PlayerMover.MoveTowards(bubble.Location);
+            await CommonCoroutines.SleepForRandomReactionTime();
+        }
+        
+        public async Task Start()
+        {
+            var bubble = StartBubble;
+            if(bubble == null) 
+            {
+              Logging.Write($"Waiting for start bubble");
+              return;
+            }
+            Navigator.PlayerMover.MoveTowards(bubble.Location);
+            await CommonCoroutines.SleepForRandomReactionTime();
+        }
+
+]]>
+        </CustomBehavior>
+        <While Condition="OnQuest">
+            <If Condition="!HasQuest(43777)">
+                <RunTo X="2571.907" Y="4515.744" Z="234.3352" />
+            </If>
+            <While Condition="HasQuest(43777)">
+                <DisableBehavior Name="All" />
+                <If Condition="StartBubble == null &amp;&amp; FlightBubble == null">
+                    <RunTo X="2544.909" Y="4529.673" Z="231.8074" />
+                    <CustomBehavior File="ForcedDismount" />
+                </If>
+                <If Condition="StartBubble != null &amp;&amp; FlightBubble == null">
+                    <CustomBehavior File="RunCode" Code="await Start();" />
+                </If>
+                <While Condition="FlightBubble != null">
+                    <CustomBehavior File="RunCode" Code="await MoveInBubble();" />
+                </While>
+            </While>
+        </While>
+        <EnableBehavior Name="All" />
+        <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
+            <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
+        </If>
+        <CustomBehavior File="LoadProfile" ProfileName="./[N] Daily Loader" RememberProfile="false" />
+    </QuestOrder>
+</HBProfile>

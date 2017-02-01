@@ -160,7 +160,7 @@
         </While>
         <While Condition="WorldQuestInfo.HasWorldQuest(44857)">
             <RunTo X="2599.003" Y="5607.023" Z="178.3525" />
-            <CustomBehavior File="KillUntilComplete" MobIds="106765, 106764" QuestId="44857">
+            <CustomBehavior File="KillUntilComplete" MobIds="106765, 106764" TerminateWhen="WorldQuestInfo.HasWorldQuest(44857) == false">
                 <HuntingGrounds>
                     <Hotspot X="2577.946" Y="5578.055" Z="177.9498" />
                     <Hotspot X="2678.354" Y="5583.09" Z="194.9198" />
@@ -172,8 +172,6 @@
                     <Hotspot X="2653.415" Y="5479.208" Z="162.8133" />
                 </HuntingGrounds>
             </CustomBehavior>
-            <CustomBehavior File="Misc\RunLua" WaitTime="1500" Lua="WorldMapFrame:Show()" />
-            <CustomBehavior File="Misc\RunLua" Lua="WorldMapFrame:Hide()" />
         </While>
         <If Condition="HasItem(141605) &amp;&amp; Me.BagItems.FirstOrDefault(h =&gt; h.Entry == 141605).CooldownTimeLeft.TotalMilliseconds == 0">
             <CustomBehavior File="UseItem" ItemId="141605" WaitTime="2000" />
